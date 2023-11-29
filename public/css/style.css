@@ -1,0 +1,163 @@
+body{
+    background-color: #B2C8BA;
+    text-align:left;
+    overflow-x: hidden;
+}
+
+nav{
+  height: 60px;
+}
+ul{
+  list-style: none;
+}
+a{
+  text-decoration: none;
+  color: #000000;
+}
+a:hover{
+  text-decoration: none;
+  color: #f4f2f2;
+}
+a:hover .feature{
+  background-color: #86A789;
+}
+/* common sections */
+.colored-section {
+    background-color: #86A789;
+    color: #fff;
+}
+.white-section {
+    background-color: #fff;
+}
+.container-fluid {
+  padding: 7% 15%;
+}
+
+/* footer section */
+#footer{
+    background-color: azure;
+}
+#footer .container-fluid{
+    text-align: center;
+    padding: 1% 15% 0%;
+}
+
+/* sidebar */
+.sidebar{
+  margin-top: 70px;
+  padding-left: 40px;
+  position: fixed;
+  height: 100%;
+  background-color: coral;
+ 
+}
+.admin-brand{
+  height: 80px;
+  background-color: aqua;
+  padding-top: 10px;
+}
+.feature{
+  height: 50px;
+  margin-bottom: 10px;
+  background-color: antiquewhite;
+}
+
+
+
+/* admin */
+.admin-brand{
+  height: 100px;
+  background-color: blueviolet;
+}
+
+.list-group{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* page content */
+.page-content{
+  margin-top: 60px;
+  position: absolute;
+  right: 0;
+  background-color: burlywood;
+}
+
+#teacher{
+  background-color: #1c492d;
+}
+#teacher,#student{
+  padding: 5%;
+}
+
+.section-title{
+  background-color: #272928;
+  padding: 15px;
+  color: chartreuse;
+}
+
+.sub-title{
+  padding: 15px;
+}
+
+.sub-top-header{
+  height: 100px;
+  background-color: #768d7e3b;
+  font-size: large;
+}
+.sub-top-header a{
+  margin: 0 10px;
+  background-color: #1c492d;
+  border:#1c492d ;
+}
+
+
+.add-teacher{
+  background-color: beige;
+  padding: 15px;
+}
+.teacher-form{
+  background-color: #f4f2f2;
+  padding-bottom: 50px;
+  padding-top: 10px;
+}
+
+.teacher-form-button{
+  margin-top: 40px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 10%;
+}
+.top-blank{
+  margin-top: 60px;
+}
+.teacher-list{
+  background-color: blanchedalmond;
+  /* margin-top: 60px; */
+}
+
+.teacher-detail{
+  padding: 2%;
+  margin-bottom: 60px;
+}
+
+.sub-bg{
+  background-color: #eaeeeb;
+  padding: 0;
+}
+
+.teacher-content{
+  background-color: #eaeeeb;
+}
+#updateTeacher{
+  margin-top: 60px;
+}
+.search-content{
+  margin-top: 20px;
+}
+
+.form-group #captureButton{
+  margin-top: 0px !important;
+}
+

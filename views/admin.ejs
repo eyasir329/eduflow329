@@ -1,0 +1,539 @@
+<%- include("header") -%>
+
+<div class="row">
+    <nav class="navbar navbar-expand navbar-dark bg-primary fixed-top">
+        <div class="col-md-3">
+            <a href="#menu-toggle" id="menu-toggle" class="navbar-brand"><span class="navbar-toggler-icon"></span></a>
+        </div>
+        <div class="col-md-6">
+            <a class="navbar-brand brand-name" href="#title">ABC School</a>
+        </div>
+        <div class="col-md-3">
+            <div class="collapse navbar-collapse" id="nav-sidebar">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<!-- navbar finish -->
+
+<!-- main content start -->
+<div class="row">
+    <!-- Sidebar start -->
+    <div class="col-md-2 sidebar">
+
+        <!-- admin -->
+        <div class="row">
+            <div class="col-md-12 admin-brand d-flex justify-content-center align-items-center text-center">
+                <h1 class="">Admin Panel</h1>
+            </div>
+        </div>
+        <!-- feature -->
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-group sidebar-feather">
+                    <a href="#teacher">
+                        <div class="row feature">
+                            <div class="col-md-12 d-flex justify-content-center align-items-center text-center">
+                                <li><span>Teachers</span></li>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#student">
+                        <div class="row feature">
+                            <div class="col-md-12 d-flex justify-content-center align-items-center text-center">
+                                <li><span>Students</span></li>
+                            </div>
+                        </div>
+                    </a>
+                  
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <!-- sidebar end -->
+
+    <!-- page content start -->
+    <div class="col-md-10 page-content">
+
+
+      <!-- teacher content started -->
+      <div class="row" id="teacher">
+        <div class="col-md-12">
+
+          <!-- teacher section heading -->
+          <div class="row section-title d-flex justify-content-center align-items-center text-center">
+            <div class="col-md-12">
+              <h1>Teacher Section</h1>
+            </div>
+          </div>
+          <!-- top header for teacher -->
+          <div class="row sub-top-header d-flex justify-content-center align-items-center text-center">
+              <a class="btn btn-primary btn-lg" href="#addTeacher" role="button">Add Teacher</a>
+              <a class="btn btn-primary btn-lg" href="#searchTeacher" role="button">Find</a>
+              <a class="btn btn-primary btn-lg" href="#updateTeacher" role="button">Update Info</a>
+              <a class="btn btn-primary btn-lg" href="#deleteTeacher" role="button">Remove From Database</a>
+          </div>
+
+          <!-- add teacher start-->
+          <div class="row sub-header" id="addTeacher">
+            <div class="col-md-12">
+              <!-- sub heading -->
+              <div
+                class="row sub-title top-blank add-teacher d-flex justify-content-center align-items-center text-center">
+                <div class="col-md-12">
+                  <h1><span class="badge bg-secondary">Add a New Teacher</span></h1>
+                </div>
+              </div>
+
+              <div class="row teacher-form">
+                <div class="col-md-12">
+
+                  <form action="/" method="post">
+                    <div class="row">
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="First name" name="tfName"
+                          autocomplete="off">
+                      </div>
+                      <div class="col">
+                        <input type="text" class="form-control" placeholder="Last name" name="tlName"
+                          autocomplete="off">
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary teacher-form-button">Submit</button>
+
+                  </form>
+
+                </div>
+
+              </div>
+              <!-- teacher add success message -->
+              <% if(addTeacher.teacherID>0){ %>
+                <div class="row teacher-form addSuccess sub-title d-flex justify-content-center align-items-center text-center">
+                  <div class="col-md-12">
+                    <h2>Data imported Successfully</h2>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">#ID</th>
+                          <th scope="col">Name</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><%= addTeacher.teacherID %> </td>
+                          <td><%= addTeacher.teacherName %></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              <% } %>
+              <!-- end success script -->
+
+            </div>
+          </div>
+          <!-- add teacher end -->
+
+          <!-- classwise teacher search-->
+          <div class="row" id="searchTeacher">
+            <div class="col-md-12">
+              <!-- sub heading -->
+              <div
+                class="row sub-title teacher-list top-blank d-flex justify-content-center align-items-center text-center">
+                <div class="col-md-12">
+                  <h1><span class="badge bg-secondary">Teacher List</span></h1>
+                </div>
+              </div>
+              <!-- sub button -->
+              <div
+                class="row sub-top-header sub-bg sub-title teacher-list d-flex justify-content-center align-items-center text-center">
+
+                <a class="btn btn-primary" data-toggle="collapse" href="#search-by-teacher-id" role="button">Search By
+                  Individual</a>
+                <a class="btn btn-primary" data-toggle="collapse" href="#search-by-academic" role="button">Search By
+                  Class</a>
+                <a class="btn btn-primary" data-toggle="collapse" href="#latest-updated-info" role="button">Latest
+                  Updated Info</a>
+                  <a class="btn btn-primary" data-toggle="collapse" href="#all-teacher-info" role="button">All Teacher Info</a>
+              </div>
+                  
+
+              <!-- search by teacher id -->
+                <div class="row d-flex teacher-content justify-content-center align-items-center text-center">
+                  <div class="col-md-12">
+                    <div class="collapse multi-collapse" id="search-by-teacher-id">
+                      <!-- search -->
+                      <div class="row">
+                        <div class="col-md-12">
+
+                          <div class="form-group">
+                            <select class="selectpicker" data-live-search="true" id="mySelect">
+                              <option>Teacher Info</option>
+                              <% teacher.forEach(row =>{ %>
+                                <option><%= row.teacher_id%> <%= row.fname%> <%= row.lname%></option>
+                              <% }); %>
+                            </select>
+                            <button id="captureButton" class="btn btn-primary mt-2">Capture</button>
+                          </div>
+                          
+                        </div>
+                        
+                      </div>
+                      <!-- content -->
+                      <div class="row search-content">
+                        <div class="col-md-12">
+                          <table class="table" id="myTable">
+                            <thead>
+                              <tr>
+                                <th scope="col">#ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                          
+                        
+                    </div>
+                  </div>
+                </div>
+
+                <!-- search by academic class -->
+                <div class="row d-flex teacher-content justify-content-center align-items-center text-center">
+                  <div class="col-md-12">
+                    <div class="collapse multi-collapse" id="search-by-academic">
+
+                      
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">#ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><= row.teacher_id %></td>
+                                <td><= row.fname %></td>
+                                <td><= row.lname %></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        
+                    </div>
+                  </div>
+                </div>
+
+                <!-- recent added teacher -->
+                <div class="row d-flex teacher-content justify-content-center align-items-center text-center">
+                  <div class="col-md-12">
+                    <div class="collapse multi-collapse" id="latest-updated-info">
+
+                      <caption>Latest Added Teacher List</caption>
+                          <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">#ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% updateTeacher.forEach(row=>{ %>
+                                <tr>
+                                  <td><%= row.teacher_id %></td>
+                                  <td><%= row.fname %></td>
+                                  <td><%= row.lname %></td>
+                                </tr>
+                              <% }); %>
+                              
+
+                            </tbody>
+                          </table>
+                        
+                    </div>
+                  </div>
+                </div>
+
+                <!-- all added teacher -->
+                <div class="row d-flex teacher-content justify-content-center align-items-center text-center">
+                  <div class="col-md-12">
+                    <div class="collapse multi-collapse" id="all-teacher-info">
+
+                      <caption>Teacher List</caption>
+                          <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">#ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% teacher.forEach(row=>{ %>
+                                <tr>
+                                  <td><%= row.teacher_id %></td>
+                                  <td><%= row.fname %></td>
+                                  <td><%= row.lname %></td>
+                                </tr>
+                              <% }); %>
+                              
+
+                            </tbody>
+                          </table>
+                        
+                    </div>
+                  </div>
+                </div>
+
+
+                <!-- finish search -->
+              
+
+            </div>
+          </div>
+          <!-- search end -->
+
+          <!-- update teacher -->
+          <div class="row" id="updateTeacher">
+            <div class="col-md-12">
+              <div class="row sub-title teacher-list d-flex justify-content-center align-items-center text-center">
+                <div class="col-md-12">
+                  <h1><span class="badge bg-secondary">Update Teacher Info</span></h1>
+                </div>
+              </div>
+
+              <div class="row teacher-list teacher-detail d-flex justify-content-center align-items-center text-center">
+                <div class="col-md-12">
+
+                  <div class="row search">
+                    <div class="col-md-12">
+
+                      <form class="justify-content-center" action="/tupdate" method="post">
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                          <input type="text" placeholder="Teacher ID" name="teacher_id" id="autocompleteInput2">
+                          <button class="btn btn-secondary" type="submit">Search</button>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+
+
+                  <div class="row search-item">
+                    <div class="col-md-12">
+
+                      <form action="/tupdatef" method="post">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#ID</th>
+                              <th scope="col">First Name</th>
+                              <th scope="col">Last Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% teacherINFO.forEach(row => { %>
+                            <tr>
+                              <td>
+                                <fieldset disabled>
+                                  <input type="text" id="disabledTextInput" class="form-control"
+                                    placeholder="<%= row.teacher_id %>">
+                                </fieldset>
+                              </td>
+                              <td><input type="text" class="form-control" placeholder="<%= row.fname %>" name="tufName"
+                                  autocomplete="off" value="<%= row.fname %>"></td>
+                              <td><input type="text" class="form-control" placeholder="<%= row.lname %>" name="tulName"
+                                  autocomplete="off" value="<%= row.lname %>"></td>
+                              <td><button type="submit" class="btn btn-primary">Update</button></td>
+                            </tr>
+                            <% }); %>
+
+                      </form>
+
+                      </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- update success -->
+                  <div class="row search">
+                    <div class="col-md-12">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <h3>Successfully Update Done</h3>
+                        </div>
+                      </div>
+                      <div class="row search-item">
+                        <div class="col-md-12">
+
+                          <form action="/tupdatef" method="post">
+                            <table class="table">
+                              <!-- latest update -->
+                              <tbody>
+                                <% teacherINFO.forEach(row => { %>
+                                <tr>
+
+                                  <td>
+                                    <fieldset disabled>
+                                      <input type="text" id="disabledTextInput" class="form-control"
+                                        placeholder="<%= row.teacher_id %>">
+                                    </fieldset>
+                                  </td>
+                                  <td>
+                                    <fieldset disabled>
+                                      <input type="text" class="form-control" placeholder="<%= row.fname %>"
+                                        name="tufName" autocomplete="off" value="<%= row.fname %>">
+                                    </fieldset>
+                                  </td>
+                                  <td>
+                                    <fieldset disabled>
+                                      <input type="text" class="form-control" placeholder="<%= row.lname %>"
+                                        name="tufName" autocomplete="off" value="<%= row.lname %>">
+                                    </fieldset>
+                                  </td>
+
+                                </tr>
+                                <% }); %>
+
+                          </form>
+
+                          </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- update teacher end -->
+
+
+          <!-- delete teacher -->
+          <div class="row" id="deleteTeacher">
+            <div class="col-md-12">
+              <div class="row sub-title teacher-list d-flex justify-content-center align-items-center text-center">
+                <div class="col-md-12">
+                  <h1><span class="badge bg-secondary">Remove Teacher</span></h1>
+                </div>
+              </div>
+
+              <div class="row teacher-list teacher-detail d-flex justify-content-center align-items-center text-center">
+                <div class="col-md-12">
+
+                  <div class="row search">
+                    <!-- hidden class for auto suggestion -->
+                    <div class="form-group d-none">
+                      <select class="selectpicker" data-live-search="true" id="mySelect2">
+                        <option>Teacher Info</option>
+                        <% teacher.forEach(row =>{ %>
+                        <option><%= row.teacher_id%></option>
+                        <% }); %>
+                      </select>
+                    </div>
+
+
+                    <div class="col-md-12">
+                      <form class="justify-content-center" action="/tdelete" method="post">
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                          <input type="text" placeholder="Teacher ID" name="teacher_id" id="autocompleteInput">
+                          <button class="btn btn-secondary" type="submit">Search</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <div class="row search-item">
+                    <div class="col-md-12">
+
+                      <form action="/tdeletef" method="post">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#ID</th>
+                              <th scope="col">First Name</th>
+                              <th scope="col">Last Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% teacherIDD.forEach(row => { %>
+                            <tr>
+                              <td>
+                                <fieldset disabled>
+                                  <input type="text" id="disabledTextInput" class="form-control"
+                                    placeholder="<%= row.teacher_id %>">
+                                </fieldset>
+                              </td>
+                              <td>
+                                <fieldset disabled>
+                                  <input type="text" class="form-control" placeholder="<%= row.fname %>" name="tufName"
+                                    autocomplete="off" value="<%= row.fname %>">
+                                </fieldset>
+                              </td>
+                              <td>
+                                <fieldset disabled>
+                                  <input type="text" class="form-control" placeholder="<%= row.lname %>" name="tufName"
+                                    autocomplete="off" value="<%= row.lname %>">
+                                </fieldset>
+                              </td>
+                              <td><button type="submit" class="btn btn-primary">Confirm Delete</button></td>
+                            </tr>
+                            <% }); %>
+
+                      </form>
+
+                      </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- delete success -->
+                  <div class="row search">
+                    <div class="col-md-12">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <h3>Successfully Deleted Done</h3>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- delete end -->
+        </div>
+      </div>
+      <!-- teacher section end -->
+       
+    </div>
+    <!-- page content end -->
+</div>
+
+<!-- main content finish -->
+
+<%- include("footer") -%>

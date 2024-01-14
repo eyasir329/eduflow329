@@ -1,0 +1,382 @@
+
+body {
+    background: #86A789;
+    background-image: url("https://www.transparenttextures.com/patterns/brick-wall.png");
+}
+
+.colored-section{
+    background-color: #4F6F52;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.white-section{
+    background-color: #ffffff;
+    /* padding-top: 10px; */
+    /* padding-bottom: 10px; */
+}
+
+/* .container{
+    padding-top: 10px;
+    padding-bottom: 10px;
+} */
+
+
+/* header section start */
+
+.header-left{
+    height: 120px;
+    position: relative;
+}
+.header-left img{
+    position: absolute;
+    left: 0;
+    bottom: 10px;
+    height: 100px;
+}
+.header-left-title{
+    font-size: 30px;
+    line-height: 30px;
+    margin: auto 0;
+    color: #fff;
+    margin-left: auto;
+}
+.header-left-title .address{
+    font-size: 20px;
+}
+.header-right{
+    position: relative;
+    text-align: right;
+}
+
+.header-right .header-img{
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    
+}
+.header-right .header-img img{
+    height: 100px;
+    margin-left: 10px;
+}
+
+/* header section end */
+
+/* navbar start */
+.navbar{
+    padding: 0;
+}
+#basic-nav-dropdown{
+    padding-right: 20px;
+    padding-left: 10px;
+}
+
+.nav-item a:hover{
+    background-color: #86A789;
+    color: #fff;
+}
+.home{
+    margin-left: -10px;
+}
+.home:hover{
+    background-color: #86A789;
+    color: #fff;
+}
+
+
+/* navbar end */
+
+/* news start */
+.news-heading{
+    /* height: 40px; */
+    background-color: #4F6F52;
+    color: #fff;
+}
+.news-heading span{
+    margin-top: 2px;
+    display: grid;
+    align-items: center;
+}
+.news-title{
+    background-color: #EAD196;
+    color: #fff;
+    width: 160px;
+}
+
+.animate-charcter
+{
+   text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #231557 0%,
+    #44107a 29%,
+    #ff1361 67%,
+    #fff800 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+      font-size: 20px;
+}
+
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
+}
+
+#scroll-container {
+    /* border: 3px solid black; */
+    /* border-radius: 5px; */
+    overflow: hidden;
+  }
+  
+  #scroll-text {
+    /* animation properties */
+    -moz-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    
+    -moz-animation: my-animation 25s linear infinite;
+    -webkit-animation: my-animation 25s linear infinite;
+    animation: my-animation 25s linear infinite;
+  }
+  
+  /* for Firefox */
+  @-moz-keyframes my-animation {
+    from { -moz-transform: translateX(100%); }
+    to { -moz-transform: translateX(-100%); }
+  }
+  
+  /* for Chrome */
+  @-webkit-keyframes my-animation {
+    from { -webkit-transform: translateX(100%); }
+    to { -webkit-transform: translateX(-100%); }
+  }
+  
+  @keyframes my-animation {
+    from {
+      -moz-transform: translateX(100%);
+      -webkit-transform: translateX(100%);
+      transform: translateX(100%);
+    }
+    to {
+      -moz-transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+      transform: translateX(-100%);
+    }
+} 
+
+/* news end */
+
+/* notice board start */
+.article{
+    padding: 20px 0;
+}
+.photo-carousal{
+    margin-left: -10px;
+}
+.photo-carousal img{
+    width: 900px;
+    height: 500px;
+    
+}
+
+
+/*notice */
+.notice{
+    /* margin-left: 10px; */
+    background-color: #739072;
+        /* position: relative; */
+        /* box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
+        -webkit-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
+        -moz-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75); */
+}
+
+.notice .container{
+
+    /* background-color: #000000; */
+}
+
+.notice-heading{
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    /* position: absolute; */
+    /* width: 450px; */
+    height: 60px;
+    padding: 10px;
+    background-color: #ada8be;
+}
+.notice-content{
+    margin: 10px;
+    /* position: absolute; */
+    /* top: 60px; */
+    /* height: 400px; */
+    background-color: #ffffff;
+}
+
+.notice-content p{
+    color: #000000;
+    line-height: 20px;
+    font-size: 18px;
+    padding: 10px;
+}
+.notice-content span,p{
+    padding: 15px;
+}
+
+
+/* notice board end */
+
+/* head teacher start */
+.head-teacher{
+    height: 600px;
+}
+
+.head-teacher .colored-section{
+    background-color: #86A789;
+    height: 200px;
+}
+
+.head-teacher .white-section{
+    background-color: #fff;
+    height: 400px;
+}
+.teacher-extra{
+    position: relative;
+}
+.teacher-extra .teacher-content{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 100px;
+    /* background-color: #4F6F52; */
+    height: 450px;
+    
+}
+
+.teacher-content .teacher-left{
+    
+    /* width: 100px; */
+        height: 400px;
+    
+        background-color: #ede8e8;
+        box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+        -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+        -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    }
+
+.teacher-content .teacher-right{
+    
+    /* width: 100px; */
+        height: 350px;
+        padding: 0 20px;
+        background-color: #ede8e8;
+        box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+        -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+        -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    }
+
+/* head teacher end */
+
+/* school info start */
+/* 86A789 */
+.school-color{
+    background-color: #D2E3C8;
+}
+.school-info{
+    /* height: 500px; */
+    margin-top: 50px;
+    margin-bottom: 100px;
+    /* background-color: #ffffff; */
+}
+.school-heading{
+    height: 100px;
+    margin-bottom: 30px;
+    /* background-color: red; */
+    text-align: center;
+}
+.school-heading h1{
+    font-size: 30px;
+}
+.school-left{
+    /* position: fixed; */
+    height: 100px;
+    /* background-color: rgb(79, 59, 59); */
+}
+.school-left .histo-heading h1{
+    font-size: 30px;
+    text-align: left;
+    margin-left: 12px;
+}
+.school-left .histo-content p{
+    font-size: 20px;
+    text-align: left;
+}
+
+.school-left p{
+    font-size: 22px;
+}
+.school-right{
+    height: 400px;
+    /* background-color: rgb(176, 114, 114); */
+}
+.school-right img{
+    width: 300px;
+}
+
+
+/* school info end */
+
+/* mujib corner start */
+
+.mujib{
+    padding: 50px 0;
+}
+.mujib img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+.mujib .mujib-text {
+    text-align: center;
+    /* width: 150px; */
+    /* height: 40px; */
+    background-color: #4F6F52;
+    color: #fff;
+    margin: auto;
+    width: 30%;
+    /* border: 3px solid green; */
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+/* mujib corner end */
+
+
+
+/* footer start */
+
+.footer-section footer{
+    /* position: absolute; */
+    text-align: center;
+    /* bottom: 0; */
+    /* right: 0; */
+    /* width: 100%; */
+    height: 20px;
+}
+.footer-section footer a{
+    color: #131212;
+    text-decoration: none;
+}
+/* footer end */

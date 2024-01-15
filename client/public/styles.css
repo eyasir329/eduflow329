@@ -200,10 +200,6 @@ body {
         -moz-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75); */
 }
 
-.notice .container{
-
-    /* background-color: #000000; */
-}
 
 .notice-heading{
     text-align: center;
@@ -363,9 +359,139 @@ body {
 
 /* mujib corner end */
 
+/* extra info start */
+.extra-info{
+    background-color: #D2E3C8;
+}
+/* extra info end */
+
+
+/* institute information start */
+.institute-head{
+    text-align: center;
+    padding: 20px 0;
+    
+}
+.institute-head h2{
+    color: #fff;
+}
+/* institute information end */
+
+.temporary{
+    margin: 20px 0;
+}
+
+.temporary2 img{
+    width: 200px;
+}
+
+.temporary3 img{
+    width: 150px;
+}
+
+.portal{
+    background-color: #86A789;
+    height: 400px;
+}
+
+.portal-heading{
+    text-align: center;
+    color: #fff;
+    padding: 50px 0;
+}
+
+.portal-login{
+    margin-bottom: 50px;
+    color: #fff;
+    font-size: 30px;
+    text-align: center;
+}
+
+.portal-login button{
+    padding: 5px 20px;
+    border-radius: 10px;
+}
 
 
 /* footer start */
+
+/* school addresse */
+.address-temp{
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.address-temp .address-up{
+    position: absolute;
+    height: 200px;
+    /* background-color: #EAD196; */
+    top: -100px;
+}
+.address-extra{
+    height: 200px;
+    background-color: #fff;
+    width: 80%;
+    margin: 0 auto;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.address-extra .ad-tex{
+    margin-top: 25px;
+}
+
+.address-extra .ad-tex .ad-tex-ex {
+    height: 100px;
+    padding: 0 10px;
+    white-space: normal;
+    word-break: break-word;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    text-align: center;
+    margin-left: 80px;
+}
+
+.address-extra .adex{
+    /* margin: 0 auto; */
+    height: 150px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.addr-content{
+    margin-top: 130px;
+    height: 300px;
+    /* background-color: #44107a; */
+}
+
+.addr-content .footer-logo{
+    /* background-color: #131212; */
+    height: 310px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    margin-left: 150px;
+}
+
+.addr-content .footer-logo img{
+    width: 180px;
+}
+
+.address-main{
+    height: 310px;
+}
+
+.user-form input{
+    margin: 10px 0;
+}
+
+
+.footer-section{
+    background-color: #4F6F52;
+    height: 450px;
+}
 
 .footer-section footer{
     /* position: absolute; */
@@ -373,9 +499,9 @@ body {
     /* bottom: 0; */
     /* right: 0; */
     /* width: 100%; */
-    height: 20px;
+    height: 20px;  
 }
-.footer-section footer a{
+.footer-section a{
     color: #131212;
     text-decoration: none;
 }

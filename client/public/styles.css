@@ -1,84 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+}
 
 body {
+    text-align: center;
     background: #86A789;
     background-image: url("https://www.transparenttextures.com/patterns/brick-wall.png");
+    font-family: "Ubuntu", sans-serif;
 }
 
-.colored-section{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+p {
+    color: #8f8f8f;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* .ubuntu-light {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .ubuntu-light-italic {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  .ubuntu-regular {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .ubuntu-regular-italic {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  .ubuntu-medium {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .ubuntu-medium-italic {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+  }
+  
+  .ubuntu-bold {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .ubuntu-bold-italic {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+  } */
+  
+
+
+
+/* common css */
+
+.colored-section {
     background-color: #4F6F52;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 
-.white-section{
+.white-section {
     background-color: #ffffff;
-    /* padding-top: 10px; */
-    /* padding-bottom: 10px; */
 }
 
-/* .container{
-    padding-top: 10px;
-    padding-bottom: 10px;
-} */
+.container{
+    padding: 20px 10px;
+}
 
 
 /* header section start */
-
 .header-left{
-    height: 120px;
-    position: relative;
+    text-align: left;
 }
-.header-left img{
-    position: absolute;
-    left: 0;
-    bottom: 10px;
-    height: 100px;
+
+.header-left img {
+    width: 100px;
 }
-.header-left-title{
-    font-size: 30px;
-    line-height: 30px;
-    margin: auto 0;
+
+.header-left .title-midle{
+   height: 100%;
+}
+
+.header-left .logo-title, .logo-address{
+    margin-left: 20px;
+}
+
+@media (max-width:1250px){
+    .header-left .logo-title, .logo-address{
+        margin-left: 40px;
+    }
+}
+
+@media (max-width:1000px){
+    .header-left .logo-title, .logo-address{
+        margin-left: 20px;
+    }
+    .header-right{
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.header-left .logo-title {
+    font-size: 32px;
     color: #fff;
-    margin-left: auto;
 }
-.header-left-title .address{
+
+.header-left .logo-address{
+    color: #fff;
     font-size: 20px;
 }
-.header-right{
-    position: relative;
+
+.header-right {
     text-align: right;
 }
 
-.header-right .header-img{
-    position: absolute;
-    right: 0;
-    bottom: 5px;
-    
-}
-.header-right .header-img img{
+.header-right .header-img img {
     height: 100px;
     margin-left: 10px;
 }
 
 /* header section end */
 
+
 /* navbar start */
-.navbar{
+.navbar {
     padding: 0;
 }
-#basic-nav-dropdown{
+
+#basic-nav-dropdown {
     padding-right: 20px;
     padding-left: 10px;
 }
 
-.nav-item a:hover{
+.nav-item a:hover {
     background-color: #86A789;
     color: #fff;
 }
-.home{
+
+.home {
     margin-left: -10px;
 }
-.home:hover{
+
+.home:hover {
     background-color: #86A789;
     color: #fff;
 }
@@ -87,121 +177,133 @@ body {
 /* navbar end */
 
 /* news start */
-.news-heading{
+.news-heading {
     /* height: 40px; */
     background-color: #4F6F52;
     color: #fff;
 }
-.news-heading span{
+
+.news-heading span {
     margin-top: 2px;
     display: grid;
     align-items: center;
 }
-.news-title{
+
+.news-title {
     background-color: #EAD196;
     color: #fff;
     width: 160px;
 }
 
-.animate-charcter
-{
-   text-transform: uppercase;
-  background-image: linear-gradient(
-    -225deg,
-    #231557 0%,
-    #44107a 29%,
-    #ff1361 67%,
-    #fff800 100%
-  );
-  background-size: auto auto;
-  background-clip: border-box;
-  background-size: 200% auto;
-  color: #fff;
-  background-clip: text;
-  text-fill-color: transparent;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: textclip 2s linear infinite;
-  display: inline-block;
-      font-size: 20px;
+.animate-charcter {
+    text-transform: uppercase;
+    background-image: linear-gradient(-225deg,
+            #231557 0%,
+            #44107a 29%,
+            #ff1361 67%,
+            #fff800 100%);
+    background-size: auto auto;
+    background-clip: border-box;
+    background-size: 200% auto;
+    color: #fff;
+    background-clip: text;
+    /* text-fill-color: transparent; */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textclip 2s linear infinite;
+    display: inline-block;
+    font-size: 20px;
 }
 
 @keyframes textclip {
-  to {
-    background-position: 200% center;
-  }
+    to {
+        background-position: 200% center;
+    }
 }
 
 #scroll-container {
     /* border: 3px solid black; */
     /* border-radius: 5px; */
     overflow: hidden;
-  }
-  
-  #scroll-text {
+}
+
+#scroll-text {
     /* animation properties */
     -moz-transform: translateX(100%);
     -webkit-transform: translateX(100%);
     transform: translateX(100%);
-    
+
     -moz-animation: my-animation 25s linear infinite;
     -webkit-animation: my-animation 25s linear infinite;
     animation: my-animation 25s linear infinite;
-  }
-  
-  /* for Firefox */
-  @-moz-keyframes my-animation {
-    from { -moz-transform: translateX(100%); }
-    to { -moz-transform: translateX(-100%); }
-  }
-  
-  /* for Chrome */
-  @-webkit-keyframes my-animation {
-    from { -webkit-transform: translateX(100%); }
-    to { -webkit-transform: translateX(-100%); }
-  }
-  
-  @keyframes my-animation {
+}
+
+/* for Firefox */
+@-moz-keyframes my-animation {
     from {
-      -moz-transform: translateX(100%);
-      -webkit-transform: translateX(100%);
-      transform: translateX(100%);
+        -moz-transform: translateX(100%);
     }
+
     to {
-      -moz-transform: translateX(-100%);
-      -webkit-transform: translateX(-100%);
-      transform: translateX(-100%);
+        -moz-transform: translateX(-100%);
     }
-} 
+}
+
+/* for Chrome */
+@-webkit-keyframes my-animation {
+    from {
+        -webkit-transform: translateX(100%);
+    }
+
+    to {
+        -webkit-transform: translateX(-100%);
+    }
+}
+
+@keyframes my-animation {
+    from {
+        -moz-transform: translateX(100%);
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%);
+    }
+
+    to {
+        -moz-transform: translateX(-100%);
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%);
+    }
+}
 
 /* news end */
 
 /* notice board start */
-.article{
+.article {
     padding: 20px 0;
 }
-.photo-carousal{
+
+.photo-carousal {
     margin-left: -10px;
 }
-.photo-carousal img{
+
+.photo-carousal img {
     width: 900px;
     height: 500px;
-    
+
 }
 
 
 /*notice */
-.notice{
+.notice {
     /* margin-left: 10px; */
     background-color: #739072;
-        /* position: relative; */
-        /* box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
+    /* position: relative; */
+    /* box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
         -webkit-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
         -moz-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75); */
 }
 
 
-.notice-heading{
+.notice-heading {
     text-align: center;
     margin-top: 20px;
     margin-bottom: 10px;
@@ -211,7 +313,8 @@ body {
     padding: 10px;
     background-color: #ada8be;
 }
-.notice-content{
+
+.notice-content {
     margin: 10px;
     /* position: absolute; */
     /* top: 60px; */
@@ -219,13 +322,15 @@ body {
     background-color: #ffffff;
 }
 
-.notice-content p{
+.notice-content p {
     color: #000000;
     line-height: 20px;
     font-size: 18px;
     padding: 10px;
 }
-.notice-content span,p{
+
+.notice-content span,
+p {
     padding: 15px;
 }
 
@@ -233,99 +338,109 @@ body {
 /* notice board end */
 
 /* head teacher start */
-.head-teacher{
+.head-teacher {
     height: 600px;
 }
 
-.head-teacher .colored-section{
+.head-teacher .colored-section {
     background-color: #86A789;
     height: 200px;
 }
 
-.head-teacher .white-section{
+.head-teacher .white-section {
     background-color: #fff;
     height: 400px;
 }
-.teacher-extra{
+
+.teacher-extra {
     position: relative;
 }
-.teacher-extra .teacher-content{
+
+.teacher-extra .teacher-content {
     position: absolute;
     width: 100%;
     left: 0;
     top: 100px;
     /* background-color: #4F6F52; */
     height: 450px;
-    
+
 }
 
-.teacher-content .teacher-left{
-    
-    /* width: 100px; */
-        height: 400px;
-    
-        background-color: #ede8e8;
-        box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-        -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-        -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-    }
+.teacher-content .teacher-left {
 
-.teacher-content .teacher-right{
-    
     /* width: 100px; */
-        height: 350px;
-        padding: 0 20px;
-        background-color: #ede8e8;
-        box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-        -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-        -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-    }
+    height: 400px;
+
+    background-color: #ede8e8;
+    box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+}
+
+.teacher-content .teacher-right {
+
+    /* width: 100px; */
+    height: 350px;
+    padding: 0 20px;
+    background-color: #ede8e8;
+    box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+}
 
 /* head teacher end */
 
 /* school info start */
 /* 86A789 */
-.school-color{
+.school-color {
     background-color: #D2E3C8;
 }
-.school-info{
+
+.school-info {
     /* height: 500px; */
     margin-top: 50px;
     margin-bottom: 100px;
     /* background-color: #ffffff; */
 }
-.school-heading{
+
+.school-heading {
     height: 100px;
     margin-bottom: 30px;
     /* background-color: red; */
     text-align: center;
 }
-.school-heading h1{
+
+.school-heading h1 {
     font-size: 30px;
 }
-.school-left{
+
+.school-left {
     /* position: fixed; */
     height: 100px;
     /* background-color: rgb(79, 59, 59); */
 }
-.school-left .histo-heading h1{
+
+.school-left .histo-heading h1 {
     font-size: 30px;
     text-align: left;
     margin-left: 12px;
 }
-.school-left .histo-content p{
+
+.school-left .histo-content p {
     font-size: 20px;
     text-align: left;
 }
 
-.school-left p{
+.school-left p {
     font-size: 22px;
 }
-.school-right{
+
+.school-right {
     height: 400px;
     /* background-color: rgb(176, 114, 114); */
 }
-.school-right img{
+
+.school-right img {
     width: 300px;
 }
 
@@ -334,15 +449,17 @@ body {
 
 /* mujib corner start */
 
-.mujib{
+.mujib {
     padding: 50px 0;
 }
+
 .mujib img {
     display: block;
     margin-left: auto;
     margin-right: auto;
     width: 90%;
 }
+
 .mujib .mujib-text {
     text-align: center;
     /* width: 150px; */
@@ -360,54 +477,57 @@ body {
 /* mujib corner end */
 
 /* extra info start */
-.extra-info{
+.extra-info {
     background-color: #D2E3C8;
 }
+
 /* extra info end */
 
 
 /* institute information start */
-.institute-head{
+.institute-head {
     text-align: center;
     padding: 20px 0;
-    
+
 }
-.institute-head h2{
+
+.institute-head h2 {
     color: #fff;
 }
+
 /* institute information end */
 
-.temporary{
+.temporary {
     margin: 20px 0;
 }
 
-.temporary2 img{
+.temporary2 img {
     width: 200px;
 }
 
-.temporary3 img{
+.temporary3 img {
     width: 150px;
 }
 
-.portal{
+.portal {
     background-color: #86A789;
     height: 400px;
 }
 
-.portal-heading{
+.portal-heading {
     text-align: center;
     color: #fff;
     padding: 50px 0;
 }
 
-.portal-login{
+.portal-login {
     margin-bottom: 50px;
     color: #fff;
     font-size: 30px;
     text-align: center;
 }
 
-.portal-login button{
+.portal-login button {
     padding: 5px 20px;
     border-radius: 10px;
 }
@@ -416,18 +536,19 @@ body {
 /* footer start */
 
 /* school addresse */
-.address-temp{
+.address-temp {
     margin-bottom: 10px;
     position: relative;
 }
 
-.address-temp .address-up{
+.address-temp .address-up {
     position: absolute;
     height: 200px;
     /* background-color: #EAD196; */
     top: -100px;
 }
-.address-extra{
+
+.address-extra {
     height: 200px;
     background-color: #fff;
     width: 80%;
@@ -436,7 +557,7 @@ body {
     text-align: center;
 }
 
-.address-extra .ad-tex{
+.address-extra .ad-tex {
     margin-top: 25px;
 }
 
@@ -452,20 +573,20 @@ body {
     margin-left: 80px;
 }
 
-.address-extra .adex{
+.address-extra .adex {
     /* margin: 0 auto; */
     height: 150px;
     border-left: 1px solid black;
     border-right: 1px solid black;
 }
 
-.addr-content{
+.addr-content {
     margin-top: 130px;
     height: 300px;
     /* background-color: #44107a; */
 }
 
-.addr-content .footer-logo{
+.addr-content .footer-logo {
     /* background-color: #131212; */
     height: 310px;
     width: 100%;
@@ -475,34 +596,53 @@ body {
     margin-left: 150px;
 }
 
-.addr-content .footer-logo img{
+.addr-content .footer-logo img {
     width: 180px;
 }
 
-.address-main{
+.address-main {
     height: 310px;
 }
 
-.user-form input{
+.footer-middle {
+    color: #fff;
+}
+
+.footer-middle li {
+    list-style-type: none;
+}
+
+.footer-middle .icon li {
+    display: inline;
+    margin-left: 10px;
+}
+
+.footer-form textarea {
+    border-radius: 10px;
+}
+
+.user-form input {
     margin: 10px 0;
 }
 
 
-.footer-section{
+.footer-section {
+    /* margin-top: 200px; */
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
     background-color: #4F6F52;
     height: 450px;
 }
 
-.footer-section footer{
-    /* position: absolute; */
+.footer-section footer {
     text-align: center;
-    /* bottom: 0; */
-    /* right: 0; */
-    /* width: 100%; */
-    height: 20px;  
+    height: 20px;
 }
-.footer-section a{
+
+.footer-section a {
     color: #131212;
     text-decoration: none;
 }
-/* footer end */

@@ -20,19 +20,19 @@ function AttendanceInfo(){
                         <div className="mujib-text">
                             <span>Institute Wise</span>
                         </div>
-                       
+
                     </div>
                     <div className="col-lg-4">
                         <div className="mujib-text">
                             <span>Section Wise</span>
                         </div>
-                        
+
                     </div>
                     <div className="col-lg-4">
                         <div className="mujib-text">
                             <span>Student Wise</span>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

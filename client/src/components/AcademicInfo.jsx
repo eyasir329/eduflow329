@@ -1,7 +1,7 @@
 import React from "react";
 
-function AcademicInfo(){
-    return(
+function AcademicInfo() {
+    return (
         <div className="extra-info">
             <div className="container mujib temporary2">
                 <div className="row">
@@ -20,19 +20,19 @@ function AcademicInfo(){
                         <div className="mujib-text">
                             <span>Book List</span>
                         </div>
-                       
+
                     </div>
                     <div className="col-lg-4">
                         <div className="mujib-text">
                             <span>Dress Code</span>
                         </div>
-                        
+
                     </div>
                     <div className="col-lg-4">
                         <div className="mujib-text">
                             <span>Seat Info</span>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -52,19 +52,19 @@ function AcademicInfo(){
                         <div className="mujib-text">
                             <span>Syllabus</span>
                         </div>
-                       
+
                     </div>
                     <div className="col-lg-4">
                         <div className="mujib-text">
                             <span>Fees Info</span>
                         </div>
-                        
+
                     </div>
                     <div className="col-lg-4">
                         <div className="mujib-text">
                             <span>Find Payslip</span>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

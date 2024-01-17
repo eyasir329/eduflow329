@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -146,10 +147,58 @@ p {
     margin-left: 10px;
 }
 
+.title-midle{
+    position: relative;
+}
+.title-item{
+    position: absolute;
+    top: 10px;
+}
+
+
 /* header section end */
 
 
 /* navbar start */
+#nav-bar .container{
+    padding: 0px 10px;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 450;
+    font-style: normal;
+}
+
+
+
+
+
+/* 
+
+#nav-bar nav{
+    
+}
+
+.desktop-nav{
+    text-align: left;
+}
+
+.desktop-nav ul{
+    list-style: none;
+    padding: 0;
+}
+.desktop-nav ul li{
+    display: inline;
+    padding: 0;
+
+} */
+
+
+
+/* #nav-bar .container{
+    padding: 0px 10px;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 450;
+    font-style: normal;
+}
 .navbar {
     padding: 0;
 }
@@ -171,28 +220,34 @@ p {
 .home:hover {
     background-color: #86A789;
     color: #fff;
-}
+} */
 
 
 /* navbar end */
 
+
+
 /* news start */
 .news-heading {
-    /* height: 40px; */
-    background-color: #4F6F52;
-    color: #fff;
+    background-color: #D2E3C8;
+    color: #76453B;
+}
+
+.news-heading .container{
+    padding: 0;
+    /* margin: 0; */
 }
 
 .news-heading span {
-    margin-top: 2px;
+    /* margin-top: 2px; */
     display: grid;
     align-items: center;
 }
 
 .news-title {
-    background-color: #EAD196;
+    /* background-color: #EAD196; */
     color: #fff;
-    width: 160px;
+    /* width: 160px; */
 }
 
 .animate-charcter {
@@ -225,6 +280,9 @@ p {
     /* border: 3px solid black; */
     /* border-radius: 5px; */
     overflow: hidden;
+}
+#scroll-container span{
+    margin-top: 3px;
 }
 
 #scroll-text {
@@ -536,6 +594,9 @@ p {
 /* footer start */
 
 /* school addresse */
+.d-block{
+    /* display: inline-block; */
+}
 .address-temp {
     margin-bottom: 10px;
     position: relative;
@@ -561,23 +622,27 @@ p {
     margin-top: 25px;
 }
 
-.address-extra .ad-tex .ad-tex-ex {
-    height: 100px;
-    padding: 0 10px;
-    white-space: normal;
-    word-break: break-word;
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-    text-align: center;
-    margin-left: 80px;
-}
-
 .address-extra .adex {
     /* margin: 0 auto; */
     height: 150px;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 2px solid #739072;
+    border-right: 2px solid #739072;
+}
+
+.adr-extra{
+    margin-top: 40px;
+}
+
+.adr-extra .adr-icon{
+    margin-right: 10px;
+    margin-bottom: 5px;
+    color: #4F6F52;
+}
+
+.sp-text{
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 700;
+    font-style: normal;
 }
 
 .addr-content {
@@ -588,7 +653,7 @@ p {
 
 .addr-content .footer-logo {
     /* background-color: #131212; */
-    height: 310px;
+    /* height: 310px; */
     width: 100%;
     display: flex;
     align-items: center;
@@ -606,9 +671,12 @@ p {
 
 .footer-middle {
     color: #fff;
+    margin-top: 20px;
+    text-align: left;
 }
 
 .footer-middle li {
+    padding: 2px;
     list-style-type: none;
 }
 
@@ -619,6 +687,12 @@ p {
 
 .footer-form textarea {
     border-radius: 10px;
+    width: 100%;
+}
+.footer-form button{
+    display: flex;
+    background-color: #76453B;
+    border: 0px;
 }
 
 .user-form input {
@@ -627,6 +701,7 @@ p {
 
 
 .footer-section {
+    /* display: none; */
     /* margin-top: 200px; */
     position: absolute;
     left: 0;
@@ -634,14 +709,8 @@ p {
     right: 0;
 
     background-color: #4F6F52;
-    height: 450px;
+    /* height: 450px; */
 }
-
-.footer-section footer {
-    text-align: center;
-    height: 20px;
-}
-
 .footer-section a {
     color: #131212;
     text-decoration: none;

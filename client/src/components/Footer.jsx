@@ -1,9 +1,11 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { faLocationDot, faSquarePhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 
-const getCurrentYear = new Date().getFullYear(); 
+
+const getCurrentYear = new Date().getFullYear();
 
 function Footer() {
     return (
@@ -17,29 +19,60 @@ function Footer() {
                                 <div className="row ">
                                     <div className="col-lg-12 address-up">
                                         <div className="address-extra">
+
                                             <div className="row">
                                                 <div className="col-lg-4 ad-tex">
-                                                    <div className="ad-tex-ex">
-                                                        <span> Address<br />
-                                                            Jamalpur</span>
+                                                    <div className="row adr-extra">
+                                                        <div className="col-lg-12">
+                                                            <div className="row adr-icon">
+                                                                <FontAwesomeIcon icon={faLocationDot} />
+                                                            </div>
+                                                            <div className="row">
+                                                                <span className="sp-text"> Address</span>
+                                                            </div>
+                                                            <div className="row">
+                                                                <span>Jamalpur</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                 </div>
+
                                                 <div className="col-lg-4 adex ad-tex">
-                                                    <div className="ad-tex-ex">
-                                                        <span>Phone Number<br />
-                                                            02997772112</span>
+                                                    <div className="row adr-extra">
+                                                        <div className="col-lg-12">
+                                                            <div className="row adr-icon">
+                                                                <FontAwesomeIcon icon={faSquarePhone} />
+                                                            </div>
+                                                            <div className="row">
+                                                                <span className="sp-text">Phone Number</span>
+                                                            </div>
+                                                            <div className="row">
+                                                                <span>02997772112</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-
                                                 </div>
+
                                                 <div className="col-lg-4 ad-tex">
-                                                    <div className="ad-tex-ex">
-                                                        <span>Email Address<br />
-                                                            jamzilsch@yahoo.com</span>
+                                                    <div className="row adr-extra">
+                                                        <div className="col-lg-12">
+                                                            <div className="row adr-icon">
+                                                                <FontAwesomeIcon icon={faEnvelope} />
+                                                            </div>
+                                                            <div className="row">
+                                                                <span className="sp-text">Email Addressr</span>
+                                                            </div>
+                                                            <div className="row">
+                                                                <span>jamzilsch@yahoo.com</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                 </div>
                                             </div>
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +124,7 @@ function Footer() {
                                                             </div>
                                                             <div className="row">
                                                                 <div className="col-lg-12">
-                                                                    <textarea name="content" rows="4" cols="40" placeholder="Message" />
+                                                                    <textarea name="content" rows="6" cols="40" placeholder="   Message" />
                                                                 </div>
                                                             </div>
 

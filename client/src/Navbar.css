@@ -58,7 +58,11 @@ header {
 
 .desktop-nav .menu-items a:hover,
 .desktop-nav .menu-items button:hover {
-  background-color: #f2f2f2;
+  background-color: #D2E3C8;
+}
+
+.desktop-nav .menu-items:hover{
+  color: #4F6F52;
 }
 
 .desktop-nav .arrow::after {
@@ -200,9 +204,10 @@ header {
 
 /* page content */
 .content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 20px;
+  /* max-width: 1200px; */
+  /* margin: 0 auto; */
+  /* padding: 3rem 20px; */
+  
 }
 
 .content h1 {

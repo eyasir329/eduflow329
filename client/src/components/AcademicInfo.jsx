@@ -17,20 +17,20 @@ function AcademicInfo() {
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Book List</span>
+                        <div className="stylebutton">
+                            <button>Book List</button>
                         </div>
 
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Dress Code</span>
+                        <div className="stylebutton">
+                            <button>Dress Code</button>
                         </div>
 
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Seat Info</span>
+                        <div className="stylebutton">
+                            <button>Seat Info</button>
                         </div>
 
                     </div>
@@ -49,20 +49,20 @@ function AcademicInfo() {
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Syllabus</span>
+                        <div className="stylebutton">
+                            <button>Syllabus</button>
                         </div>
 
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Fees Info</span>
+                        <div className="stylebutton">
+                            <button>Fees Info</button>
                         </div>
 
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Find Payslip</span>
+                        <div className="stylebutton">
+                            <button>Find Payslip</button>
                         </div>
 
                     </div>

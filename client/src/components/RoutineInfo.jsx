@@ -17,20 +17,20 @@ function RoutineInfo() {
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Class Routine</span>
+                        <div className="stylebutton">
+                            <button>Class Routine</button>
                         </div>
 
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Exam Routine</span>
+                        <div className="stylebutton">
+                            <button>Exam Routine</button>
                         </div>
 
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Online Class Routine</span>
+                        <div className="stylebutton">
+                            <button>Online Class Routine</button>
                         </div>
 
                     </div>

@@ -5,7 +5,7 @@ export const menuItemsData = [
     },
     {
         title: "Institute Info",
-        url: "#institute-info",
+        url: "",
         submenu: [
             {
                 title: "Administration",
@@ -13,7 +13,7 @@ export const menuItemsData = [
                 submenu: [
                     {
                         title: "Welcome Speech",
-                        url: "Welcome-Speech"
+                        url: "WelcomeSpeech"
                     },
                     {
                         title: "Committee",
@@ -31,15 +31,15 @@ export const menuItemsData = [
                 submenu: [
                     {
                         title: "Teacher",
-                        url: "Teacher"
+                        url: "TeacherList"
                     },
                     {
                         title: "Student",
-                        url: "Student"
+                        url: "StudentList"
                     },
                     {
                         title: "Staff",
-                        url: "Staff"
+                        url: "StaffList"
                     }
                 ]
             },
@@ -49,7 +49,7 @@ export const menuItemsData = [
                 submenu: [
                     {
                         title: "Institute Details",
-                        url: "institute-details"
+                        url: "InstituteDetails"
                     }
                 ]
             }
@@ -57,7 +57,7 @@ export const menuItemsData = [
     },
     {
         title: "Academic Info",
-        url: "#academic-info",
+        url: "",
         submenu: [
             {
                 title: "Details Info",
@@ -125,7 +125,7 @@ export const menuItemsData = [
     },
     {
         title: "Result Info",
-        url: "#result-info",
+        url: "",
         submenu: [
             {
                 title: "Semester Exam",
@@ -141,7 +141,7 @@ export const menuItemsData = [
                     },
                     {
                         title: "Section Wise",
-                        url: "SectionWise"
+                        url: "SectionWiseResult"
                     },
                     {
                         title: "Indivitual",
@@ -183,7 +183,7 @@ export const menuItemsData = [
             },
             {
                 title: "APA Corner",
-                url: "APA Corner"
+                url: "APACorner"
             },
             {
                 title: "IS Corner",

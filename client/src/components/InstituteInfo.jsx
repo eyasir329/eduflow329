@@ -17,20 +17,20 @@ function InstituteInfo(){
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Institute Details</span>
+                        <div className="stylebutton">
+                            <button>Institute Details</button>
                         </div>
                        
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Student</span>
+                        <div className="stylebutton">
+                            <button>Student</button>
                         </div>
                         
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Teacher</span>
+                        <div className="stylebutton">
+                            <button>Teacher</button>
                         </div>
                         
                     </div>
@@ -49,20 +49,20 @@ function InstituteInfo(){
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Committee</span>
+                        <div className="stylebutton">
+                            <button>Committee</button>
                         </div>
                        
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Donor Member</span>
+                        <div className="stylebutton">
+                            <button>Donor Member</button>
                         </div>
                         
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Staff</span>
+                        <div className="stylebutton">
+                            <button>Staff</button>
                         </div>
                         
                     </div>

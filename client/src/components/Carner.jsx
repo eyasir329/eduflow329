@@ -17,20 +17,20 @@ function Corner(){
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Photo Corner</span>
+                        <div className="stylebutton">
+                            <button>Photo Corner</button>
                         </div>
                        
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Video Corner</span>
+                        <div className="stylebutton">
+                            <button>Video Corner</button>
                         </div>
                         
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>Download Corner</span>
+                        <div className="stylebutton">
+                            <button>Download Corner</button>
                         </div>
                         
                     </div>

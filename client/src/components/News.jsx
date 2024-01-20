@@ -10,7 +10,11 @@ function News() {
           </div>
           <div className="col-lg-10">
             <div id="scroll-container">
-              <div id="scroll-text"><span>dictum non consectetur a erat nam at lectus urna duis.</span></div>
+              <div id="scroll-text">
+                <a href="/" >
+                  <span>২০২৪ সালের মাধ্যমিক স্কুল সার্টিফিকেট (এসএসসি) পরীক্ষার সময়সূচি</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>

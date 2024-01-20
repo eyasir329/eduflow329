@@ -61,7 +61,7 @@ function Footer() {
                                                                 <FontAwesomeIcon icon={faEnvelope} />
                                                             </div>
                                                             <div className="row">
-                                                                <span className="sp-text">Email Addressr</span>
+                                                                <span className="sp-text">Email Address</span>
                                                             </div>
                                                             <div className="row">
                                                                 <span>jamzilsch@yahoo.com</span>
@@ -124,7 +124,7 @@ function Footer() {
                                                             </div>
                                                             <div className="row">
                                                                 <div className="col-lg-12">
-                                                                    <textarea name="content" rows="6" cols="40" placeholder="   Message" />
+                                                                    <textarea name="content" rows="6" cols="40" placeholder="  Message" />
                                                                 </div>
                                                             </div>
 

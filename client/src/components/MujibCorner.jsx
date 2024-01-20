@@ -1,6 +1,6 @@
 import React from "react";
 
-function MujibCorner(){
+function MujibCorner() {
     return (
         <div className="white-section">
             <div className="container mujib">
@@ -14,16 +14,16 @@ function MujibCorner(){
                 </div>
                 <div className="row">
                     <div className="col-lg-6">
-                        <div className="mujib-text">
-                            <span>হৃদয়ে বঙ্গবন্ধু</span>
+                        <div className="stylebutton">
+                            <button>হৃদয়ে বঙ্গবন্ধু</button>
                         </div>
-                       
+
                     </div>
                     <div className="col-lg-6">
-                        <div className="mujib-text">
-                            <span>সুবর্ণ জয়ন্তী কর্ণার</span>
+                        <div className="stylebutton">
+                            <button>সুবর্ণ জয়ন্তী কর্ণার</button>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

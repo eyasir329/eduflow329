@@ -1,7 +1,7 @@
 import React from "react";
 
-function ExtraInfo(){
-    return(
+function ExtraInfo() {
+    return (
         <div className="white-section extra-info">
             <div className="container mujib">
                 <div className="row">
@@ -17,22 +17,22 @@ function ExtraInfo(){
                 </div>
                 <div className="row">
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>বিস্তারিত</span>
+                        <div className="stylebutton">
+                            <button>বিস্তারিত</button>
                         </div>
-                       
+
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>বিস্তারিত</span>
+                        <div className="stylebutton">
+                            <button>বিস্তারিত</button>
                         </div>
-                        
+
                     </div>
                     <div className="col-lg-4">
-                        <div className="mujib-text">
-                            <span>বিস্তারিত</span>
+                        <div className="stylebutton">
+                            <button>বিস্তারিত</button>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

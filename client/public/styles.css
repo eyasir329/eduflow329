@@ -76,7 +76,7 @@ p {
     font-weight: 700;
     font-style: italic;
   } */
-  
+
 
 
 
@@ -90,13 +90,13 @@ p {
     background-color: #ffffff;
 }
 
-.container{
+.container {
     padding: 20px 10px;
 }
 
 
 /* header section start */
-.header-left{
+.header-left {
     text-align: left;
 }
 
@@ -104,25 +104,31 @@ p {
     width: 100px;
 }
 
-.header-left .title-midle{
-   height: 100%;
+.header-left .title-midle {
+    height: 100%;
 }
 
-.header-left .logo-title, .logo-address{
+.header-left .logo-title,
+.logo-address {
     margin-left: 20px;
 }
 
-@media (max-width:1250px){
-    .header-left .logo-title, .logo-address{
+@media (max-width:1250px) {
+
+    .header-left .logo-title,
+    .logo-address {
         margin-left: 40px;
     }
 }
 
-@media (max-width:1000px){
-    .header-left .logo-title, .logo-address{
+@media (max-width:1000px) {
+
+    .header-left .logo-title,
+    .logo-address {
         margin-left: 20px;
     }
-    .header-right{
+
+    .header-right {
         display: flex;
         justify-content: center;
     }
@@ -133,7 +139,7 @@ p {
     color: #fff;
 }
 
-.header-left .logo-address{
+.header-left .logo-address {
     color: #fff;
     font-size: 20px;
 }
@@ -147,10 +153,11 @@ p {
     margin-left: 10px;
 }
 
-.title-midle{
+.title-midle {
     position: relative;
 }
-.title-item{
+
+.title-item {
     position: absolute;
     top: 10px;
 }
@@ -160,67 +167,17 @@ p {
 
 
 /* navbar start */
-#nav-bar .container{
-    padding: 0px 10px;
-    font-family: "Ubuntu", sans-serif;
-    font-weight: 450;
-    font-style: normal;
-}
-
-
-
-
-
-/* 
-
-#nav-bar nav{
-    
-}
-
-.desktop-nav{
-    text-align: left;
-}
-
-.desktop-nav ul{
-    list-style: none;
-    padding: 0;
-}
-.desktop-nav ul li{
-    display: inline;
-    padding: 0;
-
-} */
-
-
-
-/* #nav-bar .container{
-    padding: 0px 10px;
-    font-family: "Ubuntu", sans-serif;
-    font-weight: 450;
-    font-style: normal;
-}
-.navbar {
-    padding: 0;
-}
-
-#basic-nav-dropdown {
-    padding-right: 20px;
-    padding-left: 10px;
-}
-
-.nav-item a:hover {
+#nav-bar {
     background-color: #86A789;
-    color: #fff;
 }
 
-.home {
-    margin-left: -10px;
-}
-
-.home:hover {
-    background-color: #86A789;
+#nav-bar .container {
+    padding: 0px 10px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
     color: #fff;
-} */
+    font-weight: 400;
+}
 
 
 /* navbar end */
@@ -233,7 +190,7 @@ p {
     color: #76453B;
 }
 
-.news-heading .container{
+.news-heading .container {
     padding: 0;
     /* margin: 0; */
 }
@@ -281,8 +238,14 @@ p {
     /* border-radius: 5px; */
     overflow: hidden;
 }
-#scroll-container span{
+
+#scroll-container span {
     margin-top: 3px;
+}
+
+#scroll-text a {
+    text-decoration: none;
+    color: #131212;
 }
 
 #scroll-text {
@@ -291,8 +254,8 @@ p {
     -webkit-transform: translateX(100%);
     transform: translateX(100%);
 
-    -moz-animation: my-animation 25s linear infinite;
-    -webkit-animation: my-animation 25s linear infinite;
+    -moz-animation: my-animation 10s linear infinite;
+    -webkit-animation: my-animation 10s linear infinite;
     animation: my-animation 25s linear infinite;
 }
 
@@ -335,116 +298,309 @@ p {
 /* news end */
 
 /* notice board start */
-.article {
-    padding: 20px 0;
+#banner .container {
+    margin: 0 auto;
+    padding: 25px 0;
 }
 
 .photo-carousal {
-    margin-left: -10px;
+    /* margin-left: -10px; */
+    background-color: #8271955b;
 }
 
 .photo-carousal img {
     width: 900px;
     height: 500px;
-
 }
+
+.carousel-indicators .button {
+    background-color: #fff;
+    /* Green */
+    border: 3px solid #115615;
+    /* color: white; */
+    padding: 5px 3px;
+}
+
+.carousel-indicators .active {
+    background: #4F6F52;
+}
+
 
 
 /*notice */
-.notice {
-    /* margin-left: 10px; */
-    background-color: #739072;
-    /* position: relative; */
-    /* box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
-        -webkit-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75);
-        -moz-box-shadow: 4px 5px 5px 0px rgba(41, 13, 13, 0.75); */
+#notice {
+    background-color: #86A789;
+    height: 100%;
 }
 
+#notice .container {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+}
+
+.notice-heading h4 {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    color: #000;
+}
 
 .notice-heading {
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    /* position: absolute; */
-    /* width: 450px; */
-    height: 60px;
-    padding: 10px;
+    text-align: left;
+    padding: 15px;
+    padding-top: 25px;
     background-color: #ada8be;
+    margin-bottom: 10px;
+}
+
+.notice-main {
+    margin: 10px 20px;
+}
+
+.notice-main a {
+    text-decoration: none;
 }
 
 .notice-content {
-    margin: 10px;
-    /* position: absolute; */
-    /* top: 60px; */
-    /* height: 400px; */
     background-color: #ffffff;
+    margin-bottom: 15px;
 }
 
-.notice-content p {
-    color: #000000;
-    line-height: 20px;
-    font-size: 18px;
-    padding: 10px;
+.notice-content .heading {
+    color: #00000054;
+    text-align: left;
+    padding: 5px 10px 0px;
+    font-size: 15px;
+    font-family: "Ubuntu";
+    font-weight: 300;
+    font-style: normal;
 }
 
-.notice-content span,
-p {
-    padding: 15px;
+.notice-content {
+    border: 2px solid #43766c00;
 }
 
+.notice-content:hover {
+    border: 2px solid #43766C;
+}
+
+.notice-content .title {
+    padding: 0px 10px 0px;
+    text-align: left;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.notice-content .title p {
+    color: #000;
+}
+
+.notices {
+    position: relative;
+    height: 100%;
+}
+
+.notice-more {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px 20px;
+}
+
+.notice-more span {
+    color: #115615;
+}
+
+.notice-more a {
+    text-decoration: none;
+}
 
 /* notice board end */
 
 /* head teacher start */
-.head-teacher {
-    height: 600px;
-}
 
 .head-teacher .colored-section {
-    background-color: #86A789;
     height: 200px;
 }
 
-.head-teacher .white-section {
-    background-color: #fff;
-    height: 400px;
-}
-
-.teacher-extra {
-    position: relative;
+.head-teacher .container {
+    padding: 0px;
 }
 
 .teacher-extra .teacher-content {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 100px;
-    /* background-color: #4F6F52; */
-    height: 450px;
-
+    margin-top: -100px;
+    padding-bottom: 100px;
 }
 
 .teacher-content .teacher-left {
-
-    /* width: 100px; */
-    height: 400px;
-
-    background-color: #ede8e8;
-    box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-    -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-    -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    background-color: #fff;
+    box-shadow: -1px 0px 5px 3px rgba(0, 0, 0, 0.237);
+    -webkit-box-shadow: -1px 0px 5px 3px rgba(0, 0, 0, 0.237);
+    -moz-box-shadow: -1px 0px 5px 3px rgba(0, 0, 0, 0.237);
 }
 
-.teacher-content .teacher-right {
-
-    /* width: 100px; */
+.teacher-content .teacher-right-link {
     height: 350px;
-    padding: 0 20px;
-    background-color: #ede8e8;
-    box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-    -webkit-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
-    -moz-box-shadow: 10px 9px 6px -5px rgba(0, 0, 0, 0.56);
+    padding: 0;
+    background-color: #fff;
+    box-shadow: -1px 0px 5px 3px rgba(0, 0, 0, 0.237);
+    -webkit-box-shadow: -1px 0px 5px 3px rgba(0, 0, 0, 0.237);
+    -moz-box-shadow: -1px 0px 5px 3px rgba(0, 0, 0, 0.237);
 }
+
+
+.tll-image {
+    padding: 40px;
+}
+
+.tll-image img {
+    border-radius: 20px;
+    width: 200px;
+}
+
+.tll-list {
+    text-align: center;
+}
+
+.tll-list ul {
+    list-style: none;
+
+}
+
+.tll-list ul li {
+    display: inline;
+    margin-right: 10px;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #115615;
+}
+
+
+.teacher-content .teacher-left .tlr {
+    text-align: left;
+    padding: 10px;
+}
+
+.teacher-content .teacher-left .tlr h5 {
+    padding-top: 30px;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.teacher-content .teacher-left .tlr hr {
+    width: 100px;
+    margin-top: -5px;
+    color: #115615;
+    border: 2px solid #115615;
+}
+
+.teacher-content .teacher-left .tlr p {
+    color: #000;
+    font-size: 18px;
+    padding-right: 10px;
+}
+
+.teacher-content .teacher-left .tlr button {
+    margin-left: 450px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #4F6F52;
+}
+
+/* link css right */
+.teacher-right-link .link-title {
+    height: 50px;
+    background-color: #86A789;
+    text-align: left;
+    padding: 5px;
+}
+
+.teacher-right-link .link-title .link-icon {
+    padding: 10px 9px;
+    background-color: #115615;
+    color: #fff;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-left: 20px;
+}
+
+.teacher-right-link .link-title .link-content {
+    font-size: 22px;
+    color: #fff;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    text-align: justify;
+}
+
+.link-main {
+    text-align: left;
+}
+
+.link-main ul {
+    position: relative;
+    background: #fff;
+}
+
+.link-main ul:hover li {
+    opacity: 0.3;
+}
+
+.link-main ul li {
+    margin: 10px;
+    margin-left: -15px;
+    list-style: none;
+    padding: 10px;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s;
+}
+
+.link-main ul li:hover {
+    transform: scale(1.1);
+    z-index: 5;
+    background: #D2E3C8;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    color: #4F6F52;
+    opacity: 1;
+}
+
+.link-main ul li span {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    background: #115615;
+    color: #fff;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    transform: translateY(-2px);
+}
+
+.link-main ul li:hover span {
+    background: #fff;
+    color: #4F6F52;
+}
+
+.imp-button {
+    padding: 5px 10px;
+    margin-top: 10px;
+    background-color: #739072;
+    color: #fff;
+    border-radius: 5px;
+}
+
 
 /* head teacher end */
 
@@ -455,53 +611,58 @@ p {
 }
 
 .school-info {
-    /* height: 500px; */
     margin-top: 50px;
     margin-bottom: 100px;
-    /* background-color: #ffffff; */
 }
 
 .school-heading {
     height: 100px;
     margin-bottom: 30px;
-    /* background-color: red; */
     text-align: center;
 }
 
-.school-heading h1 {
-    font-size: 30px;
+.school-heading h3 {
+    font-size: 24px;
+    color: #115615;
 }
 
-.school-left {
-    /* position: fixed; */
-    height: 100px;
-    /* background-color: rgb(79, 59, 59); */
+.school-heading p {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 500;
+    font-style: normal;
 }
 
-.school-left .histo-heading h1 {
+.school-left .histo-heading h3 {
     font-size: 30px;
     text-align: left;
-    margin-left: 12px;
 }
 
 .school-left .histo-content p {
     font-size: 20px;
     text-align: left;
+    color: #000000b7;
+    text-align: justify;
 }
 
-.school-left p {
-    font-size: 22px;
+.school-left .histo-content {
+    text-align: left;
+}
+
+.school-left .histo-content button {
+    padding: 5px 15px;
+    margin-top: 10px;
+    background-color: #739072;
+    color: #fff;
+    border-radius: 5px;
 }
 
 .school-right {
     height: 400px;
-    /* background-color: rgb(176, 114, 114); */
 }
 
 .school-right img {
     width: 300px;
 }
-
 
 /* school info end */
 
@@ -520,17 +681,17 @@ p {
 
 .mujib .mujib-text {
     text-align: center;
-    /* width: 150px; */
-    /* height: 40px; */
+}
+
+.stylebutton button {
+    padding: 10px 30px;
+    margin-top: 10px;
+    font-size: 22px;
+    border-radius: 10px;
     background-color: #4F6F52;
     color: #fff;
-    margin: auto;
-    width: 30%;
-    /* border: 3px solid green; */
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 10px;
 }
+
 
 /* mujib corner end */
 
@@ -569,17 +730,17 @@ p {
 
 .portal {
     background-color: #86A789;
-    height: 400px;
+    height: 300px;
 }
 
 .portal-heading {
     text-align: center;
     color: #fff;
-    padding: 50px 0;
+    padding-top: 50px;
+    padding-bottom: 10px;
 }
 
 .portal-login {
-    margin-bottom: 50px;
     color: #fff;
     font-size: 30px;
     text-align: center;
@@ -590,13 +751,16 @@ p {
     border-radius: 10px;
 }
 
+.end-section {
+    height: 150px;
+    margin-bottom: -150px;
+}
+
 
 /* footer start */
 
 /* school addresse */
-.d-block{
-    /* display: inline-block; */
-}
+
 .address-temp {
     margin-bottom: 10px;
     position: relative;
@@ -616,6 +780,9 @@ p {
     margin: 0 auto;
     border-radius: 20px;
     text-align: center;
+    box-shadow: -2px -3px 5px 0px rgba(13, 13, 13, 0.75);
+    -webkit-box-shadow: -2px -3px 5px 0px rgba(13, 13, 13, 0.75);
+    -moz-box-shadow: -2px -3px 5px 0px rgba(13, 13, 13, 0.75);
 }
 
 .address-extra .ad-tex {
@@ -629,17 +796,17 @@ p {
     border-right: 2px solid #739072;
 }
 
-.adr-extra{
+.adr-extra {
     margin-top: 40px;
 }
 
-.adr-extra .adr-icon{
+.adr-extra .adr-icon {
     margin-right: 10px;
     margin-bottom: 5px;
     color: #4F6F52;
 }
 
-.sp-text{
+.sp-text {
     font-family: "Ubuntu", sans-serif;
     font-weight: 700;
     font-style: normal;
@@ -689,7 +856,8 @@ p {
     border-radius: 10px;
     width: 100%;
 }
-.footer-form button{
+
+.footer-form button {
     display: flex;
     background-color: #76453B;
     border: 0px;
@@ -701,16 +869,10 @@ p {
 
 
 .footer-section {
-    /* display: none; */
-    /* margin-top: 200px; */
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-
+    margin-top: 150px;
     background-color: #4F6F52;
-    /* height: 450px; */
 }
+
 .footer-section a {
     color: #131212;
     text-decoration: none;

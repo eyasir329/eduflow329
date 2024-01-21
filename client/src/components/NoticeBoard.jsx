@@ -2,6 +2,7 @@ import React from "react";
 import NoticeItem from "./NoticeItem";
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 function NoticeBoard() {
     return (
@@ -44,7 +45,7 @@ function NoticeBoard() {
                                 <div className="row">
                                     <div className="col-lg-12">
                                         <div className="notice-more">
-                                            <a href="/"> <span>READ ALL</span></a>
+                                            <Link to="/InstituteNotice"> <span>READ ALL</span></Link>
                                         </div>
                                     </div>
                                 </div>

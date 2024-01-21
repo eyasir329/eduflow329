@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Portal(){
     return (
@@ -11,7 +12,7 @@ function Portal(){
                 </div>
                 <div className="row">
                     <div className="col-lg-12 portal-login">
-                        <button>Log In</button>
+                        <Link to="login"><button>Log In</button></Link>
                     </div>
                 </div>
             </div>

@@ -43,7 +43,10 @@ import Teacher from "./routes/Teacher";
 import Student from "./routes/Student";
 import Parent from "./routes/Parent";
 import Login from "./routes/Login";
-import Registration from "./routes/Registration";
+import ImportantLink from "./routes/ImportantLink";
+import SignUp from "./routes/Signup";
+import Admin from "./routes/Admin";
+
 
 const router = createBrowserRouter([
   {
@@ -191,28 +194,36 @@ const router = createBrowserRouter([
         element: <Download />,
       },
       {
-        path: "portal/teacher",
+        path: "importantLink",
+        element: <ImportantLink />,
+      },
+      {
+        path: "admin",
+        element: <Admin />,
+      },
+      {
+        path: "teacher",
         element: <Teacher />,
       },
       {
-        path: "portal/student",
+        path: "student",
         element: <Student />,
       },
       {
-        path: "portal/parent",
+        path: "parent",
         element: <Parent />,
       },
       {
-        path: "portal/login",
+        path: "login",
         element: <Login />,
       },
       {
-        path: "portal/registration",
-        element: <Registration />,
-      }
-      
-    ],
-  },
+        path: "signup",
+        element: <SignUp />,
+      },
+
+    ]
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -221,3 +232,31 @@ root.render(
     <RouterProvider router={router} />
   </React.StrictMode>
 );
+
+const registeredUser =
+  [
+
+    {
+      email: "kumar@draft.dev",
+      password: "1234",
+      type : "admin"
+    },
+    {
+      "email": "hey@kumarharsh.me",
+      "password": "1234",
+      type : "teacher"
+    },
+    {
+      "email": "ko2ed2@gm.com",
+      "password": "1234",
+      type : "student"
+    },
+    {
+      "email": "ko2ed2@gm.com",
+      "password": "1234",
+      type : "parent"
+    }
+
+  ];
+
+  console.log(registeredUser);

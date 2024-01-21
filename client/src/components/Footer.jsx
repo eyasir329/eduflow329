@@ -2,6 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faLocationDot, faSquarePhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 
 
@@ -142,7 +143,7 @@ function Footer() {
                         <div className="row footer-main">
                             <footer>
                                 <div className="col-lg-12">
-                                    <span className="copyright">ⓒ </span>Copyright 2023-{getCurrentYear}<a href="eyasir329.com" target="_blank"> eyasir329</a>
+                                    <span className="copyright">ⓒ </span>Copyright 2023-{getCurrentYear}<Link to="eyasir329.com" target="_blank"> eyasir329</Link>
                                 </div>
                             </footer>
                         </div>

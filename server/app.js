@@ -1,19 +1,31 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require('mysql2');
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const _ = require("lodash");
+const JZSUserModel = require("./models/User");
+
+
 require("dotenv").config();
+
 const app = express();
 
 app.set('view engine', 'ejs');
+app.use(express.json());
+app.use(cors());
+app.use(cookieParser());
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-// mongoose.connect("mongodb://localhost:27017/todolistDB");
+// mongoose connection
+mongoose.connect("mongodb://localhost:27017/JzsUser");
 
-//mysql connection
+//mysql connection start
 const connection = mysql.createConnection({
   host: 'localhost',  
   user: process.env.sqlUser,         
@@ -28,6 +40,22 @@ connection.connect((err) => {
   }
   console.log('Connected to MySQL server');
 });
+//mysql connection end
+
+// user registration start using mongoose
+app.post("/register",(req,res)=>{
+  console.log(req.body);
+  const {userId,fName,lName,gender,email,phone,securityQuestion,password,role} = req.body;
+  bcrypt.hash(password,10).then(hash=>{
+    JZSUserModel.create({userId,fName,lName,gender,email,phone,securityQuestion,role,password:hash})
+    .then(user=>res.json({status:"OK"}))
+    .catch(err=>res.json(err))
+  }).catch(err=>res.json(err));
+});
+// user registration end
+
+
+
 
 // default
 const addTeacher= {

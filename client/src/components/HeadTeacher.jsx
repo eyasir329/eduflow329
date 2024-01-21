@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 function HeadTeacher() {
     const [showMoreContent, setShowMoreContent] = useState(false);
@@ -80,18 +81,9 @@ function HeadTeacher() {
 
                                                             </ul>
                                                         </div>
-                                                        {/* <ul className="fa-ul">
-                                                                <li><span className="fa-li"><FontAwesomeIcon icon={faSquareCaretRight} /></span>
-                                                                    মাধ্যমিক ও উচ্চমাধ্যমিক শিক্ষাবোর্ড, ময়নসিংহ</li>
-                                                                <li><span className="fa-li"><FontAwesomeIcon icon={faSquareCaretRight} /></span>
-                                                                    অনলাইন ক্লাশ</li>
-                                                                <li><span className="fa-li"><FontAwesomeIcon icon={faSquareCaretRight} /></span>
-                                                                    ইউটিউব চ্যানেল</li>
-                                                            </ul> */}
-                                                        {/* </div> */}
                                                     </div>
                                                     <div className="col-lg-12">
-                                                        <button className="imp-button">Explore all</button>
+                                                        <Link to="/ImportantLink"><button className="imp-button">Explore all</button> </Link>
 
                                                     </div>
                                                 </div>

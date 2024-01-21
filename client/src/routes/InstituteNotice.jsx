@@ -1,7 +1,7 @@
 import React from "react";
 
-export default function DonorMember(){
+export default function InstituteNotice(){
     return(
-        <h1>DonorMember</h1>
+        <h1>InstituteNotice</h1>
     );
 }

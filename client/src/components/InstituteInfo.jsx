@@ -18,7 +18,7 @@ function InstituteInfo(){
                 <div className="row">
                     <div className="col-lg-4">
                         <div className="stylebutton">
-                            <button>Institute Details</button>
+                            <a href="/InstituteDetails"><button>Institute Details</button></a>
                         </div>
                        
                     </div>

@@ -1,6 +1,7 @@
 import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   return (
@@ -57,7 +58,7 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <p className="mb-0">Don't have an account? <a href="/signup" className="text-white-50 fw-bold"> Sign Up</a></p>
+                  <p className="mb-0">Don't have an account? <Link to="/signup" className="text-white-50 fw-bold"> Sign Up</Link></p>
                 </div>
 
               </div>

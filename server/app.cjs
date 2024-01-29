@@ -7,7 +7,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const _ = require("lodash");
-const JZSUserModel = require("./models/User");
+
+// routes
+const userRoutes = require("./api/routes/SchoolUser.js");
 
 
 require("dotenv").config();
@@ -19,17 +21,23 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.static("public"));
 
 // mongoose connection
-mongoose.connect("mongodb://localhost:27017/JzsUser");
+mongoose.connect(process.env.mongoSchoolUser)
+  .then(() => {
+    console.log("Connected to mongoSchoolUser");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
-//mysql connection start
+//mysql connection setup start
 const connection = mysql.createConnection({
-  host: 'localhost',  
-  user: process.env.sqlUser,         
-  password: process.env.mysqlPass,  
+  host: 'localhost',
+  user: process.env.sqlUser,
+  password: process.env.mysqlPass,
   database: process.env.sqlDatabase
 });
 
@@ -40,27 +48,25 @@ connection.connect((err) => {
   }
   console.log('Connected to MySQL server');
 });
-//mysql connection end
+//mysql connection setup end
+
 
 // user registration start using mongoose
-app.post("/register",(req,res)=>{
-  console.log(req.body);
-  const {userId,fName,lName,gender,email,phone,securityQuestion,password,role} = req.body;
-  bcrypt.hash(password,10).then(hash=>{
-    JZSUserModel.create({userId,fName,lName,gender,email,phone,securityQuestion,role,password:hash})
-    .then(user=>res.json({status:"OK"}))
-    .catch(err=>res.json(err))
-  }).catch(err=>res.json(err));
-});
+app.use("/api/register", userRoutes);
 // user registration end
+
+// userlogin start using mongoose
+
+// userlogin end using mongoose
+
 
 
 
 
 // default
-const addTeacher= {
-  teacherID : Number,
-  teacherName : String
+const addTeacher = {
+  teacherID: Number,
+  teacherName: String
 };
 
 //view
@@ -104,7 +110,7 @@ app.get('/', (req, res) => {
           res.render('admin', {
             addTeacher: addTeacher,
             teacher: result1,
-            updateTeacher:result11,
+            updateTeacher: result11,
             teacherINFO: result2,
             teacherIDD: result3
           });
@@ -116,10 +122,10 @@ app.get('/', (req, res) => {
 
 
 //create teacher
-app.post("/",function(req,res){
+app.post("/", function (req, res) {
   const teacherfName = req.body.tfName;
   const teacherlName = req.body.tlName;
-  addTeacher.teacherName = teacherfName + " "+ teacherlName;
+  addTeacher.teacherName = teacherfName + " " + teacherlName;
   const teacherData = {
     fname: teacherfName,
     lname: teacherlName
@@ -145,20 +151,20 @@ app.post("/",function(req,res){
 var teacherID = 0;
 
 // for update
-app.post("/tupdate",function(req,res){
+app.post("/tupdate", function (req, res) {
   const ID = req.body.teacher_id;
-  teacherID=ID;
+  teacherID = ID;
   res.redirect("/#updateTeacher");
 });
 
-app.post("/tupdatef",function(req,res){
+app.post("/tupdatef", function (req, res) {
   const teacher_id = teacherID;
   const fname = req.body.tufName;
   const lname = req.body.tulName;
 
   const updateSql = 'UPDATE teacher SET fname = ?, lname = ? WHERE teacher_id = ?';
 
-  connection.query(updateSql, [fname,lname,teacher_id], (err, result) => {
+  connection.query(updateSql, [fname, lname, teacher_id], (err, result) => {
     if (err) {
       console.error('Error updating teacher info:', err);
       res.status(500).send('Error updating teacher info');
@@ -172,14 +178,14 @@ app.post("/tupdatef",function(req,res){
 });
 
 //delete teacher
-var dteacherId="";
-app.post("/tdelete",function(req,res){
-  dteacherId=req.body.teacher_id;
+var dteacherId = "";
+app.post("/tdelete", function (req, res) {
+  dteacherId = req.body.teacher_id;
   res.redirect("/#deleteTeacher");
   // res.status(200).render("admin",{ID:ID,fullName:fullName});
 });
 
-app.post("/tdeletef",function(req,res){
+app.post("/tdeletef", function (req, res) {
   const teacherIDToDelete = dteacherId;
 
   const deleteSql = 'DELETE FROM teacher WHERE teacher_id = ?';
@@ -191,7 +197,7 @@ app.post("/tdeletef",function(req,res){
       return;
     }
 
-    console.log('Teacher deleted successfully ID '+teacherIDToDelete);
+    console.log('Teacher deleted successfully ID ' + teacherIDToDelete);
     res.redirect("/#deleteTeacher");
   });
 });
@@ -199,6 +205,6 @@ app.post("/tdeletef",function(req,res){
 
 
 
-app.listen(5000, function() {
+app.listen(5000, function () {
   console.log("Node js Server started on port 5000");
 });

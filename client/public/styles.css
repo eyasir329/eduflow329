@@ -996,19 +996,21 @@ form .form-align {
 .register .register-form {
     padding: 10%;
     margin-top: 10%;
+    padding-top: 40px;
 }
 
 .btnRegister {
     float: right;
-    margin-top: 10%;
+    /* margin-top: 10%; */
     border: none;
-    border-radius: 1.5rem;
-    padding: 2%;
+    /* border-radius: 1.5rem; */
+    padding: 10px;
     background: #0062cc;
     color: #fff;
     font-weight: 600;
-    width: 50%;
+    width: 100%;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 .register-right{
@@ -1067,7 +1069,7 @@ form .form-align {
     text-transform: uppercase;
     margin-top: 120px;
     text-align: left;
-    margin-left: 120px;
+    margin-left: 100px;
     font-family: "Ubuntu", sans-serif;
     font-weight: 700;
     font-style: normal;
@@ -1077,8 +1079,12 @@ form .form-align {
     color: #00000083;
 }
 
-.register-form input[type=radio] {
-    margin-left: 10px;
+.register-form input{
+    padding: 10px;                       
+}
+
+.register-form .form-group{
+    margin: 10px;
 }
 
 

@@ -11,7 +11,7 @@ import AcademicInfo from "./components/AcademicInfo";
 import AttendanceInfo from "./components/AttendanceInfo";
 import RoutineInfo from "./components/RoutineInfo";
 import SemesterExamInfo from "./components/SemesterExamInfo";
-import Portal from "./components/Portal";
+import Portal from "./components/PortalLink";
 
 const App = () => {
     return (

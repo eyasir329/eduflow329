@@ -9,7 +9,8 @@ const cookieParser = require("cookie-parser");
 const _ = require("lodash");
 
 // routes
-const userRoutes = require("./api/routes/SchoolUser.js");
+const userRoutes = require("./api/routes/UserSignup.js");
+const loginRoutes = require("./api/routes/UserLogin.js");
 
 
 require("dotenv").config();
@@ -27,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // mongoose connection
 mongoose.connect(process.env.mongoSchoolUser)
   .then(() => {
-    console.log("Connected to mongoSchoolUser");
+    console.log("Connected to MongoDB School User DBMS");
   })
   .catch((err) => {
     console.log(err);
@@ -46,13 +47,13 @@ connection.connect((err) => {
     console.error('Error connecting to MySQL:', err);
     return;
   }
-  console.log('Connected to MySQL server');
+  console.log('Connected to MySQL School DBMS Server');
 });
 //mysql connection setup end
 
-
 // user registration start using mongoose
 app.use("/api/register", userRoutes);
+app.use("/api/login", loginRoutes);
 // user registration end
 
 // userlogin start using mongoose

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Tab, Tabs } from "react-bootstrap";
 import axios from "axios";
 
@@ -9,22 +9,35 @@ export default function SignUp() {
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    let role ="";
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+    let role = "student";
+
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post("http://localhost:5000/api/register", { userId, userName, email, password, role })
-            .then(res => {
-                alert("Account Created Successfully");
-                setUserId("");
-                setUserName("");
-                setEmail("");
-                setPassword("");
-                navigate("/login");
-            }).catch(err => {
-                console.log(err);
-            })
+        try {
+            setLoading(true);
+            const response = await axios.post("http://localhost:5000/api/register", { userId, userName, email, password, role });
+            const data = await response.data;
+            if (data.status === "ok") {
+                navigate("/portal/login");
+            }else{
+                setLoading(false);
+                setError(false);
+            }
+        } catch (error) {
+            setLoading(false);
+            setError(true);
+        }
+        finally{
+            setUserId("");
+            setUserName("");
+            setEmail("");
+            setPassword("");
+        }
     }
 
     return (
@@ -32,10 +45,9 @@ export default function SignUp() {
             <div className="container register py-5 h-100">
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="col-md-3 register-left">
-                        {/* <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt="" /> */}
                         <h3>Welcome</h3>
                         <p>To our portal</p>
-                        <Link to="/login">
+                        <Link to="/portal/login">
                             <button type="button" className="btn btn-success">
                                 Login
                             </button>
@@ -64,14 +76,14 @@ export default function SignUp() {
                                                             value={userId}
                                                             onChange={ev => setUserId(ev.target.value)}
                                                         />
-                                                        <label className="form-label" htmlFor="typePasswordX">*If you are our student and do not have a student id then contact school administration</label>
+                                                      
                                                     </div>
 
                                                     <div className="form-group">
                                                         <input
                                                             type="text"
                                                             className="form-control"
-                                                            placeholder="User Name *"
+                                                            placeholder="Username *"
                                                             value={userName}
                                                             onChange={ev => setUserName(ev.target.value)}
                                                         />
@@ -99,17 +111,23 @@ export default function SignUp() {
 
                                                     <div className="form-group">
                                                         <button
+                                                            disabled ={loading}
                                                             type="button"
                                                             className="btnRegister btn btn-success"
                                                             onClick={(event) => {
                                                                 event.preventDefault();
-                                                                role ="student";
+                                                                role = "student";
                                                                 handleSubmit(event);
                                                             }}
                                                         >
-                                                            Create Account
+                                                            {loading?"Loading...":"Sign up"}
                                                         </button>
                                                     </div>
+                                                    <p className="reg-error">
+                                                    {
+                                                        error && "Something Went Wrong"
+                                                    }
+                                                    </p>
 
                                                 </div>
 
@@ -167,10 +185,15 @@ export default function SignUp() {
                                                     <div className="form-group">
                                                         <input type="submit" className="btnRegister" value="Register" onClick={(event) => {
                                                             event.preventDefault();
-                                                            role ="parent";
+                                                            role = "parent";
                                                             handleSubmit(event);
                                                         }} />
                                                     </div>
+                                                    <p className="reg-error">
+                                                    {
+                                                        error && "Something Went Wrong"
+                                                    }
+                                                    </p>
 
                                                 </div>
 
@@ -229,10 +252,15 @@ export default function SignUp() {
                                                     <div className="form-group">
                                                         <input type="submit" className="btnRegister" value="Register" onClick={(event) => {
                                                             event.preventDefault();
-                                                            role ="teacher";
+                                                            role = "teacher";
                                                             handleSubmit(event);
                                                         }} />
                                                     </div>
+                                                    <p className="reg-error">
+                                                    {
+                                                        error && "Something Went Wrong"
+                                                    }
+                                                    </p>
 
                                                 </div>
                                             </div>

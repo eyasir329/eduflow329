@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./Navbar.css";
 import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/root";
@@ -39,13 +38,14 @@ import ApplyOnline from "./routes/ApplyOnline";
 import Payment from "./routes/Payment";
 import Search from "./routes/Search";
 import Download from "./routes/Download";
-import Teacher from "./routes/Teacher";
-import Student from "./routes/Student";
-import Parent from "./routes/Parent";
-import Login from "./routes/Login";
+import Teacher from "./routes/portals/Teacher";
+import Student from "./routes/portals/Student";
+import Parent from "./routes/portals/Parent";
+import Login from "./routes/portals/Login";
 import ImportantLink from "./routes/ImportantLink";
-import SignUp from "./routes/Signup";
-import Admin from "./routes/Admin";
+import SignUp from "./routes/portals/Signup";
+import Admin from "./routes/portals/Admin";
+import Portal from "./routes/portals/Portal";
 
 
 const router = createBrowserRouter([
@@ -198,33 +198,42 @@ const router = createBrowserRouter([
         element: <ImportantLink />,
       },
       {
-        path: "admin",
-        element: <Admin />,
+        path: "/portal",
+        children: [
+          {
+            path: "/portal",
+            element: <Portal />,
+          },
+          {
+            path: "/portal/student",
+            element: <Student />,
+          },
+          {
+            path: "/portal/teacher",
+            element: <Teacher />,
+          },
+          {
+            path: "/portal/admin",
+            element: <Admin />,
+          },
+          {
+            path: "/portal/parent",
+            element: <Parent />,
+          },
+          {
+            path: "/portal/login",
+            element: <Login />,
+          },
+          {
+            path: "/portal/signup",
+            element: <SignUp />,
+          },
+        ],
       },
-      {
-        path: "teacher",
-        element: <Teacher />,
-      },
-      {
-        path: "student",
-        element: <Student />,
-      },
-      {
-        path: "parent",
-        element: <Parent />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "signup",
-        element: <SignUp />,
-      },
-
-    ]
-  }
+    ],
+  },
 ]);
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -232,31 +241,3 @@ root.render(
     <RouterProvider router={router} />
   </React.StrictMode>
 );
-
-const registeredUser =
-  [
-
-    {
-      email: "kumar@draft.dev",
-      password: "1234",
-      type : "admin"
-    },
-    {
-      "email": "hey@kumarharsh.me",
-      "password": "1234",
-      type : "teacher"
-    },
-    {
-      "email": "ko2ed2@gm.com",
-      "password": "1234",
-      type : "student"
-    },
-    {
-      "email": "ko2ed2@gm.com",
-      "password": "1234",
-      type : "parent"
-    }
-
-  ];
-
-  console.log(registeredUser);

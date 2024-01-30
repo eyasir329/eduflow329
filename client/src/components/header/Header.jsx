@@ -1,7 +1,7 @@
 import HeaderMain from "./HeaderMain";
-import MobileNav from "./MobileNav";
-import Navbar from "./Navbar";
-import News from "./News";
+import MobileNav from "../navbar/MobileNav";
+import Navbar from "../navbar/Navbar";
+import News from "../News";
 
 const Header = () => {
   return (

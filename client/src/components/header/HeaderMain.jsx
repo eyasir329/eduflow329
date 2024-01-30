@@ -15,7 +15,7 @@ function HeaderMain() {
 
                                     <div className="row">
                                         <div className="col-lg-2 col-sm-2">
-                                            <img src="images/logo.png" alt="logo" />
+                                            <img src="https://i.postimg.cc/dV9r5NhW/logo.png" alt="logo" />
                                         </div>
 
                                         <div className="col-lg-10 col-sm-10">
@@ -35,8 +35,8 @@ function HeaderMain() {
                                 <div className="col-lg-6 header-right">
 
                                     <div className="header-img">
-                                        <img src="images/mujib100.png" alt="logo" />
-                                        <img src="images/bd50yr.png" alt="logo" />
+                                        <img src="https://i.postimg.cc/9wY7dQr7/mujib100.png" alt="logo" />
+                                        <img src="https://i.postimg.cc/BP0FPKQ3/bd50yr.png" alt="logo" />
                                     </div>
 
                                 </div>

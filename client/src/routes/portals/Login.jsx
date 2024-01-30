@@ -1,9 +1,52 @@
 import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./portal.css"
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await axios.post("http://localhost:5000/api/login", { email, password });
+      const data = await response.data;
+      console.log(data);
+      if (data.status === "found") {
+        if(data.validUser.role==="teacher"){
+          navigate("/portal/teacher");
+        }else if(data.validUser.role==="student"){
+          navigate("/portal/student");
+        }else if(data.validUser.role==="parent"){
+          navigate("/portal/parent");
+        }else{
+          navigate("/portal/admin");
+        }
+        
+      } else {
+        setLoading(false);
+        setError(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      setError(true);
+    }
+    finally {
+      setEmail("");
+      setPassword("");
+    }
+  }
+
+
   return (
     <section className="vh-100 gradient-custom">
       <div className="container py-5 h-100">
@@ -15,7 +58,7 @@ export default function Login() {
                 <div className="mb-md-5 mt-md-4 pb-5">
 
                   <div className="login-img gradient-box">
-                    <img src="images/logo.png" alt="logo" />
+                    <img src="../../images/logo.png" alt="logo" />
                   </div>
 
                   <h2 className="fw-bold mb-2 text-uppercase">Login</h2>
@@ -26,8 +69,10 @@ export default function Login() {
                         <label className="form-label" htmlFor="typeEmailX">Enter Your Email</label>
                         <input
                           type="email"
-                          id="typeEmailX"
-                          className="form-control form-control-lg"
+                          className="form-control"
+                          placeholder="Your Email *"
+                          value={email}
+                          onChange={ev => setEmail(ev.target.value)}
                         />
 
                       </div>
@@ -36,8 +81,10 @@ export default function Login() {
                         <label className="form-label" htmlFor="typePasswordX">Enter Password</label>
                         <input
                           type="password"
-                          id="typePasswordX"
-                          className="form-control form-control-lg"
+                          className="form-control"
+                          placeholder="Password *"
+                          value={password}
+                          onChange={ev => setPassword(ev.target.value)}
                         />
 
                       </div>
@@ -45,8 +92,16 @@ export default function Login() {
                       <p className="small mb-5 pb-lg-2"><a className="text-white-50" href="#!">Forgot password?</a></p>
 
                     </div>
-
-                    <button className="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                    <button
+                      type="submit"
+                      className="btn btn-outline-light btn-lg px-5"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handleSubmit(event);
+                      }}
+                    >
+                      Login
+                    </button>
 
                     <div className="d-flex justify-content-center text-center mt-4 pt-1">
 
@@ -58,7 +113,7 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <p className="mb-0">Don't have an account? <Link to="/signup" className="text-white-50 fw-bold"> Sign Up</Link></p>
+                  <p className="mb-0">Don't have an account? <Link to="/portal/signup" className="text-white-50 fw-bold"> Sign Up</Link></p>
                 </div>
 
               </div>

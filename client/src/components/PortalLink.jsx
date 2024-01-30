@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Portal(){
+function PortalLink(){
     return (
         <div className="colored-section portal">
             <div className="container">
@@ -12,7 +12,7 @@ function Portal(){
                 </div>
                 <div className="row">
                     <div className="col-lg-12 portal-login">
-                        <Link to="login"><button>Log In</button></Link>
+                        <Link to="/portal/login"><button>Log In</button></Link>
                     </div>
                 </div>
             </div>
@@ -20,4 +20,4 @@ function Portal(){
     );
 }
 
-export default Portal;
+export default PortalLink;

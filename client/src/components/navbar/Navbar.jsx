@@ -1,4 +1,4 @@
-import { menuItemsData } from "../menuItemsData";
+import { menuItemsData } from "../../menuItemsData";
 import MenuItems from "./MenuItems";
 
 const Navbar = () => {

@@ -11,6 +11,7 @@ const _ = require("lodash");
 // routes
 const userRoutes = require("./api/routes/UserSignup.js");
 const loginRoutes = require("./api/routes/UserLogin.js");
+const schoolInfo = require("./api/routes/SchoolInfo.js");
 
 
 require("dotenv").config();
@@ -53,13 +54,16 @@ connection.connect((err) => {
 
 // user registration start using mongoose
 app.use("/api/register", userRoutes);
-app.use("/api/login", loginRoutes);
 // user registration end
 
 // userlogin start using mongoose
-
+app.use("/api/login", loginRoutes);
 // userlogin end using mongoose
 
+
+// admin panel start
+app.use("/api", schoolInfo);
+// admin panel end
 
 
 

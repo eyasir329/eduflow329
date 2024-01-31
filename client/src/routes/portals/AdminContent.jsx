@@ -1,11 +1,17 @@
 import React from "react";
+import AdminSchoolInfo from "./AdminSchoolInfo";
+// import { AddBox, ArrowDownward } from "@material-ui/icons";
 
 export default function AdminContent() {
     return (
         <div className="admin-content">
             <div id="school-info" className="admin-details">
                 <h1>School Information</h1>
-                
+                <div className="row">
+                    <div className="col-lg-12">
+                        <AdminSchoolInfo />
+                    </div>
+                </div>
             </div>
             <div id="principal-info" className="admin-details">
                 <h1>Principal Information</h1>

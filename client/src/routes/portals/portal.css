@@ -379,6 +379,13 @@ form .form-align {
     margin: 10px;
 }
 
+.reg-error{
+    margin-top: -10px;
+    color: red;
+    font-size: 24px;
+    text-shadow: #f8f8f8;
+}
+
 
 /* signup end */
 

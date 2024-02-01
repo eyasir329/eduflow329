@@ -47,8 +47,9 @@ import SignUp from "./routes/portals/Signup";
 import Admin from "./routes/portals/Admin";
 import Portal from "./routes/portals/Portal";
 
-import { store } from "./redux/store";
+import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 
 const router = createBrowserRouter([
@@ -240,7 +241,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <Provider store={store}>
-    <RouterProvider router={router} />
-  </Provider>
+  <PersistGate persistor={persistor}>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </PersistGate>
 );

@@ -595,7 +595,7 @@ form .form-align {
 }
 
 .admin-details {
-    height: 600px;
+    height: 80vh;
     margin-bottom: 100px;
     padding-top: 50px;
     background: rgb(89, 126, 82);

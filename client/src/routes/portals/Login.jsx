@@ -66,7 +66,7 @@ export default function Login() {
         return;
       }
       dispatch(signInSuccess(data));
-      console.log(data);
+      // console.log(data);
       navigate("/portal/admin");
     } catch (error) {
       dispatch(signInFailure("An unexpected error occurred"));

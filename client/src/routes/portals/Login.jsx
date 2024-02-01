@@ -1,22 +1,35 @@
 import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      return dispatch(signInFailure("Please fill all the fields"));
+    }
+
     const apiUrl = "http://localhost:5000/api/auth/signin";
+
     try {
-      setLoading(true);
-      setError(false);
+      dispatch(signInStart());
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -26,33 +39,45 @@ export default function Login() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      if (data.success === false) {
-        setError(true);
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.startsWith("application/json")) {
+          // If the response is JSON, try to parse it
+          const errorData = await response.json();
+          dispatch(signInFailure(errorData.message));
+        } else {
+          // If not JSON, handle the error based on the content
+          const errorText = await response.text();
+          const errorMessageRegex = /Error: (.+?)<br>/;
+          const matches = errorText.match(errorMessageRegex);
+          if (matches && matches.length > 1) {
+            const errorMessage = matches[1];
+            dispatch(signInFailure(errorMessage));
+          } else {
+            dispatch(signInFailure("An unexpected error occurred"));
+          }
+        }
         return;
       }
 
-      if (data.role === "admin") {
-        navigate("/portal/admin");
-      } else if (data.role === "teacher") {
-        navigate("/portal/teacher");
-      } else if (data.validUser.role === "student") {
-        navigate("/portal/student");
-      } else if (data.role === "parent") {
-        navigate("/portal/parent");
-      } else {
-        setLoading(false);
-        setError(false);
+      const data = await response.json();
+
+      if (data.success === false) {
+        dispatch(signInFailure(data.message));
+        return;
       }
+      dispatch(signInSuccess(data));
+      console.log(data);
+      navigate("/portal/admin");
     } catch (error) {
-      setLoading(false);
-      setError(true);
-    } finally {
-      setEmail("");
-      setPassword("");
+      dispatch(signInFailure("An unexpected error occurred"));
     }
+  };
+
+
+  // show/hide password
+  const [passwordType, setPasswordType] = useState('password');
+  const togglePassword = () => {
+    setPasswordType((prevType) => (prevType === 'password' ? 'text' : 'password'));
   };
 
   return (
@@ -82,7 +107,7 @@ export default function Login() {
                         </label>
                         <input
                           type="email"
-                          className="form-control"
+                          className="form-control snemail"
                           placeholder="Your Email *"
                           value={email}
                           onChange={(ev) => setEmail(ev.target.value)}
@@ -93,13 +118,27 @@ export default function Login() {
                         <label className="form-label" htmlFor="typePasswordX">
                           Enter Password
                         </label>
-                        <input
-                          type="password"
-                          className="form-control"
-                          placeholder="Password *"
-                          value={password}
-                          onChange={(ev) => setPassword(ev.target.value)}
-                        />
+
+                        <div className="passwordMain">
+                          <div className="passwordContainer">
+                            <input
+                              name="password"
+                              type={passwordType}
+                              className="form-control passwordExtra"
+                              placeholder="Password *"
+                              value={password}
+                              onChange={(ev) => setPassword(ev.target.value)}
+                            />
+                            <button className="btn btn-primary passwordShow" type="button" onClick={togglePassword}>
+                              {passwordType === 'password' ? (
+                                <FaEye className="bi" />
+                              ) : (
+                                <FaEyeSlash className="bi" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
                       </div>
 
                       <p className="small mb-5 pb-lg-2">
@@ -108,9 +147,7 @@ export default function Login() {
                         </a>
                       </p>
                     </div>
-                    <p className="reg-error">
-                      {error && "Something Went Wrong"}
-                    </p>
+                    <p className="reg-error">{errorMessage && errorMessage}</p>
                     <button
                       type="submit"
                       className="btn btn-outline-light btn-lg px-5"

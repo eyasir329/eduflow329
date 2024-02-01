@@ -168,6 +168,40 @@ p {
 
 /* login  start */
 
+.passwordMain {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh;  */
+  }
+  
+  .passwordContainer {
+    position: relative;
+    width: 100%;
+  }
+
+  .snemail{
+    padding: 10px;
+  }
+  
+  .passwordExtra {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    /* margin-right: -36px;  */
+  }
+  
+  .passwordShow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .passwordShow .bi {
+    font-size: 1.25rem;
+  }
 
 .login-img img {
     width: 130px;
@@ -379,11 +413,15 @@ form .form-align {
     margin: 10px;
 }
 
-.reg-error{
-    margin-top: -10px;
-    color: red;
+.reg-error {
+    margin-top: -20px;
     font-size: 24px;
-    text-shadow: #f8f8f8;
+    color: #cfc547;
+
+    text-shadow: -1px 1px 0 #41ba45,
+        1px 1px 0 #c63d2b,
+        1px -1px 0 #42afac,
+        -1px -1px 0 #c6c23f;
 }
 
 
@@ -513,10 +551,12 @@ form .form-align {
 .admin-left {
     position: relative;
 }
-.admin-extra{
-     position: fixed;
-     background-color: #f8f9fa;
+
+.admin-extra {
+    position: fixed;
+    background-color: #f8f9fa;
 }
+
 .admin-sidebar {
     position: absolute;
     left: -350px;
@@ -582,5 +622,3 @@ form .form-align {
 }
 
 /* admin header end */
-
-

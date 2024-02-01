@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const apiUrl = "http://localhost:5000/api/login";
+    const apiUrl = "http://localhost:5000/api/auth/signin";
     try {
       setLoading(true);
       setError(false);

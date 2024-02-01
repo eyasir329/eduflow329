@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const JZSUserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
@@ -26,5 +26,5 @@ const JZSUserSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const JZSUserModel = mongoose.model("SchoolUser", JZSUserSchema);
-module.exports = JZSUserModel;
+const UserModel = mongoose.model("SchoolUser", UserSchema);
+module.exports = UserModel;

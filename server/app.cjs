@@ -8,9 +8,9 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const _ = require("lodash");
 
+
 // routes
-const userRoutes = require("./api/routes/UserSignup.js");
-const loginRoutes = require("./api/routes/UserLogin.js");
+const authRoutes = require("./api/routes/auth.route.js");
 const schoolInfo = require("./api/routes/SchoolInfo.js");
 
 
@@ -26,40 +26,38 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.static("public"));
 
-// mongoose connection
+// mongodb connection start
 mongoose.connect(process.env.mongoSchoolUser)
   .then(() => {
-    console.log("Connected to MongoDB School User DBMS");
+    console.log("Connected to MongoDB School User DBMS Server");
   })
   .catch((err) => {
     console.log(err);
   });
+// mongodb connection end
 
-//mysql connection setup start
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: process.env.sqlUser,
-  password: process.env.mysqlPass,
-  database: process.env.sqlDatabase
+// mysql connection start
+const connection = require("./api/sql/db.js");
+
+connection.getConnection((err, conn) => {
+    if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return;
+    }
+
+    console.log('Connected to MySQL School DBMS Server');
+
+    // query is here
+
+    // Release the connection when done
+    // conn.release();
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL School DBMS Server');
-});
-//mysql connection setup end
+//mysql connection end
 
-// user registration start using mongoose
-app.use("/api/register", userRoutes);
-// user registration end
-
-// userlogin start using mongoose
-app.use("/api/login", loginRoutes);
-// userlogin end using mongoose
-
+// user route
+app.use("/api/auth", authRoutes);
+// user route end
 
 // admin panel start
 app.use("/api", schoolInfo);

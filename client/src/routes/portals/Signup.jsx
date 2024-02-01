@@ -20,7 +20,7 @@ export default function SignUp() {
         e.preventDefault();
         try {
             setLoading(true);
-            const response = await axios.post("http://localhost:5000/api/register", { userId, userName, email, password, role });
+            const response = await axios.post("http://localhost:5000/api/auth/signup", { userId, userName, email, password, role });
             const data = await response.data;
             if (data.status === "ok") {
                 navigate("/portal/login");

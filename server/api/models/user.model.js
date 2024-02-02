@@ -8,8 +8,7 @@ const UserSchema = new mongoose.Schema({
     },
     userName: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     email: {
         type: String,
@@ -19,6 +18,10 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    profilePicture:{
+        type : String,
+        default : "https://img.freepik.com/premium-vector/slim-spiration-central-vector-illustration-cartoon_969863-2375.jpg?size=626&ext=jpg"
     },
     role: {
         type: String,

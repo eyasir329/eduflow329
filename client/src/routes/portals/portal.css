@@ -198,7 +198,10 @@ p {
     top: 50%;
     transform: translateY(-50%);
   }
+  .passwordShow:hover{
+    background-color: #436850;
 
+  }
   .passwordShow .bi {
     font-size: 1.25rem;
   }
@@ -220,10 +223,22 @@ p {
 form .form-align {
     text-align: left;
 }
-
+.oauthBody{
+    margin-top: 30px;
+    width: 100%;
+}
 .login-outh {
-    font-size: 32px;
+    border-radius: 10px;
+    width: 45%;
+    background-color: #789461;
+    font-size: 24px;
     padding: 10px;
+    text-align: center;
+    margin: 10px;
+    margin-bottom: -20px;
+}
+.login-outh:hover{
+    background-color: #50623A;
 }
 
 /* login section end */

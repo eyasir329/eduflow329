@@ -1,6 +1,4 @@
-import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -9,6 +7,7 @@ import {
   signInFailure,
 } from "../../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import OAuth from "../../components/OAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -129,7 +128,7 @@ export default function Login() {
                               value={password}
                               onChange={(ev) => setPassword(ev.target.value)}
                             />
-                            <button className="btn btn-primary passwordShow" type="button" onClick={togglePassword}>
+                            <button className="btn btn-outline passwordShow" type="button" onClick={togglePassword}>
                               {passwordType === 'password' ? (
                                 <FaEye className="bi" />
                               ) : (
@@ -159,14 +158,11 @@ export default function Login() {
                       {loading ? "Loading..." : "Sign In"}
                     </button>
 
-                    <div className="d-flex justify-content-center text-center mt-4 pt-1">
-                      <a href="#!" className="text-white login-outh">
-                        <FontAwesomeIcon icon={faGoogle} />
-                      </a>
-                      <a href="#!" className="text-white login-outh">
-                        <FontAwesomeIcon icon={faFacebook} />
-                      </a>
+                    <div className="oauthBody">
+                      <OAuth />
                     </div>
+
+                    
                   </form>
                 </div>
 

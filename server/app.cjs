@@ -1,29 +1,38 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require('mysql2');
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const _ = require("lodash");
 
 
 // routes
 const authRoutes = require("./api/routes/auth.route.js");
+const guestUserRoutes = require("./api/routes/guest.route.js");
 const schoolInfo = require("./api/routes/SchoolInfo.js");
 
 
-require("dotenv").config();
-
 const app = express();
 
-app.set('view engine', 'ejs');
-app.use(express.json());
-app.use(cors());
-app.use(cookieParser());
+// app.set('view engine', 'ejs');
 
+app.use(cors({
+  origin: 'http://localhost:3000',  // Adjust this to your client's actual origin
+  credentials: true,
+}));
+
+app.use(cookieParser());
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Your existing headers middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 // app.use(express.static("public"));
 
 // mongodb connection start
@@ -44,19 +53,14 @@ connection.getConnection((err, conn) => {
         console.error('Error connecting to MySQL:', err);
         return;
     }
-
     console.log('Connected to MySQL School DBMS Server');
-
-    // query is here
-
-    // Release the connection when done
-    // conn.release();
 });
 
 //mysql connection end
 
 // user route
 app.use("/api/auth", authRoutes);
+app.use("/api/guest", guestUserRoutes);
 // user route end
 
 // admin panel start

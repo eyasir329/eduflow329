@@ -12,7 +12,7 @@ function Footer() {
     return (
         <>
         <footer>
-            <div className="white-section end-section"></div>
+            <div className="end-section"></div>
             <section id="footer">
                 <div className="footer-section">
                     <div className="container">

@@ -41,7 +41,6 @@ export default function UnknownUser() {
     );
   };
 
-  console.log(formData);
   return (
     <>
       <div className='user-heading'>Guest User</div>

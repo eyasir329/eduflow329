@@ -1,6 +1,6 @@
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   signInStart,
   signInSuccess,
@@ -17,8 +17,6 @@ export default function Login() {
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -28,7 +26,7 @@ export default function Login() {
 
     const apiUrl = "http://localhost:5000/api/auth/signin";
 
-    try { 
+    try {
       dispatch(signInStart());
 
       const response = await fetch(apiUrl, {
@@ -36,6 +34,7 @@ export default function Login() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include', 
         body: JSON.stringify({ email, password }),
       });
 
@@ -67,8 +66,6 @@ export default function Login() {
         return;
       }
       dispatch(signInSuccess(data));
-      // console.log(data);
-      navigate("/portal/admin");
     } catch (error) {
       dispatch(signInFailure("An unexpected error occurred"));
     }
@@ -148,7 +145,11 @@ export default function Login() {
                         </a>
                       </p>
                     </div>
-                    <p className="reg-error">{errorMessage && errorMessage}</p>
+
+                    <p className="reg-error">
+                      {typeof errorMessage === 'string' ? errorMessage : ''}
+                    </p>
+
                     <button
                       type="submit"
                       className="btn btn-outline-light btn-lg px-5"

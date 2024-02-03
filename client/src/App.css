@@ -714,6 +714,12 @@ p {
     color: #fff;
 }
 
+.extra-info{
+    padding: 50px;
+}
+.exam-extra{
+    padding: 100px;
+}
 /* institute information end */
 
 .temporary {
@@ -729,21 +735,21 @@ p {
 }
 
 .portal {
-    background-color: #86A789;
-    height: 35vh;
+    background: rgb(255,255,255);
+background: linear-gradient(180deg, rgba(255,255,255,1) 12%, rgba(217,244,217,1) 63%, rgba(220,237,220,1) 100%);
 }
 
 .portal-heading {
     text-align: center;
-    color: #fff;
+    color: #000;
     padding-top: 150px;
-    padding-bottom: 10px;
 }
 
 .portal-login {
-    color: #fff;
+    color: #000000;
     font-size: 30px;
     text-align: center;
+    padding-bottom: 150px;
 }
 
 .portal-login button {
@@ -752,9 +758,12 @@ p {
 }
 
 .end-section {
+
     padding-top: 50px;
     height: 150px;
     margin-bottom: -150px;
+    background: rgb(223, 230, 233);
+    background: linear-gradient(180deg, rgba(223, 230, 233, 1) 0%, rgba(143, 181, 143, 1) 27%, rgba(79, 111, 82, 1) 100%);
 }
 
 
@@ -777,7 +786,6 @@ footer {
 .address-temp .address-up {
     position: absolute;
     height: 200px;
-    /* background-color: #EAD196; */
     top: -100px;
 }
 
@@ -1291,7 +1299,10 @@ p {
     align-items: center;
     /* height: 100vh;  */
 }
-
+.text-uppercase{
+    margin-top: 30px;
+    margin-right: 10px;
+}
 .passwordContainer {
     position: relative;
     width: 100%;
@@ -1322,12 +1333,13 @@ p {
 }
 
 .passwordShow .bi {
-    font-size: 1.25rem;
+    font-size: 18px;
 }
-
+.login-img{
+    margin-top: -150px;
+}
 .login-img img {
     width: 130px;
-    margin-top: -150px;
     border-width: 5px;
     border-style: solid;
     border-radius: 50%;
@@ -1344,7 +1356,7 @@ form .form-align {
 }
 
 .oauthBody {
-    margin-top: 30px;
+    /* margin-top: 30px; */
     width: 100%;
 }
 
@@ -1355,8 +1367,8 @@ form .form-align {
     font-size: 24px;
     padding: 10px;
     text-align: center;
-    margin: 10px;
-    margin-bottom: -20px;
+    margin: 30px 10px;
+    margin-bottom: -30px;
 }
 
 .login-outh:hover {
@@ -1762,7 +1774,7 @@ form .form-align {
 
 
 /* user */
-.user-heading{
+.user-heading {
     background-color: #86A789;
     padding: 10px;
     font-size: 32px;
@@ -1778,8 +1790,9 @@ form .form-align {
     padding: 25px;
     background-color: #dfe6e9;
     text-align: center;
-  }
-  .guest-extra{
+}
+
+.guest-extra {
     border-radius: 5px;
     width: 600px;
     margin: 50px auto;
@@ -1787,19 +1800,20 @@ form .form-align {
     padding-top: 20px;
     background-color: #d1bfbf;
     font-size: 18px;
-    
-  }
-  .guest-extra p{
+
+}
+
+.guest-extra p {
     color: #000;
     padding-bottom: 15px;
-  }
+}
 
-  .guest-extra input{
+.guest-extra input {
     color: #000;
     font-size: 24px;
-  }
-  
-  .card {
+}
+
+.card {
     /* width: 600px; */
     border-radius: 25px;
     position: relative;
@@ -1810,64 +1824,72 @@ form .form-align {
     /* height: 200px; */
     box-shadow: 0 2px 5px #ccc;
     font-size: 24px;
-  }
-  
-  .top {
+}
+
+.top {
     /* height: 50px; */
     /* width: 90%; */
     background-color: #9DBC98;
     /* margin: 20px; */
     padding: 20px;
     border-radius: 10px;
-  }
-  .top .icon{
+}
+
+.top .icon {
     color: #ffffff;
-  }
-  .guest-button{
+}
+
+.guest-button {
     margin-top: -40px;
     font-size: 22px;
     width: 600px;
-  }
-  .guest-below{
+}
+
+.guest-below {
     margin-top: 15px;
     padding-bottom: 40px;
 
-  }
+}
 
- 
 
-  .top input{
-    /* margin-top: 30px; */
+
+.top input {
+    margin: -10px;
+    padding: 10px 20px;
+    width: 100%;
     text-align: center;
     border: none;
     background-color: #9DBC98;
-  }
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+}
 
-  .card img {
+.card img {
     margin: 30px 20px 0 0;
-  }
-  
-  .circle-img {
-    margin-top: 20px;
+}
+
+.circle-img {
+    margin-top: 40px;
     border-radius: 50%;
     border: 7px solid #fff;
     width: 180px;
     height: 180px;
     cursor: pointer;
-  }
-  .image-below{
+}
+
+.image-below {
     color: #115615;
     padding: 10px;
-  }
-  
-  
-  .info {
+}
+
+
+.info {
     cursor: pointer;
     font-size: 24px;
     padding: 170px;
     color: #ba1f1f;
-  }
+}
 
 
-  /*  */
-
+/*  */

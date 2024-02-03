@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function PortalLink(){
     return (
-        <div className="colored-section portal">
+        <div className="portal">
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 portal-heading">

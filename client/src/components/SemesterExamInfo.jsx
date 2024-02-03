@@ -2,7 +2,7 @@ import React from "react";
 
 function SemesterExamInfo(){
     return(
-        <div className="extra-info">
+        <div className="extra-info exam-extra">
             <div className="container mujib temporary3">
                 <div className="row">
                     <div className="col-lg-3">

@@ -762,7 +762,6 @@ p {
 /* school addresse */
 .content {
     background-color: #9DBC98;
-    height: 100%;
 }
 
 footer {
@@ -1760,3 +1759,109 @@ form .form-align {
 }
 
 /* admin header end */
+
+
+/* user */
+.user-heading{
+    background-color: #86A789;
+    padding: 10px;
+    font-size: 32px;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
+}
+
+.guest-content {
+    font-family: sans-serif;
+    margin: 0 auto;
+    padding: 25px;
+    background-color: #dfe6e9;
+    text-align: center;
+  }
+  .guest-extra{
+    border-radius: 5px;
+    width: 600px;
+    margin: 50px auto;
+    margin-bottom: -30px;
+    padding-top: 20px;
+    background-color: #d1bfbf;
+    font-size: 18px;
+    
+  }
+  .guest-extra p{
+    color: #000;
+    padding-bottom: 15px;
+  }
+
+  .guest-extra input{
+    color: #000;
+    font-size: 24px;
+  }
+  
+  .card {
+    /* width: 600px; */
+    border-radius: 25px;
+    position: relative;
+    /* padding: 25px 15px; */
+    background-color: #9DBC98;
+    width: 600px;
+    margin: 50px auto;
+    /* height: 200px; */
+    box-shadow: 0 2px 5px #ccc;
+    font-size: 24px;
+  }
+  
+  .top {
+    /* height: 50px; */
+    /* width: 90%; */
+    background-color: #9DBC98;
+    /* margin: 20px; */
+    padding: 20px;
+    border-radius: 10px;
+  }
+  .top .icon{
+    color: #ffffff;
+  }
+  .guest-button{
+    margin-top: -40px;
+    font-size: 22px;
+    width: 600px;
+  }
+  .guest-below{
+    margin-top: 15px;
+    padding: 0px;
+
+  }
+
+ 
+
+  .top input{
+    /* margin-top: 30px; */
+    text-align: center;
+    border: none;
+    background-color: #9DBC98;
+  }
+
+  .card img {
+    margin: 30px 20px 0 0;
+  }
+  
+  .circle-img {
+    margin-top: 20px;
+    border-radius: 50%;
+    border: 7px solid #fff;
+    width: 180px;
+    height: 180px;
+  }
+  
+  
+  .info {
+    font-size: 24px;
+    padding: 170px;
+    color: #ba1f1f;
+  }
+
+
+  /*  */
+

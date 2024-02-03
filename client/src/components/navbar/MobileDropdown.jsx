@@ -1,5 +1,4 @@
 import MobileMenuItems from "./MobileMenuItems";
-import "./Navbar.css"
 
 const MobileDropdown = ({ submenus, dropdown, depthLevel }) => {
   depthLevel = depthLevel + 1;

@@ -1,5 +1,4 @@
 import React from "react";
-import "./portal.css"
 
 export default function AdminSidebar() {
     return (

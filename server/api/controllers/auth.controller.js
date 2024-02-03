@@ -92,7 +92,7 @@ exports.google = async (req, res, next) => {
                 email: req.body.email,
                 password: hashedPassword,
                 profilePicture: req.body.photo,
-                role: "undefined"
+                role: "notAllocated"
             });
 
             await newUser.save();

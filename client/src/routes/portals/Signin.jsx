@@ -9,7 +9,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../../components/OAuth";
 
+
 export default function Login() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { loading, error: errorMessage } = useSelector((state) => state.user);
@@ -26,7 +28,7 @@ export default function Login() {
 
     const apiUrl = "http://localhost:5000/api/auth/signin";
 
-    try {
+    try { 
       dispatch(signInStart());
 
       const response = await fetch(apiUrl, {
@@ -162,7 +164,7 @@ export default function Login() {
                       <OAuth />
                     </div>
 
-                    
+
                   </form>
                 </div>
 

@@ -5,21 +5,23 @@ import Footer from "../components/Footer";
 import HeaderMain from "../components/header/HeaderMain";
 
 export default function Root() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === "/portal/login";
-  const isSignupPage = location.pathname === "/portal/signup";
-  const isAdminPage = location.pathname === "/portal/admin";
-  const isStudentPage = location.pathname === "/portal/student";
-  const isTeacherPage = location.pathname === "/portal/teacher";
-  const isParentPage = location.pathname === "/portal/parent";
+  const currentLocation = useLocation();
+  const isLoginPage = currentLocation.pathname === "/portal/login";
+  const isSignupPage = currentLocation.pathname === "/portal/signup";
+  const isAdminPage = currentLocation.pathname === "/portal/admin";
+  const isStudentPage = currentLocation.pathname === "/portal/student";
+  const isTeacherPage = currentLocation.pathname === "/portal/teacher";
+  const isParentPage = currentLocation.pathname === "/portal/parent";
 
   return (
-    <div>
+    <div className="main-content">
       {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <Header />}
       {(isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <HeaderMain />}
+
       <div className="content">
         <Outlet />
       </div>
+      
       {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <Footer />}
     </div>
   );

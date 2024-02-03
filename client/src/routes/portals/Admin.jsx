@@ -1,6 +1,5 @@
 import React from "react";
 import PortalHead from "./PortalHead";
-import "./portal.css";
 import AdminSidebar from "./AdminSidebar";
 import AdminContent from "./AdminContent";
 

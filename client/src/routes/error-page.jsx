@@ -14,8 +14,8 @@ export default function ErrorPage() {
           <div className="row">
             <div className="col-lg-12">
               <h1>Oops!</h1>
-              <p>Sorry, an unexpected error has occurred.</p>
-              <p>
+              <p style={{color:"#000"}}>Sorry, an unexpected error has occurred.</p>
+              <p style={{color:"#000"}}>
                 <i>{error.statusText || error.message}</i>
               </p>
             </div>

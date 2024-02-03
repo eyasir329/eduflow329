@@ -1,4 +1,5 @@
 import React from "react";
+import "../src/App.css"
 import PhotoCarousal from "./components/PhotoCarousal";
 import NoticeBoard from "./components/NoticeBoard";
 import HeadTeacher from "./components/HeadTeacher";

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {GoogleAuthProvider, getAuth, signInWithPopup} from "firebase/auth"
 import app from '../firebase';
 import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../redux/user/userSlice';
+import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
 
 
 export default function OAuth() {
@@ -14,6 +14,7 @@ export default function OAuth() {
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
             const result = await signInWithPopup(auth, provider);
+            dispatch(signInStart(result));
             // Access user data from the `result.user` object
             const userData = {
               id: result.user.uid,
@@ -32,6 +33,7 @@ export default function OAuth() {
               const data = await res.json();
             dispatch(signInSuccess(data));
         }catch(error){
+            dispatch(signInFailure(error));
             console.log("could not login with google",error);
         }
     }

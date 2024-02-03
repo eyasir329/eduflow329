@@ -38,18 +38,13 @@ import ApplyOnline from "./routes/admission/ApplyOnline";
 import Payment from "./routes/admission/Payment";
 import Search from "./routes/more/Search";
 import Download from "./routes/admission/Download";
-import Teacher from "./routes/portals/Teacher";
-import Student from "./routes/portals/Student";
-import Parent from "./routes/portals/Parent";
-import Login from "./routes/portals/Login";
 import ImportantLink from "./routes/more/ImportantLink";
-import SignUp from "./routes/portals/Signup";
-import Admin from "./routes/portals/Admin";
-import Portal from "./routes/portals/Portal";
 
 import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import Portal from "./routes/portals/Portal";
+
 
 
 const router = createBrowserRouter([
@@ -202,38 +197,13 @@ const router = createBrowserRouter([
         element: <ImportantLink />,
       },
       {
-        path: "/portal",
         children: [
           {
-            path: "/portal",
+            path: "portal/*",
             element: <Portal />,
           },
-          {
-            path: "/portal/student",
-            element: <Student />,
-          },
-          {
-            path: "/portal/teacher",
-            element: <Teacher />,
-          },
-          {
-            path: "/portal/admin",
-            element: <Admin />,
-          },
-          {
-            path: "/portal/parent",
-            element: <Parent />,
-          },
-          {
-            path: "/portal/login",
-            element: <Login />,
-          },
-          {
-            path: "/portal/signup",
-            element: <SignUp />,
-          },
         ],
-      },
+      }
     ],
   },
 ]);

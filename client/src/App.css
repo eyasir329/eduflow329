@@ -1830,7 +1830,7 @@ form .form-align {
   }
   .guest-below{
     margin-top: 15px;
-    padding: 0px;
+    padding-bottom: 40px;
 
   }
 
@@ -1853,10 +1853,16 @@ form .form-align {
     border: 7px solid #fff;
     width: 180px;
     height: 180px;
+    cursor: pointer;
+  }
+  .image-below{
+    color: #115615;
+    padding: 10px;
   }
   
   
   .info {
+    cursor: pointer;
     font-size: 24px;
     padding: 170px;
     color: #ba1f1f;

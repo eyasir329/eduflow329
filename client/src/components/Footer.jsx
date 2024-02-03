@@ -87,7 +87,7 @@ function Footer() {
                                                     <div className="row addr-content">
                                                         <div className="col-lg-4">
                                                             <div className="footer-logo">
-                                                                <img src="images/logo.png" alt="" />
+                                                                <img src="../images/logo.png" alt="" />
                                                             </div>
 
                                                         </div>

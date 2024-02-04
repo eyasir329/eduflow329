@@ -1,25 +1,30 @@
 import React, { useEffect } from "react";
-// import { Helmet } from 'react-helmet';
 
 export default function PortalHead(props) {
     useEffect(() => {
-        window.addEventListener('scroll', function () {
-            if (window.scrollY > 50) {
-                document.getElementById('navbar_top').classList.add('fixed-top');
-                const navbar_height = document.querySelector('.navbar').offsetHeight;
-                document.body.style.paddingTop = navbar_height + 'px';
-            } else {
-                document.getElementById('navbar_top').classList.remove('fixed-top');
-                document.body.style.paddingTop = '0';
+        const handleScroll = () => {
+            const navbar = document.getElementById('navbar_top');
+
+            if (navbar) {
+                const navbar_height = navbar.offsetHeight;
+
+                if (window.scrollY > 50) {
+                    navbar.classList.add('fixed-top');
+                    document.body.style.paddingTop = `${navbar_height}px`;
+                } else {
+                    navbar.classList.remove('fixed-top');
+                    document.body.style.paddingTop = '0';
+                }
             }
-        });
+        };
+
+        window.addEventListener('scroll', handleScroll);
 
         return () => {
-            window.removeEventListener('scroll', function () {
-
-            });
+            window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
     return (
         <>
             <nav id="navbar_top" className="navbar navbar-expand-lg">

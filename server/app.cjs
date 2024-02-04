@@ -10,7 +10,7 @@ const _ = require("lodash");
 
 // routes
 const authRoutes = require("./api/routes/auth.route.js");
-const guestUserRoutes = require("./api/routes/guest.route.js");
+const guestUserRoutes = require("./api/routes/user.route.js");
 const schoolInfo = require("./api/routes/SchoolInfo.js");
 
 

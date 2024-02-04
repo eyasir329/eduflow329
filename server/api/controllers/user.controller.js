@@ -9,7 +9,7 @@ exports.test = (req, res) => {
     });
 };
 
-exports.updateGuestUser = async (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
     if (req.user.id != req.params.id) {
         return next(errorHandler(401, "You can update only your account"));
     }
@@ -41,7 +41,7 @@ exports.updateGuestUser = async (req, res, next) => {
     }
 }
 
-exports.deleteGuestUser = async (req, res, next) => {
+exports.deleteUser = async (req, res, next) => {
     try {
         // Ensure the authenticated user is the owner of the account
         if (req.user.id != req.params.id) {

@@ -1650,6 +1650,7 @@ form .form-align {
 
 #navbar_top {
     background-color: #9DBC98;
+    padding: 20px 0px;
 }
 
 #navbar_top .navbar-brand {
@@ -1709,10 +1710,10 @@ form .form-align {
 .admin-sidebar {
     position: absolute;
     left: -350px;
-    top: 0;
+    top: -105px;
     /* margin-top: -20px; */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* z-index: 999; */
+    z-index: 999;
 }
 
 .admin-sidebar ul {
@@ -1743,10 +1744,16 @@ form .form-align {
     color: #fff;
 }
 
-.admin-details {
-    height: 80vh;
+#admin-profile{
     margin-bottom: 100px;
-    padding-top: 50px;
+    padding-top: 100px;
+    background-color: #e8f4ec;
+}
+
+.admin-details {
+    /* height: 80vh; */
+    margin-bottom: 100px;
+    padding-top: 100px;
     background: rgb(89, 126, 82);
     background: linear-gradient(90deg, rgba(89, 126, 82, 1) 0%, rgba(77, 145, 77, 1) 27%, rgba(197, 204, 24, 1) 100%);
     border: 10px solid;
@@ -1905,4 +1912,4 @@ form .form-align {
 }
 
 
-/*  */
+/* user profile end */

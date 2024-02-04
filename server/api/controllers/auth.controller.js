@@ -77,7 +77,7 @@ exports.signin = async (req, res, next) => {
     }
 };
 
-exports.signoutGuestUser = (req,res)=>{
+exports.signoutUser = (req,res)=>{
     res.clearCookie('access_token').status(200).json("Signout success");
 }
 

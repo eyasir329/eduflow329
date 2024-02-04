@@ -9,20 +9,18 @@ export default function Root() {
   const isLoginPage = currentLocation.pathname === "/portal/login";
   const isSignupPage = currentLocation.pathname === "/portal/signup";
   const isAdminPage = currentLocation.pathname === "/portal/admin";
-  const isStudentPage = currentLocation.pathname === "/portal/student";
-  const isTeacherPage = currentLocation.pathname === "/portal/teacher";
-  const isParentPage = currentLocation.pathname === "/portal/parent";
 
   return (
     <div className="main-content">
-      {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <Header />}
-      {(isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <HeaderMain />}
+      {!(isLoginPage || isSignupPage ||isAdminPage) && <Header />}
+
+      {(isAdminPage) && <HeaderMain />}
 
       <div className="content">
         <Outlet />
       </div>
       
-      {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <Footer />}
+      {!(isLoginPage || isSignupPage ||isAdminPage) && <Footer />}
     </div>
   );
 }

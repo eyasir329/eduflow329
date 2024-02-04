@@ -1,7 +1,10 @@
 import React from "react";
+import Profile from "../../components/Profile";
 
 export default function Student(){
     return(
-        <h1>Student</h1>
+        <Profile 
+            title = "Student"
+        />
     );
 }

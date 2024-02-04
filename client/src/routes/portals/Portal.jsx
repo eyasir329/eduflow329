@@ -8,7 +8,7 @@ import Admin from "./Admin";
 import Parent from "./Parent";
 import Student from "./Student";
 import Teacher from "./Teacher";
-import UnknownUser from "./UnknownUser";
+import GuestUser from "./GuestUser";
 
 const Portal = () => {
     const role = useSelector((state) => state.user.currentUser?.role);
@@ -42,7 +42,7 @@ const Portal = () => {
             <Route
                 path="/guest"
                 element={
-                    role === "notAllocated" ? <UnknownUser /> : <Navigate to="/portal/login" />
+                    role === "notAllocated" ? <GuestUser /> : <Navigate to="/portal/login" />
                 }
             />
             <Route

@@ -8,8 +8,9 @@ export default function AdminSidebar() {
                     <div className="admin-sidebar">
                         <div className="admin-extra">
                             <ul>
+                                <a href="#admin-profile"><li>profile</li></a>
                                 <a href="#school-info"><li>School Info</li></a>
-                                <a href="#principal-info"><li>Principal</li></a>
+                                {/* <a href="#principal-info"><li>Principal</li></a> */}
                                 <a href="#teacher-info"><li>Teacher</li></a>
                                 <a href="#staff-info"><li>Staff</li></a>
                                 <a href="#student-info"><li>Student</li></a>

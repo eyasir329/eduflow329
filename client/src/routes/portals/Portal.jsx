@@ -4,7 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Signin from "./Signin";
 import Signup from "./Signup";
-import Admin from "./Admin";
+import Admin from "./admin/Admin";
 import Parent from "./Parent";
 import Student from "./Student";
 import Teacher from "./Teacher";
@@ -12,8 +12,6 @@ import GuestUser from "./GuestUser";
 
 const Portal = () => {
     const role = useSelector((state) => state.user.currentUser?.role);
-    console.log(role);
-
     return (
         <Routes>
             <Route path="/" element={<PortalLink />} />

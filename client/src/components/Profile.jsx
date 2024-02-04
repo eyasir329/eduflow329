@@ -138,11 +138,13 @@ export default function Profile(props) {
         }
     }
 
-    const handleSignOut = async () => {
+    const handleSignOut = async (e) => {
+        e.preventDefault(); 
         try {
             const res = await fetch('http://localhost:5000/api/auth/signout');
             if (res.ok) {
                 dispatch(signOut());
+                window.location.href = '/portal/login';
             } else {
                 console.log('signout failed');
             }
@@ -233,7 +235,7 @@ export default function Profile(props) {
                         </form>
                         <div className='guest-below'>
                             <span className='info' onClick={handleDeleteAccount}>Delete Account</span>
-                            <span className='info' onClick={handleSignOut}>Sign out</span>
+                            <span className='info' onClick={(event) => handleSignOut(event)}>Sign out</span>
                         </div>
                         <p className='guest-wrong'>
                             {typeof errorMessage === 'string' ? errorMessage : ''}

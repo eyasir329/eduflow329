@@ -1,3 +1,5 @@
+// PortalHead.js
+
 import React, { useEffect } from "react";
 
 export default function PortalHead(props) {
@@ -20,6 +22,7 @@ export default function PortalHead(props) {
 
         window.addEventListener('scroll', handleScroll);
 
+        // Cleanup function
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };

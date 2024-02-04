@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 import app from "../../firebase"
-import { updateUserStart, updateUserSuccess, updateUserFailure } from "../../redux/user/userSlice"
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOut } from "../../redux/user/userSlice"
 
 
 export default function UnknownUser() {
@@ -78,15 +78,13 @@ export default function UnknownUser() {
             const errorMessage = matches[1];
             dispatch(updateUserFailure(errorMessage));
           } else {
-            dispatch(updateUserFailure("An unexpected error occurred  hh"));
+            dispatch(updateUserFailure("An unexpected error occurred"));
           }
         }
         return;
       }
   
       const data = await res.json();
-  
-      console.log(data);
   
       if (data.success === false) {
         dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
@@ -99,7 +97,59 @@ export default function UnknownUser() {
       dispatch(updateUserFailure("An unexpected error occurred"));
     }
   }
-  
+
+  const handleDeleteAccount = async ()=>{
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`http://localhost:5000/api/guest/delete/${currentUser._id}`,{
+        method:'DELETE',
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        const contentType = res.headers.get("Content-Type");
+        if (contentType && contentType.startsWith("application/json")) {
+          // If the response is JSON, try to parse it
+          const errorData = await res.json();
+          dispatch(deleteUserFailure(errorData.message));
+        } else {
+          // If not JSON, handle the error based on the content
+          const errorText = await res.text();
+          const errorMessageRegex = /Error: (.+?)<br>/;
+          const matches = errorText.match(errorMessageRegex);
+          if (matches && matches.length > 1) {
+            const errorMessage = matches[1];
+            dispatch(deleteUserFailure(errorMessage));
+          } else {
+            dispatch(deleteUserFailure("An unexpected error occurred  hh"));
+          }
+        }
+        return;
+      }
+
+      const data = await res.json();
+      if(data.success===false){
+        dispatch(deleteUserFailure(data));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error))
+    }
+  }
+
+  const handleSignOut = async()=>{
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/signout');
+      if(res.ok){
+        dispatch(signOut());
+      }else{
+        console.log('signout failed');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }  
 
   return (
     <>
@@ -182,8 +232,8 @@ export default function UnknownUser() {
 
             </form>
             <div className='guest-below'>
-              <span className='info1 info'>Delete Account</span>
-              <span className='info2 info'>Sign out</span>
+              <span className='info' onClick={handleDeleteAccount}>Delete Account</span>
+              <span className='info' onClick={handleSignOut}>Sign out</span>
             </div>
             <p className='guest-wrong'>
             {typeof errorMessage === 'string' ? errorMessage : ''}

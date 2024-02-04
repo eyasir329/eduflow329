@@ -77,6 +77,10 @@ exports.signin = async (req, res, next) => {
     }
 };
 
+exports.signoutGuestUser = (req,res)=>{
+    res.clearCookie('access_token').status(200).json("Signout success");
+}
+
 exports.google = async (req, res, next) => {
     try {
         const user = await User.findOne({ email: req.body.email });
@@ -101,7 +105,7 @@ exports.google = async (req, res, next) => {
             const firstName = words[0].toLowerCase();
 
             const newUser = new User({
-                userId: req.body.id,
+                userId: " ",
                 userName: firstName + Math.random().toString(10).slice(-4),
                 email: req.body.email,
                 password: hashedPassword,

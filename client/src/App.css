@@ -1844,6 +1844,10 @@ form .form-align {
     font-size: 22px;
     width: 600px;
 }
+.guest-button:hover{
+    background-color: #115615;
+    color: #fff;
+}
 
 .guest-below {
     margin-top: 15px;
@@ -1887,8 +1891,17 @@ form .form-align {
 .info {
     cursor: pointer;
     font-size: 24px;
-    padding: 170px;
+    padding: 0px 170px;
     color: #ba1f1f;
+}
+
+.guest-wrong{
+    font-size: 20px;
+    color: #ba1f1f;
+}
+.guest-success{
+    font-size: 20px;
+    color: #115615;
 }
 
 

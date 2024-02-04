@@ -10,7 +10,6 @@ exports.test = (req, res) => {
 };
 
 exports.updateGuestUser = async (req,res,next)=>{
-    console.log(req.cookie);
     if(req.user.id!=req.params.id){
         return next(errorHandler(401,"You can update only your account"));
     }
@@ -23,6 +22,7 @@ exports.updateGuestUser = async (req,res,next)=>{
             req.params.id,
             {
                 $set:{
+                    userId:req.body.userId,
                     userName:req.body.userName,
                     email:req.body.email,
                     password:req.body.password,
@@ -31,9 +31,16 @@ exports.updateGuestUser = async (req,res,next)=>{
             },
             {new:true}
         );
+        if (!updatedGuestUser) {
+            return next(errorHandler(404, "User not found"));
+        }
         const {password,...rest} = updatedGuestUser._doc;
         res.status(200).json(rest);
     } catch (error) {
         next(error);
     }
+}
+
+exports.deleteGuestUser = async (req,res,next)=>{
+    if()
 }

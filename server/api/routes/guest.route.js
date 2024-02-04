@@ -8,11 +8,20 @@ router.get("/", test);
 router.post("/update/:id", verifyToken, updateGuestUser);
 
 const test1 = (req, res) => {
-    const text = req.user;
-    res.json({
-        text:text
-    });
+    const user = req.user;
+    if (user.id === req.params.id) {
+        res.json({
+            user
+        });
+    } else {
+        res.json({
+            message: "You are not authorized"
+        });
+    }
 };
-router.get("/update/:id", test1);
+
+router.get("/update/:id", verifyToken, test1);
+
+
 
 module.exports = router;

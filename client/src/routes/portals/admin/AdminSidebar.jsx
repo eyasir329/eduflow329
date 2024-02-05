@@ -17,7 +17,7 @@ export default function AdminSidebar() {
                                 <a href="#parent-info"><li>Parent</li></a>
                                 <a href="#address-info"><li>Address</li></a>
                                 <a href="#academic-info"><li>Academic</li></a>                                    <a href="#subject-info"><li>Subject</li></a>
-                                <a href="#result-info"><li>Result</li></a>                                   <a href="#notice-board"><li>Notice Board</li></a>
+                                <a href="#result-info"><li>Result</li></a>                                  
                             </ul>
                         </div>
 

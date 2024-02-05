@@ -1,6 +1,8 @@
 import React from "react";
 import AdminSchoolInfo from "./AdminSchoolInfo";
 import Profile from "../../../components/Profile";
+import TeacherInfo from "./TeacherInfo";
+import StaffInfo from "./StaffInfo";
 
 export default function AdminContent() {
     return (
@@ -18,14 +20,24 @@ export default function AdminContent() {
                     </div>
                 </div>
             </div>
-            <div id="principal-info" className="admin-details">
+            {/* <div id="principal-info" className="admin-details">
                 <h1>Principal Information</h1>
-            </div>
+            </div> */}
             <div id="teacher-info" className="admin-details">
                 <h1>Teacher Information</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <TeacherInfo />
+                    </div>
+                </div>
             </div>
             <div id="staff-info" className="admin-details">
                 <h1>Staff Information</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <StaffInfo />
+                    </div>
+                </div>
             </div>
             <div id="student-info" className="admin-details">
                 <h1>student Information</h1>

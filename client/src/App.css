@@ -1913,3 +1913,62 @@ form .form-align {
 
 
 /* user profile end */
+
+
+/* admin start */
+
+/* teacherinfo */
+.teacher-info{
+    margin-top: 20px;
+}
+
+.teacher-info h1{
+    margin: 20px 0px;
+}
+
+.teacher-info form{
+    margin: 50px;
+    font-size: 24px;
+    background-color: #ffffff66;
+    padding: 30px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.create-teacher-id button{
+    background-color: #ffffff66;
+    padding: 10px 15px;
+    font-size: 22px;
+    border-radius: 10px;
+}
+.teacher-id{
+    margin-left: 10px;
+    display: inline;
+    font-size: 22px;
+    color: #fff;
+    padding: 10px 15px;
+}
+.create-teacher .form-label{
+    font-size: 18px;
+    text-align: left;
+}
+
+.create-teacher .form-row{
+    margin-bottom: 20px;
+}
+
+.teacher-view-ex{
+    background-color: #ffffff66;
+    padding: 20px;
+}
+
+.teacher-view{
+    margin: 50px;
+}
+
+.view-teacher-info{
+    margin-bottom: 50px;
+}
+
+
+/* admin end */

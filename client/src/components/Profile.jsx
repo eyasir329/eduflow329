@@ -15,7 +15,6 @@ export default function Profile(props) {
     const [updateSuccess, setUpdateSuccess] = useState(false);
 
     const { currentUser, loading, error: errorMessage } = useSelector((state) => state.user);
-    console.log(errorMessage);
 
     useEffect(() => {
         if (image) {

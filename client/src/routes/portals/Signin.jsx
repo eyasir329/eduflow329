@@ -7,7 +7,7 @@ import {
   signInFailure,
 } from "../../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import OAuth from "../../components/OAuth";
+import OAuth from "../../components/functionality/OAuth";
 
 
 export default function Login() {
@@ -90,7 +90,7 @@ export default function Login() {
               <div className="card-body p-5 text-center">
                 <div className="mb-md-5 mt-md-4 pb-5">
                   <div className="login-img gradient-box">
-                    <img src="../../images/logo.png" alt="logo" />
+                    <Link to={"/"} ><img src="../../images/logo.png" alt="logo" className='login-img-im'/></Link>
                   </div>
 
                   <h2 className="fw-bold mb-2 text-uppercase">Login</h2>

@@ -2,11 +2,6 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faLocationDot, faSquarePhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { Link } from "react-router-dom";
-
-
-
-const getCurrentYear = new Date().getFullYear();
 
 function Footer() {
     return (
@@ -143,15 +138,6 @@ function Footer() {
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="row footer-main">
-                                    
-                                        <div className="col-lg-12">
-                                            <span className="copyright">ⓒ </span>Copyright 2023-{getCurrentYear}<Link to="eyasir329.com" target="_blank"> eyasir329</Link>
-                                        </div>
-                                   
-                                </div>
-
                             </div>
                         </div>
                     </div>

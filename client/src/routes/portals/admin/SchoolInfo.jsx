@@ -30,17 +30,14 @@ import {
   TextField,
   Button,
   Stack,
-  FormLabel,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Typography,
   Paper,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
@@ -55,15 +52,12 @@ import {
   updateUserFailure,
 } from "../../../redux/user/userSlice";
 import TeacherTable from "./TeacherTable";
+import Image from "../../../components/functionality/Image";
 
-function createTeacherId() {
-  const teacherId = Math.floor(Math.random() * 900000000) + 100000000;
-  return teacherId.toString();
-}
 
 const theme = createTheme();
 
-export default function AdminSchoolInfo() {
+export default function SchoolInfo() {
   const { currentUser } = useSelector((state) => state.user);
   const [teacherId, setTeacherId] = useState(null);
   const [firstName, setFirstName] = useState("");
@@ -82,49 +76,11 @@ export default function AdminSchoolInfo() {
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
 
-  const [image, setImage] = useState(undefined);
+  const [school_logo, setSchoolLogo] = useState(undefined);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [imagePercent, setImagePercent] = useState(0);
-  const [imageError, setImageError] = useState(false);
 
   const dispatch = useDispatch();
-  const fileRef = useRef(null);
-
-  useEffect(() => {
-    if (image) {
-      handleFileUpload(image);
-    }
-  }, [image]);
-
-  const handleFileUpload = async (image) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getDate() + image.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setImagePercent(Math.round(progress));
-      },
-      (error) => {
-        console.error("Error during image upload:", error);
-        setImageError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({ ...formData, profilePicture: downloadURL });
-        });
-      }
-    );
-  };
-
-  const handleGenerateTeacherId = () => {
-    const newTeacherId = createTeacherId();
-    setTeacherId(newTeacherId);
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -175,6 +131,14 @@ export default function AdminSchoolInfo() {
       dispatch(updateUserFailure("An unexpected error occurred"));
     }
   };
+  const handleUploadSuccess = (downloadURL) => {
+    setFormData({ ...formData, setSchoolLogo: downloadURL });
+  };
+
+  const handleUploadError = (error) => {
+    // Handle error, e.g., display an error message
+    console.error('Image upload error:', error);
+  };
 
   return (
     <div className="teacher-info">
@@ -188,43 +152,19 @@ export default function AdminSchoolInfo() {
             mb: 4,
           }}
         >
-          <div className="create-teacher-id">
-            <button onClick={handleGenerateTeacherId}>
-              Create a Unique Teacher ID
-            </button>
-            <p className="teacher-id">{teacherId}</p>
-          </div>
-          <form onSubmit={handleSubmit} action={<Link to="/login" />}>
-            <input
-              type='file'
-              ref={fileRef}
-              hidden
-              accept='image/*'
-              onChange={(e) => setImage(e.target.files[0])}
+          <form onSubmit={handleSubmit}>
+
+            <Image
+              onUploadSuccess={handleUploadSuccess}
+              onUploadError={handleUploadError}
+              defaultValue={school_logo||"https://img.freepik.com/premium-vector/education-school-logo-design_586739-1335.jpg"}
+              className="imageSchool"
             />
-            <img
-              src={formData.profilePicture || currentUser.profilePicture}
-              alt='profile'
-              className='circle-img'
-              onClick={() => fileRef.current.click()}
-            />
-            <p className='image-below'>
-              {imageError ? (
-                <span>Error uploading image (filesize must be less than 2 MB)</span>
-              ) : (
-                imagePercent > 0 && imagePercent < 100 ? (
-                  <span>{`Uploading: ${imagePercent} %`}</span>
-                ) : imagePercent === 100 ? (
-                  <span>Image uploaded successfully</span>
-                ) : (
-                  ''
-                )
-              )}
-            </p>
+
             <TextField
               type="text"
               variant="outlined"
-              label="Unique User ID"
+              label="EIIN Number"
               InputLabelProps={{ shrink: true }}
               color="secondary"
               value={teacherId}
@@ -395,13 +335,13 @@ export default function AdminSchoolInfo() {
 
       <div className="teacher-view-ex">
         <div className="teacher-view">
-        <div className="create-teacher-id view-teacher-info">
+          <div className="create-teacher-id view-teacher-info">
             <button >
               Update Teacher Information
             </button>
           </div>
           <ThemeProvider theme={theme}>
-          
+
             <TeacherTable />
           </ThemeProvider>
         </div>

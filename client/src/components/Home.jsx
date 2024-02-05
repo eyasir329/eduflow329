@@ -15,13 +15,10 @@ import SemesterExamInfo from "./SemesterExamInfo";
 import Portal from "./Portal";
 
 
-function App() {
+function Home() {
     return (
         <div>
            
-
-
-
             <News />
             <div className="white-section article">
                 <div className="container">
@@ -113,4 +110,4 @@ function App() {
     );
 }
 
-export default App;
+export default Home;

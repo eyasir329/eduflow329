@@ -2,9 +2,9 @@ import React from 'react'
 import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
-import app from '../firebase';
+import app from '../../firebase';
 import { useDispatch } from 'react-redux';
-import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
+import { signInFailure, signInStart, signInSuccess } from '../../redux/user/userSlice';
 
 
 export default function OAuth() {

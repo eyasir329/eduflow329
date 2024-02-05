@@ -1,6 +1,6 @@
 import React from "react";
-import AdminSchoolInfo from "./AdminSchoolInfo";
-import Profile from "../../../components/Profile";
+import SchoolInfo from "./SchoolInfo";
+import Profile from "../../../components/functionality/Profile";
 import TeacherInfo from "./TeacherInfo";
 import StaffInfo from "./StaffInfo";
 import StudentInfo from "./StudentInfo";
@@ -21,7 +21,7 @@ export default function AdminContent() {
                 <h1>School Information</h1>
                 <div className="row">
                     <div className="col-lg-12">
-                        <AdminSchoolInfo />
+                        <SchoolInfo />
                     </div>
                 </div>
             </div>

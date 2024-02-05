@@ -1,48 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
-import app from "../firebase"
-import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOut } from "../redux/user/userSlice"
+
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOut } from "../../redux/user/userSlice"
+import Image from './Image';
 
 
 export default function Profile(props) {
     const dispatch = useDispatch();
-    const fileRef = useRef(null);
-    const [image, setImage] = useState(undefined);
-    const [imagePercent, setImagePersent] = useState(0);
-    const [imageError, setImageError] = useState(false);
     const [formData, setFormData] = useState({});
     const [updateSuccess, setUpdateSuccess] = useState(false);
-
     const { currentUser, loading, error: errorMessage } = useSelector((state) => state.user);
 
-    useEffect(() => {
-        if (image) {
-            handleFileUpload(image);
-        }
-    }, [image]);
-
-    const handleFileUpload = async (image) => {
-        const storage = getStorage(app);
-        const fileName = new Date().getDate() + image.name;
-        const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, image);
-        uploadTask.on(
-            'state_changed',
-            (snashot) => {
-                const progress = (snashot.bytesTransferred / snashot.totalBytes) * 100;
-                setImagePersent(Math.round(progress));
-            },
-            (error) => {
-                setImageError(true);
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setFormData({ ...formData, profilePicture: downloadURL })
-                });
-            }
-        );
-    };
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
         console.log(formData);
@@ -138,7 +106,7 @@ export default function Profile(props) {
     }
 
     const handleSignOut = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         try {
             const res = await fetch('http://localhost:5000/api/auth/signout');
             if (res.ok) {
@@ -152,6 +120,15 @@ export default function Profile(props) {
         }
     }
 
+    const handleUploadSuccess = (downloadURL) => {
+        setFormData({ ...formData, profilePicture: downloadURL });
+    };
+
+    const handleUploadError = (error) => {
+        // Handle error, e.g., display an error message
+        console.error('Image upload error:', error);
+    };
+
     return (
         <>
             <div className='user-heading'>{props.title}</div>
@@ -159,35 +136,24 @@ export default function Profile(props) {
                 <div className='row'>
                     <div className='col-lg-12'>
                         <form>
-                            <input
-                                type='file'
-                                ref={fileRef}
-                                hidden
-                                accept='image/*'
-                                onChange={(e) => setImage(e.target.files[0])}
+                            <Image
+                                onUploadSuccess={handleUploadSuccess}
+                                onUploadError={handleUploadError}
+                                defaultValue={currentUser.profilePicture}
                             />
-                            <img
-                                src={formData.profilePicture || currentUser.profilePicture}
-                                alt='profile'
-                                className='circle-img'
-                                onClick={() => fileRef.current.click()}
-                            />
-                            <p className='image-below'>
-                                {imageError ? (<span>Error uploading image (filesize must be less than 2 MB)</span>) :
-                                    (imagePercent > 0 && imagePercent < 100 ? (<span>{`Uploading: ${imagePercent} %`}</span>) : imagePercent === 100 ? (<span>Image uploaded successfully</span>) : (''))
-                                }
-                            </p>
-                            <div className='guest-extra'>
-                                <p>Contact Admin To Access Your Account or <br />  Enter Id and update your account</p>
-                            </div>
+                            {props.title === "Guest User" && <div className='guest-extra'>
+                                <p>Enter your valid ID and update your account<br /> Then you automaticaly Access our portal</p>
+                            </div>}
+
                             <div className='guest-extra top'>
                                 <input
                                     type='text'
-                                    defaultValue={currentUser.userId || ""}
+                                    defaultValue={currentUser.userId || ''}
                                     id='userId'
-                                    placeholder=' Enter Your Unique ID'
-                                    className='name'
-                                    onChange={handleChange}
+                                    placeholder='Enter Your Unique ID'
+                                    className={`name${props.title === "Admin" || props.title === "Guest User" ? ' readOnly' : ''}`}
+
+                                    {...(props.title === "Admin" || props.title === "Guest User" ? { onChange: handleChange } : { readOnly: true })}
                                 />
                             </div>
                             <div className='card'>
@@ -244,8 +210,6 @@ export default function Profile(props) {
                         </p>
                     </div>
                 </div>
-
-
             </div>
         </>
     )

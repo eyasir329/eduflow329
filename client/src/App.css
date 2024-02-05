@@ -894,6 +894,16 @@ footer {
     text-decoration: none;
 }
 
+.footer-main{
+    background-color: #9DBC98;
+    padding: 5px;
+}
+
+.eyasir329{
+    color: #000;
+    text-decoration: none;
+}
+
 /* footer end */
 
 
@@ -1335,15 +1345,18 @@ p {
 .passwordShow .bi {
     font-size: 18px;
 }
+
 .login-img{
     margin-top: -150px;
 }
 .login-img img {
+    color: #ffffff00;
     width: 130px;
     border-width: 5px;
     border-style: solid;
     border-radius: 50%;
 }
+
 
 .gradient-custom {
     color: #000;
@@ -1799,6 +1812,10 @@ form .form-align {
     text-align: center;
 }
 
+.readOnly{
+    border: none;
+}
+
 .guest-extra {
     border-radius: 5px;
     width: 600px;
@@ -1917,6 +1934,11 @@ form .form-align {
 
 /* admin start */
 
+/* school info */
+.imageSchool{
+    
+}
+
 /* teacherinfo */
 .teacher-info{
     margin-top: 20px;
@@ -1969,6 +1991,8 @@ form .form-align {
 .view-teacher-info{
     margin-bottom: 50px;
 }
+
+
 
 
 /* admin end */

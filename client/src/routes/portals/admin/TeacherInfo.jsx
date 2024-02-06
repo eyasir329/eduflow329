@@ -27,14 +27,18 @@ import {
   updateUserSuccess,
   updateUserFailure,
 } from "../../../redux/user/userSlice";
-import TeacherTable from "./TeacherTable";
-
-function createTeacherId() {
-  const teacherId = Math.floor(Math.random() * 900000000) + 100000000;
-  return teacherId.toString();
-}
+import TeacherTableView from "./TeacherTableView";
 
 const theme = createTheme();
+
+
+function createTeacherId(department, lastId) {
+  const currentYear = new Date().getFullYear().toString();
+  const idPrefix = `${currentYear}${department}`;
+  const previousId = parseInt(lastId, 10) + 1;
+  return idPrefix + previousId.toString().padStart(3, '0');
+}
+
 
 export default function TeacherInfo() {
   const { currentUser } = useSelector((state) => state.user);
@@ -43,7 +47,6 @@ export default function TeacherInfo() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [joiningDate, setJoiningDate] = useState("");
   const [position, setPosition] = useState("");
@@ -95,7 +98,7 @@ export default function TeacherInfo() {
   };
 
   const handleGenerateTeacherId = () => {
-    const newTeacherId = createTeacherId();
+    const newTeacherId = createTeacherId('04', '100');
     setTeacherId(newTeacherId);
   };
 
@@ -161,12 +164,7 @@ export default function TeacherInfo() {
             mb: 4,
           }}
         >
-          <div className="create-teacher-id">
-            <button onClick={handleGenerateTeacherId}>
-              Create a Unique Teacher ID
-            </button>
-            <p className="teacher-id">{teacherId}</p>
-          </div>
+
           <form onSubmit={handleSubmit} action={<Link to="/login" />}>
             <input
               type='file'
@@ -194,10 +192,17 @@ export default function TeacherInfo() {
                 )
               )}
             </p>
+
+            <div className="create-teacher-id">
+              <button onClick={handleGenerateTeacherId}>
+                Create a Unique Teacher ID
+              </button>
+            </div>
+
             <TextField
               type="text"
               variant="outlined"
-              label="Unique User ID"
+              label="Unique Teacher ID"
               InputLabelProps={{ shrink: true }}
               color="secondary"
               value={teacherId}
@@ -205,6 +210,8 @@ export default function TeacherInfo() {
               required
               sx={{ mb: 4 }}
             />
+
+
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 type="text"
@@ -312,16 +319,7 @@ export default function TeacherInfo() {
               sx={{ mb: 4 }}
             />
 
-            <TextField
-              label="Street Address"
-              type="text"
-              variant="outlined"
-              color="secondary"
-              onChange={(e) => setStreetAddress(e.target.value)}
-              value={streetAddress}
-              fullWidth
-              sx={{ mb: 4 }}
-            />
+            
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 label="City"
@@ -359,6 +357,18 @@ export default function TeacherInfo() {
                 margin="normal"
               />
             </Stack>
+
+            <TextField
+              label="Street Address"
+              type="text"
+              variant="outlined"
+              color="secondary"
+              onChange={(e) => setStreetAddress(e.target.value)}
+              value={streetAddress}
+              fullWidth
+              sx={{ mb: 4 }}
+            />
+
             <Button variant="outlined" color="secondary" type="submit">
               Register
             </Button>
@@ -368,14 +378,15 @@ export default function TeacherInfo() {
 
       <div className="teacher-view-ex">
         <div className="teacher-view">
-        <div className="create-teacher-id view-teacher-info">
+          <div className="create-teacher-id view-teacher-info">
             <button >
               Update Teacher Information
             </button>
           </div>
           <ThemeProvider theme={theme}>
-          
-            <TeacherTable />
+
+            <TeacherTableView />
+
           </ThemeProvider>
         </div>
       </div>

@@ -3,12 +3,10 @@ import {
   TextField,
   Button,
   Stack,
-  FormLabel,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Typography,
   Paper,
   createTheme,
   ThemeProvider,
@@ -27,23 +25,24 @@ import {
   updateUserSuccess,
   updateUserFailure,
 } from "../../../redux/user/userSlice";
-import TeacherTable from "./TeacherTable";
-
-function createTeacherId() {
-  const teacherId = Math.floor(Math.random() * 900000000) + 100000000;
-  return teacherId.toString();
-}
+import StaffTable from "./StaffTable";
 
 const theme = createTheme();
 
+function createStaffId(department, lastId) {
+  const currentYear = new Date().getFullYear().toString();
+  const idPrefix = `${currentYear}${department}`;
+  const previousId = parseInt(lastId, 10) + 1;
+  return idPrefix + previousId.toString().padStart(3, '0');
+}
+
 export default function StaffInfo() {
   const { currentUser } = useSelector((state) => state.user);
-  const [teacherId, setTeacherId] = useState(null);
+  const [staffId, setStaffId] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [joiningDate, setJoiningDate] = useState("");
   const [position, setPosition] = useState("");
@@ -94,9 +93,9 @@ export default function StaffInfo() {
     );
   };
 
-  const handleGenerateTeacherId = () => {
-    const newTeacherId = createTeacherId();
-    setTeacherId(newTeacherId);
+  const handleGenerateStaffId = () => {
+    const newStaffId = createStaffId('00', '00');
+    setStaffId(newStaffId);
   };
 
   const handleSubmit = async (event) => {
@@ -161,12 +160,6 @@ export default function StaffInfo() {
             mb: 4,
           }}
         >
-          <div className="create-teacher-id">
-            <button onClick={handleGenerateTeacherId}>
-              Create a Unique Teacher ID
-            </button>
-            <p className="teacher-id">{teacherId}</p>
-          </div>
           <form onSubmit={handleSubmit} action={<Link to="/login" />}>
             <input
               type='file'
@@ -194,17 +187,25 @@ export default function StaffInfo() {
                 )
               )}
             </p>
+
+            <div className="create-teacher-id">
+              <button onClick={handleGenerateStaffId}>
+                Create a Unique Staff ID
+              </button>
+            </div>
+
             <TextField
               type="text"
               variant="outlined"
-              label="Unique User ID"
+              label="Unique Staff ID"
               InputLabelProps={{ shrink: true }}
               color="secondary"
-              value={teacherId}
+              value={staffId}
               fullWidth
               required
               sx={{ mb: 4 }}
             />
+
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 type="text"
@@ -312,16 +313,6 @@ export default function StaffInfo() {
               sx={{ mb: 4 }}
             />
 
-            <TextField
-              label="Street Address"
-              type="text"
-              variant="outlined"
-              color="secondary"
-              onChange={(e) => setStreetAddress(e.target.value)}
-              value={streetAddress}
-              fullWidth
-              sx={{ mb: 4 }}
-            />
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 label="City"
@@ -359,6 +350,18 @@ export default function StaffInfo() {
                 margin="normal"
               />
             </Stack>
+
+            <TextField
+              label="Street Address"
+              type="text"
+              variant="outlined"
+              color="secondary"
+              onChange={(e) => setStreetAddress(e.target.value)}
+              value={streetAddress}
+              fullWidth
+              sx={{ mb: 4 }}
+            />
+
             <Button variant="outlined" color="secondary" type="submit">
               Register
             </Button>
@@ -368,20 +371,18 @@ export default function StaffInfo() {
 
       <div className="teacher-view-ex">
         <div className="teacher-view">
-        <div className="create-teacher-id view-teacher-info">
+          <div className="create-teacher-id view-teacher-info">
             <button >
-              Update Teacher Information
+              Update Staff Information
             </button>
           </div>
           <ThemeProvider theme={theme}>
-          
-            <TeacherTable />
+
+            <StaffTable />
+
           </ThemeProvider>
         </div>
       </div>
     </div>
   );
 }
-
-
-

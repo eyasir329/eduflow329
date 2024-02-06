@@ -1,31 +1,4 @@
-// import axios from "axios";
-// import React, { useState, useEffect } from "react";
-
-// export default function AdminSchoolInfo() {
-//     const [data, setData] = useState("");
-
-//     useEffect(() => {
-//         const apiUrl = "http://localhost:5000/api/schoolInfo";
-
-//         axios.get(apiUrl)
-//             .then(response => {
-//                 setData(response.data);
-//                 console.log('Response:', response.data);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-//     }, []);
-// console.log(data);
-//     return (
-//         <>
-//             <p>Hello World</p>
-//         </>
-//     );
-// }
-
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   TextField,
   Button,
@@ -34,52 +7,34 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Paper,
-  createTheme,
-  ThemeProvider,
+  Paper
 } from "@mui/material";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import app from "../../../firebase";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useDispatch } from "react-redux";
 import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
 } from "../../../redux/user/userSlice";
-import TeacherTable from "./TeacherTable";
 import Image from "../../../components/functionality/Image";
 
-
-const theme = createTheme();
-
 export default function SchoolInfo() {
-  const { currentUser } = useSelector((state) => state.user);
-  const [teacherId, setTeacherId] = useState(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [joiningDate, setJoiningDate] = useState("");
-  const [position, setPosition] = useState("");
-  const [salary, setSalary] = useState("");
-  const [facebook, setFacebook] = useState("");
-  const [linkedin, setLinkedin] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const [formData, setFormData] = useState({
+    school_logo: "https://img.freepik.com/premium-vector/education-school-logo-design_586739-1335.jpg",
+    school_name: "Jamalpur Zilla School",
+    eiin_number: "109873",
+    established_at: "1881",
+    email: "jamzilsch@yahoo.com",
+    phone_number: "02997772112",
+    facebook: "https://www.facebook.com/jzsonline",
+    linkedin: "https://bd.linkedin.com/",
+    street_address: "Water Tank, Water Tank Rd, Jamalpur",
+    city: "Jamalpur",
+    division: "Mymensingh",
+    zip: "2000"
+  });
 
-  const [school_logo, setSchoolLogo] = useState(undefined);
-  const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-
+  console.log(formData)
   const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
@@ -89,7 +44,7 @@ export default function SchoolInfo() {
       dispatch(updateUserStart());
 
       // Make the API call to update the user
-      const res = await fetch(`http://localhost:5000/api/guest/update/${currentUser._id}`, {
+      const res = await fetch(`http://localhost:5000/api/admin/update/school`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,17 +81,16 @@ export default function SchoolInfo() {
       }
 
       dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure("An unexpected error occurred"));
     }
   };
+
   const handleUploadSuccess = (downloadURL) => {
-    setFormData({ ...formData, setSchoolLogo: downloadURL });
+    setFormData({ ...formData, school_logo: downloadURL });
   };
 
   const handleUploadError = (error) => {
-    // Handle error, e.g., display an error message
     console.error('Image upload error:', error);
   };
 
@@ -153,198 +107,163 @@ export default function SchoolInfo() {
           }}
         >
           <form onSubmit={handleSubmit}>
+            <label className="school-info-address">School logo</label>
+            <div className="imageSchool">
+              <Image
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+                defaultValue={formData.school_logo}
+              />
+            </div>
 
-            <Image
-              onUploadSuccess={handleUploadSuccess}
-              onUploadError={handleUploadError}
-              defaultValue={school_logo||"https://img.freepik.com/premium-vector/education-school-logo-design_586739-1335.jpg"}
-              className="imageSchool"
+            <TextField
+              type="text"
+              variant="outlined"
+              color="secondary"
+              label="School Name"
+              onChange={(e) => setFormData({ ...formData, school_name: e.target.value })}
+              value={formData.school_name || ""}
+              fullWidth
+              required
+              sx={{ mb: 4 }}
             />
 
             <TextField
               type="text"
               variant="outlined"
-              label="EIIN Number"
-              InputLabelProps={{ shrink: true }}
               color="secondary"
-              value={teacherId}
+              label="EIIN Number"
+              onChange={(e) => setFormData({ ...formData, eiin_number: e.target.value })}
+              value={formData.eiin_number || ""}
               fullWidth
               required
               sx={{ mb: 4 }}
             />
+
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
-                type="text"
+                type="number"
                 variant="outlined"
                 color="secondary"
-                label="First Name"
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
+                label="Established Year"
+                onChange={(e) => setFormData({ ...formData, established_at: e.target.value })}
+                value={formData.established_at || ""}
                 fullWidth
                 required
+                sx={{ mb: 4 }}
               />
+
               <TextField
-                type="text"
+                type="email"
                 variant="outlined"
                 color="secondary"
-                label="Last Name"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
+                label="Email"
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={formData.email || ""}
                 fullWidth
                 required
+                sx={{ mb: 4 }}
               />
             </Stack>
-            <TextField
-              type="email"
-              variant="outlined"
-              color="secondary"
-              label="Email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
-            />
+
             <TextField
               type="tel"
               variant="outlined"
               color="secondary"
               label="Phone Number"
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              value={phoneNumber}
+              onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+              value={formData.phone_number || ""}
               fullWidth
               required
               sx={{ mb: 4 }}
             />
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="date"
-                variant="outlined"
-                color="secondary"
-                label="Joining Date"
-                InputLabelProps={{ shrink: true }}
-                className="no-shrink-label"
-                onChange={(e) => setJoiningDate(e.target.value)}
-                value={joiningDate}
-                fullWidth
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="Position"
-                onChange={(e) => setPosition(e.target.value)}
-                value={position}
-                fullWidth
-              />
-              <TextField
-                type="number"
-                variant="outlined"
-                color="secondary"
-                label="Salary"
-                onChange={(e) => setSalary(e.target.value)}
-                value={salary}
-                fullWidth
-              />
-            </Stack>
+
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 type="url"
                 variant="outlined"
                 color="secondary"
                 label="Facebook"
-                onChange={(e) => setFacebook(e.target.value)}
-                value={facebook}
+                onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
+                value={formData.facebook || ""}
                 fullWidth
               />
+
               <TextField
                 type="url"
                 variant="outlined"
                 color="secondary"
                 label="Linkedin"
-                onChange={(e) => setLinkedin(e.target.value)}
-                value={linkedin}
+                onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
+                value={formData.linkedin || ""}
                 fullWidth
               />
             </Stack>
-            <TextField
-              type="date"
-              variant="outlined"
-              color="secondary"
-              label="Date Of Birth"
-              InputLabelProps={{ shrink: true }}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              value={dateOfBirth}
-              fullWidth
-              sx={{ mb: 4 }}
-            />
 
-            <TextField
-              label="Street Address"
-              type="text"
-              variant="outlined"
-              color="secondary"
-              onChange={(e) => setStreetAddress(e.target.value)}
-              value={streetAddress}
-              fullWidth
-              sx={{ mb: 4 }}
-            />
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 label="City"
                 type="text"
                 variant="outlined"
                 color="secondary"
-                onChange={(e) => setCity(e.target.value)}
-                value={city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                value={formData.city || ""}
                 fullWidth
                 margin="normal"
               />
+
               <FormControl fullWidth margin="normal">
-                <InputLabel id="inputStateLabel">State</InputLabel>
+                <InputLabel
+                  id="inputDivisionLabel"
+                  sx={{ marginTop: '-10px' }}
+                >
+                  Division
+                </InputLabel>
                 <Select
-                  labelId="inputStateLabel"
-                  id="inputState"
+                  labelId="inputDivisionLabel"
+                  id="inputDivision"
                   variant="outlined"
                   color="secondary"
-                  onChange={(e) => setState(e.target.value)}
-                  value={state}
+                  onChange={(e) => setFormData({ ...formData, division: e.target.value })}
+                  value={formData.division || "Mymensingh"}
                 >
                   <MenuItem value="" disabled>Select...</MenuItem>
-                  <MenuItem value="option1">Option 1</MenuItem>
-                  <MenuItem value="option2">Option 2</MenuItem>
+                  <MenuItem value="Mymensingh">Mymensingh</MenuItem>
+                  <MenuItem value="Option2">Option 2</MenuItem>
                 </Select>
               </FormControl>
+
+
               <TextField
                 label="Zip"
                 type="text"
                 variant="outlined"
                 color="secondary"
-                onChange={(e) => setZip(e.target.value)}
-                value={zip}
+                onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                value={formData.zip || ""}
                 fullWidth
                 margin="normal"
               />
             </Stack>
+
+            <TextField
+              label="Street Address"
+              type="text"
+              variant="outlined"
+              color="secondary"
+              onChange={(e) => setFormData({ ...formData, street_address: e.target.value })}
+              value={formData.street_address || ""}
+              fullWidth
+              sx={{ mb: 4 }}
+            />
+
             <Button variant="outlined" color="secondary" type="submit">
-              Register
+              Update
             </Button>
           </form>
         </Paper>
-      </div>
 
-      <div className="teacher-view-ex">
-        <div className="teacher-view">
-          <div className="create-teacher-id view-teacher-info">
-            <button >
-              Update Teacher Information
-            </button>
-          </div>
-          <ThemeProvider theme={theme}>
-
-            <TeacherTable />
-          </ThemeProvider>
-        </div>
+        <h1>Principal Information</h1>
       </div>
     </div>
   );

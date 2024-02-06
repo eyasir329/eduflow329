@@ -1936,7 +1936,18 @@ form .form-align {
 
 /* school info */
 .imageSchool{
-    
+    margin-bottom: 30px;
+}
+.imageSchool .guest-content{
+    padding: 0px;
+    background-color: #D4E7C5;
+}
+.imageSchool .guest-content form{
+    background-color: #D4E7C5;
+}
+.school-info-address{
+    font-size: 14px;
+    text-align: left;
 }
 
 /* teacherinfo */

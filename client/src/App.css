@@ -1949,6 +1949,11 @@ form .form-align {
     font-size: 14px;
     text-align: left;
 }
+.notice-table{
+    margin: 10px 50px;
+    background-color: #ffdd9555;
+    border-radius: 10px;
+}
 
 /* teacherinfo */
 .teacher-info{

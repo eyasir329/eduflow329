@@ -17,6 +17,8 @@ import {
   updateUserFailure,
 } from "../../../redux/user/userSlice";
 import Image from "../../../components/functionality/Image";
+import PrincipalInfo from "./PrincipalInfo";
+import NoticeBoard from "./NoticeBoard";
 
 export default function SchoolInfo() {
   const [formData, setFormData] = useState({
@@ -31,7 +33,8 @@ export default function SchoolInfo() {
     street_address: "Water Tank, Water Tank Rd, Jamalpur",
     city: "Jamalpur",
     division: "Mymensingh",
-    zip: "2000"
+    zip: "2000",
+    history: "Jamalpur Zilla School has a rich history..."
   });
 
   console.log(formData)
@@ -107,7 +110,6 @@ export default function SchoolInfo() {
           }}
         >
           <form onSubmit={handleSubmit}>
-            <label className="school-info-address">School logo</label>
             <div className="imageSchool">
               <Image
                 onUploadSuccess={handleUploadSuccess}
@@ -257,6 +259,20 @@ export default function SchoolInfo() {
               sx={{ mb: 4 }}
             />
 
+            <TextField
+              multiline
+              rows={10}
+              variant="outlined"
+              color="secondary"
+              label="History"
+              placeholder="History"
+              onChange={(e) => setFormData({ ...formData, history: e.target.value })}
+              value={formData.history}
+              fullWidth
+              required
+              sx={{ mb: 4 }}
+            />
+
             <Button variant="outlined" color="secondary" type="submit">
               Update
             </Button>
@@ -264,6 +280,10 @@ export default function SchoolInfo() {
         </Paper>
 
         <h1>Principal Information</h1>
+        <PrincipalInfo />
+
+        <h1>Notice Board</h1>
+        <NoticeBoard />
       </div>
     </div>
   );

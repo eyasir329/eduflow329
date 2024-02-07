@@ -42,11 +42,9 @@ export default function StudentInfo() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [joiningDate, setJoiningDate] = useState("");
-  const [batch, setBatch] = useState("");
-  const [department, setDepartment] = useState("");
   const [image, setImage] = useState(undefined);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -94,7 +92,7 @@ export default function StudentInfo() {
   };
 
   const handleGenerateStudentId = () => {
-    const newStudentId = createStudentId(batch, '00');
+    const newStudentId = createStudentId('00', '00');
     setStudentId(newStudentId);
   };
 
@@ -181,7 +179,6 @@ export default function StudentInfo() {
               <button onClick={handleGenerateStudentId}>
                 Create a Unique Student ID
               </button>
-              <p className="teacher-id">{studentId}</p>
             </div>
 
             <TextField
@@ -294,42 +291,27 @@ export default function StudentInfo() {
                 type="date"
                 variant="outlined"
                 color="secondary"
+                label="Date Of Birth"
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                value={dateOfBirth}
+                fullWidth
+                sx={{ mb: 4 }}
+              />
+
+              <TextField
+                type="date"
+                variant="outlined"
+                color="secondary"
                 label="Joining Date"
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setJoiningDate(e.target.value)}
                 value={joiningDate}
                 fullWidth
               />
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="Batch"
-                onChange={(e) => setBatch(e.target.value)}
-                value={batch}
-                fullWidth
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="Department"
-                onChange={(e) => setDepartment(e.target.value)}
-                value={department}
-                fullWidth
-              />
+
             </Stack>
-            <TextField
-              type="date"
-              variant="outlined"
-              color="secondary"
-              label="Date Of Birth"
-              InputLabelProps={{ shrink: true }}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              value={dateOfBirth}
-              fullWidth
-              sx={{ mb: 4 }}
-            />
+
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField

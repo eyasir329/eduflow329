@@ -10,91 +10,80 @@ import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
 const columns = [
-  { id: 'studentId', label: 'Student ID', minWidth: 200 },
+  { id: 'teacherId', label: 'Teacher ID', minWidth: 200 },
   { id: 'firstName', label: 'First Name', minWidth: 200 },
   { id: 'lastName', label: 'Last Name', minWidth: 200 },
   { id: 'email', label: 'Email', minWidth: 270 },
   { id: 'dateOfBirth', label: 'Date of Birth', minWidth: 250 },
   { id: 'phoneNumber', label: 'Phone Number', minWidth: 220 },
   { id: 'joiningDate', label: 'Joining Date', minWidth: 220 },
-  { id: 'batch', label: 'Batch', minWidth: 120 },
   { id: 'department', label: 'Department', minWidth: 200 },
   { id: 'gender', label: 'Gender', minWidth: 100 },
-  { id: 'fatherName', label: "Father's Name", minWidth: 200 },
-  { id: 'motherName', label: "Mother's Name", minWidth: 200 },
-  { id: 'guardianName', label: "Guardian's Name", minWidth: 200 },
   { id: 'streetAddress', label: 'Street Address', minWidth: 200 },
   { id: 'city', label: 'City', minWidth: 100 },
   { id: 'state', label: 'State', minWidth: 100 },
   { id: 'zip', label: 'Zip', minWidth: 100 },
-  { id: 'enroll', label: 'Enroll', minWidth: 100 }, // Add "Enroll" field
+  { id: 'enroll', label: 'Enroll Class', minWidth: 200 },
 ];
 
+// Function to create teacher data
 function createData(
-  studentId,
+  teacherId,
   firstName,
   lastName,
   email,
   dateOfBirth,
   phoneNumber,
   joiningDate,
-  batch,
   department,
   gender,
-  fatherName,
-  motherName,
-  guardianName,
   streetAddress,
   city,
   state,
-  zip,
-  enroll // Include "Enroll" field in the parameters
+  zip
 ) {
   return {
-    studentId,
+    teacherId,
     firstName,
     lastName,
     email,
     dateOfBirth,
     phoneNumber,
     joiningDate,
-    batch,
     department,
     gender,
-    fatherName,
-    motherName,
-    guardianName,
     streetAddress,
     city,
     state,
     zip,
-    enroll // Include "Enroll" field in the object
   };
 }
 
-// Adjust student data to include "enroll" field
-const studentData = [
+// Sample teacher data
+const teacherData = [
   createData(
-    // Existing student data...
-    'S001',
+    // Existing teacher data...
+    'T001',
     'John',
     'Doe',
     'john.doe@example.com',
     // Other fields...
     'Male', // Example "gender" field
     // Other fields...
-    'Yes' // Example "enroll" field
+    '123 Street, ABC City', // Example "streetAddress" field
+    // Other fields...
+    'XYZ' // Example "city" field
   ),
-  // Add more student data as needed
+  // Add more teacher data as needed
 ];
 
-const StudentTable = () => {
+const TeacherTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [editableData, setEditableData] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [searchId, setSearchId] = useState('');
-  const [filteredData, setFilteredData] = useState(studentData);
+  const [filteredData, setFilteredData] = useState(teacherData);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -124,13 +113,13 @@ const StudentTable = () => {
 
   const handleDelete = (row) => {
     // Add logic to delete the row
-    console.log(`Delete student with ID: ${row.studentId}`);
+    console.log(`Delete teacher with ID: ${row.teacherId}`);
   };
 
   const handleSearch = () => {
     const searchTerm = searchId.toLowerCase().trim();
-    const searchResult = studentData.filter((row) =>
-      row.studentId.toLowerCase().includes(searchTerm) ||
+    const searchResult = teacherData.filter((row) =>
+      row.teacherId.toLowerCase().includes(searchTerm) ||
       row.firstName.toLowerCase().includes(searchTerm) ||
       row.lastName.toLowerCase().includes(searchTerm)
     );
@@ -140,23 +129,22 @@ const StudentTable = () => {
 
   const handleRefresh = () => {
     setSearchId('');
-    setFilteredData(studentData);
+    setFilteredData(teacherData);
   };
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66' }}>
-
       <TextField
-        label="Search by Student ID, First Name, or Last Name"
+        label="Search by Teacher ID, First Name, or Last Name"
         value={searchId}
         onChange={(e) => setSearchId(e.target.value)}
         fullWidth
         margin="normal"
       />
-      <Button onClick={handleSearch} variant="contained" color="primary" sx={{ m:5}}>
+      <Button onClick={handleSearch} variant="contained" color="primary" sx={{ m: 5 }}>
         Search
       </Button>
-      <Button onClick={handleRefresh} variant="contained" color="secondary" sx={{ m:5 }}>
+      <Button onClick={handleRefresh} variant="contained" color="secondary" sx={{ m: 5 }}>
         Refresh
       </Button>
 
@@ -183,7 +171,7 @@ const StudentTable = () => {
             {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.studentId}>
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.teacherId}>
                   {columns.map((column) => (
                     <TableCell key={column.id} align="left" sx={{ fontSize: '16px' }}>
                       {editableData === row ? (
@@ -215,7 +203,7 @@ const StudentTable = () => {
 
       {/* Update Dialog */}
       <Dialog open={openDialog} onClose={handleCancel}>
-        <DialogTitle>Edit Student</DialogTitle>
+        <DialogTitle>Edit Teacher</DialogTitle>
         <DialogContent>
           {editableData && columns.map((column) => (
             <TextField
@@ -251,4 +239,4 @@ const StudentTable = () => {
   );
 };
 
-export default StudentTable;
+export default TeacherTable;

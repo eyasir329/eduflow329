@@ -16,8 +16,8 @@ import {
 export default function PrincipalInfo() {
   const [formData, setFormData] = useState({
     teacherid: "2020050100",
-    joiningDate: "2020-12-10", // Default Joining Date
-    endingDate: "2024-12-10",   // Default Ending Date
+    joiningDate: "2020-12-10",
+    endingDate: "2024-12-10", 
     speech: "lorem200word"
   });
 
@@ -105,7 +105,7 @@ export default function PrincipalInfo() {
               rows={10}
               variant="outlined"
               color="secondary"
-              label="Speech"
+              label="Principal Speech"
               placeholder="Principal speech"
               onChange={(e) => setFormData({ ...formData, speech: e.target.value })}
               value={formData.speech}

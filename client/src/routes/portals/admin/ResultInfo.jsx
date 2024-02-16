@@ -1,384 +1,302 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
-  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Button,
-  Stack,
-  FormLabel,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
   Paper,
-  createTheme,
-  ThemeProvider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import app from "../../../firebase";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
-import TeacherTable from "./TeacherTable";
 
-function createTeacherId() {
-  const teacherId = Math.floor(Math.random() * 900000000) + 100000000;
-  return teacherId.toString();
-}
+const defaultResultData = [
+  {
+    examType: "Midterm",
+    examHeld: "2024-02-15",
+    classId: "C001",
+    subjectId: "S001",
+    teacherId: "T001",
+    studentId: "ST002",
+    cq: 80,
+    mcq: 70,
+    presentPercentage: 90,
+  },
+  {
+    examType: "Midterm",
+    examHeld: "2024-02-15",
+    classId: "C002",
+    subjectId: "S002",
+    teacherId: "T002",
+    studentId: "ST001",
+    cq: 80,
+    mcq: 70,
+    presentPercentage: 90,
+  },
+  // Add more result data as needed
+];
 
-const theme = createTheme();
+const ResultInfo = () => {
+  const [resultData, setResultData] = useState(defaultResultData);
+  const [open, setOpen] = useState(false);
+  const [selectedDataIndex, setSelectedDataIndex] = useState(null);
+  const [editedData, setEditedData] = useState(null);
+  const [searchCriteria, setSearchCriteria] = useState({
+    studentId: "",
+    teacherId: "",
+    classId: "",
+    subjectId: "",
+  });
 
-export default function ResultInfo() {
-  const { currentUser } = useSelector((state) => state.user);
-  const [teacherId, setTeacherId] = useState(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [joiningDate, setJoiningDate] = useState("");
-  const [position, setPosition] = useState("");
-  const [salary, setSalary] = useState("");
-  const [facebook, setFacebook] = useState("");
-  const [linkedin, setLinkedin] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-
-  const [image, setImage] = useState(undefined);
-  const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [imagePercent, setImagePercent] = useState(0);
-  const [imageError, setImageError] = useState(false);
-
-  const dispatch = useDispatch();
-  const fileRef = useRef(null);
-
-  useEffect(() => {
-    if (image) {
-      handleFileUpload(image);
-    }
-  }, [image]);
-
-  const handleFileUpload = async (image) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getDate() + image.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setImagePercent(Math.round(progress));
-      },
-      (error) => {
-        console.error("Error during image upload:", error);
-        setImageError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({ ...formData, profilePicture: downloadURL });
-        });
-      }
-    );
+  const handleDelete = (index) => {
+    const updatedResultData = [...resultData];
+    updatedResultData.splice(index, 1);
+    setResultData(updatedResultData);
   };
 
-  const handleGenerateTeacherId = () => {
-    const newTeacherId = createTeacherId();
-    setTeacherId(newTeacherId);
+  const handleUpdate = (index) => {
+    setSelectedDataIndex(index);
+    setEditedData({ ...resultData[index] });
+    setOpen(true);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      // Dispatch the action to update the user
-      dispatch(updateUserStart());
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-      // Make the API call to update the user
-      const res = await fetch(`http://localhost:5000/api/guest/update/${currentUser._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
+  const handleSave = () => {
+    const updatedResultData = [...resultData];
+    updatedResultData[selectedDataIndex] = editedData;
+    setResultData(updatedResultData);
+    setOpen(false);
+  };
 
-      if (!res.ok) {
-        // Handle errors from the server
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          const errorText = await res.text();
-          const errorMessageRegex = /Error: (.+?)<br>/;
-          const matches = errorText.match(errorMessageRegex);
-          if (matches && matches.length > 1) {
-            const errorMessage = matches[1];
-            dispatch(updateUserFailure(errorMessage));
-          } else {
-            dispatch(updateUserFailure("An unexpected error occurred"));
-          }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSearch = () => {
+    const filteredData = defaultResultData.filter((data) => {
+      for (let key in searchCriteria) {
+        if (searchCriteria[key] !== "" && data[key] !== searchCriteria[key]) {
+          return false;
         }
-        return;
       }
+      return true;
+    });
+    setResultData(filteredData);
+  };
 
-      const data = await res.json();
-
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
-    } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
-    }
+  const handleReset = () => {
+    setSearchCriteria({
+      studentId: "",
+      teacherId: "",
+      classId: "",
+      subjectId: "",
+    });
+    setResultData(defaultResultData);
   };
 
   return (
-    <div className="teacher-info">
-      <div className="create-teacher">
-        <Paper
-          sx={{
-            width: '100%',
-            overflow: 'hidden',
-            padding: '10px 15px',
-            backgroundColor: '#ffffff66',
-            mb: 4,
-          }}
-        >
-          <div className="create-teacher-id">
-            <button onClick={handleGenerateTeacherId}>
-              Create a Unique Teacher ID
-            </button>
-            <p className="teacher-id">{teacherId}</p>
-          </div>
-          <form onSubmit={handleSubmit} action={<Link to="/login" />}>
-            <input
-              type='file'
-              ref={fileRef}
-              hidden
-              accept='image/*'
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            <img
-              src={formData.profilePicture || currentUser.profilePicture}
-              alt='profile'
-              className='circle-img'
-              onClick={() => fileRef.current.click()}
-            />
-            <p className='image-below'>
-              {imageError ? (
-                <span>Error uploading image (filesize must be less than 2 MB)</span>
-              ) : (
-                imagePercent > 0 && imagePercent < 100 ? (
-                  <span>{`Uploading: ${imagePercent} %`}</span>
-                ) : imagePercent === 100 ? (
-                  <span>Image uploaded successfully</span>
-                ) : (
-                  ''
-                )
-              )}
-            </p>
+    <>
+      <div className="teacher-info">
+        <div className="teacher-view-ex">
+          <div className="teacher-view">
             <TextField
-              type="text"
-              variant="outlined"
-              label="Unique User ID"
-              InputLabelProps={{ shrink: true }}
-              color="secondary"
-              value={teacherId}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
-            />
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="First Name"
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
-                fullWidth
-                required
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="Last Name"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
-                fullWidth
-                required
-              />
-            </Stack>
-            <TextField
-              type="email"
-              variant="outlined"
-              color="secondary"
-              label="Email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
+              label="Student ID"
+              value={searchCriteria.studentId}
+              onChange={(e) =>
+                setSearchCriteria({
+                  ...searchCriteria,
+                  studentId: e.target.value,
+                })
+              }
             />
             <TextField
-              type="tel"
-              variant="outlined"
-              color="secondary"
-              label="Phone Number"
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              value={phoneNumber}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
+              label="Teacher ID"
+              value={searchCriteria.teacherId}
+              onChange={(e) =>
+                setSearchCriteria({
+                  ...searchCriteria,
+                  teacherId: e.target.value,
+                })
+              }
             />
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="date"
-                variant="outlined"
-                color="secondary"
-                label="Joining Date"
-                InputLabelProps={{ shrink: true }}
-                className="no-shrink-label"
-                onChange={(e) => setJoiningDate(e.target.value)}
-                value={joiningDate}
-                fullWidth
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="Position"
-                onChange={(e) => setPosition(e.target.value)}
-                value={position}
-                fullWidth
-              />
-              <TextField
-                type="number"
-                variant="outlined"
-                color="secondary"
-                label="Salary"
-                onChange={(e) => setSalary(e.target.value)}
-                value={salary}
-                fullWidth
-              />
-            </Stack>
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="url"
-                variant="outlined"
-                color="secondary"
-                label="Facebook"
-                onChange={(e) => setFacebook(e.target.value)}
-                value={facebook}
-                fullWidth
-              />
-              <TextField
-                type="url"
-                variant="outlined"
-                color="secondary"
-                label="Linkedin"
-                onChange={(e) => setLinkedin(e.target.value)}
-                value={linkedin}
-                fullWidth
-              />
-            </Stack>
             <TextField
-              type="date"
-              variant="outlined"
-              color="secondary"
-              label="Date Of Birth"
-              InputLabelProps={{ shrink: true }}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              value={dateOfBirth}
-              fullWidth
-              sx={{ mb: 4 }}
+              label="Class ID"
+              value={searchCriteria.classId}
+              onChange={(e) =>
+                setSearchCriteria({
+                  ...searchCriteria,
+                  classId: e.target.value,
+                })
+              }
             />
-
             <TextField
-              label="Street Address"
-              type="text"
-              variant="outlined"
-              color="secondary"
-              onChange={(e) => setStreetAddress(e.target.value)}
-              value={streetAddress}
-              fullWidth
-              sx={{ mb: 4 }}
+              label="Subject ID"
+              value={searchCriteria.subjectId}
+              onChange={(e) =>
+                setSearchCriteria({
+                  ...searchCriteria,
+                  subjectId: e.target.value,
+                })
+              }
             />
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                label="City"
-                type="text"
-                variant="outlined"
-                color="secondary"
-                onChange={(e) => setCity(e.target.value)}
-                value={city}
-                fullWidth
-                margin="normal"
-              />
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="inputStateLabel">State</InputLabel>
-                <Select
-                  labelId="inputStateLabel"
-                  id="inputState"
-                  variant="outlined"
-                  color="secondary"
-                  onChange={(e) => setState(e.target.value)}
-                  value={state}
-                >
-                  <MenuItem value="" disabled>Select...</MenuItem>
-                  <MenuItem value="option1">Option 1</MenuItem>
-                  <MenuItem value="option2">Option 2</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                label="Zip"
-                type="text"
-                variant="outlined"
-                color="secondary"
-                onChange={(e) => setZip(e.target.value)}
-                value={zip}
-                fullWidth
-                margin="normal"
-              />
-            </Stack>
-            <Button variant="outlined" color="secondary" type="submit">
-              Register
+            <Button variant="contained" color="primary" onClick={handleSearch}>
+              Search
             </Button>
-          </form>
-        </Paper>
-      </div>
+            <Button variant="contained" color="secondary" onClick={handleReset}>
+              Reset
+            </Button>
+            <TableContainer component={Paper} sx={{ backgroundColor: "#ffffff66",marginTop:"30px"}}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Exam Type</TableCell>
+                    <TableCell>Exam Held</TableCell>
+                    <TableCell>Class ID</TableCell>
+                    <TableCell>Subject ID</TableCell>
+                    <TableCell>Teacher ID</TableCell>
+                    <TableCell>Student ID</TableCell>
+                    <TableCell>CQ</TableCell>
+                    <TableCell>MCQ</TableCell>
+                    <TableCell>Present Percentage</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {resultData.map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{row.examType}</TableCell>
+                      <TableCell>{row.examHeld}</TableCell>
+                      <TableCell>{row.classId}</TableCell>
+                      <TableCell>{row.subjectId}</TableCell>
+                      <TableCell>{row.teacherId}</TableCell>
+                      <TableCell>{row.studentId}</TableCell>
+                      <TableCell>{row.cq}</TableCell>
+                      <TableCell>{row.mcq}</TableCell>
+                      <TableCell>{row.presentPercentage}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleUpdate(index)}
+                        >
+                          Update
+                        </Button>{" "}
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => handleDelete(index)}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-      <div className="teacher-view-ex">
-        <div className="teacher-view">
-        <div className="create-teacher-id view-teacher-info">
-            <button >
-              Update Teacher Information
-            </button>
+            <Dialog open={open} onClose={handleClose}>
+              <DialogTitle>Update Result Data</DialogTitle>
+              <DialogContent>
+                <TextField
+                  label="Exam Type"
+                  name="examType"
+                  value={editedData?.examType || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ margin: "10px 0px 10px 0px" }}
+                />
+                <TextField
+                  label="Exam Held"
+                  name="examHeld"
+                  value={editedData?.examHeld || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="Class ID"
+                  name="classId"
+                  value={editedData?.classId || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="Subject ID"
+                  name="subjectId"
+                  value={editedData?.subjectId || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="Teacher ID"
+                  name="teacherId"
+                  value={editedData?.teacherId || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="Student ID"
+                  name="studentId"
+                  value={editedData?.studentId || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="CQ"
+                  name="cq"
+                  value={editedData?.cq || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="MCQ"
+                  name="mcq"
+                  value={editedData?.mcq || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+                <TextField
+                  label="Present Percentage"
+                  name="presentPercentage"
+                  value={editedData?.presentPercentage || ""}
+                  fullWidth
+                  onChange={handleInputChange}
+                  sx={{ mb: "10px" }}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={handleSave} color="primary">
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
-          <ThemeProvider theme={theme}>
-          
-            <TeacherTable />
-          </ThemeProvider>
         </div>
       </div>
-    </div>
+    </>
   );
-}
+};
+
+export default ResultInfo;

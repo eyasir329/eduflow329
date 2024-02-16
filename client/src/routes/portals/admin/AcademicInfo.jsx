@@ -16,6 +16,7 @@ import {
 } from "../../../redux/user/userSlice";
 import AcademicTable from "./AcademicTable";
 import { ThemeProvider } from "@emotion/react";
+import SubjectInfo from "./SubjectInfo";
 
 const theme = createTheme();
 
@@ -83,6 +84,7 @@ export default function AcademicInfo() {
   };
 
   return (
+    <>
     <div className="teacher-info">
       <div className="create-teacher">
         <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66', mb: 4 }}>
@@ -168,7 +170,20 @@ export default function AcademicInfo() {
             </ThemeProvider>
           </div>
         </div>
+       
       </div>
+
     </div>
+
+
+    <div className="teacher-info">
+    <h1>
+      Subject Info
+    </h1>
+      <div className="create-teacher">
+      <SubjectInfo />
+      </div>
+      </div>
+    </>
   );
 }

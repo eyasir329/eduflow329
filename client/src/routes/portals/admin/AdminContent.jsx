@@ -7,7 +7,6 @@ import StudentInfo from "./StudentInfo";
 import AcademicInfo from "./AcademicInfo";
 import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
-import AddressInfo from "./AddressInfo";
 
 export default function AdminContent() {
     return (
@@ -70,14 +69,6 @@ export default function AdminContent() {
                 <div className="row">
                     <div className="col-lg-12">
                         <ResultInfo />
-                    </div>
-                </div>
-            </div>
-            <div id="address-info" className="admin-details">
-                <h1>Address Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <AddressInfo />
                     </div>
                 </div>
             </div>

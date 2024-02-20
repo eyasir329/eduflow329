@@ -5,10 +5,10 @@ import { useSelector } from "react-redux";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import Admin from "./admin/Admin";
-import Parent from "./Parent";
-import Student from "./Student";
-import Teacher from "./Teacher";
-import GuestUser from "./GuestUser";
+import Parent from "./parent/Parent";
+import Student from "./student/Student";
+import Teacher from "./teacher/Teacher";
+import GuestUser from "./guest/GuestUser";
 
 const Portal = () => {
     const role = useSelector((state) => state.user.currentUser?.role);

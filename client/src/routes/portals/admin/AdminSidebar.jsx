@@ -16,7 +16,6 @@ export default function AdminSidebar() {
                                 <a href="#academic-info"><li>Academic</li></a>
                                 <a href="#attendance-info"><li>Attendance</li></a>
                                 <a href="#result-info"><li>Result</li></a>
-                                {/* <a href="#result-info"><li>Fees</li></a> */}
                             </ul>
                         </div>
                     </div>

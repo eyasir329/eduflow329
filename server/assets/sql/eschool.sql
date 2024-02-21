@@ -288,7 +288,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `eschool`.`school` (
   `school_name` VARCHAR(255) NOT NULL,
   `eiin_number` VARCHAR(25) NOT NULL,
-  `established_at` DATE NOT NULL,
+  `established_at` YEAR NOT NULL,
   `history` VARCHAR(3000) NULL DEFAULT NULL,
   `logo` VARCHAR(255) NULL DEFAULT NULL,
   `social_id` INT NOT NULL,

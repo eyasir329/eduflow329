@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -9,93 +9,60 @@ import {
   MenuItem,
   Paper
 } from "@mui/material";
-
-import { useDispatch } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
 import Image from "../../../components/functionality/Image";
 import PrincipalInfo from "./PrincipalInfo";
 import NoticeBoard from "./NoticeBoard";
+import axios from "axios";
+
+const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
+const divisionMenuItems = divisions.map((division, index) => (
+  <MenuItem key={index} value={division}>{division}</MenuItem>
+));
 
 export default function SchoolInfo() {
-  const [formData, setFormData] = useState({
-    school_logo: "https://img.freepik.com/premium-vector/education-school-logo-design_586739-1335.jpg",
-    school_name: "Jamalpur Zilla School",
-    eiin_number: "109873",
-    established_at: "1881",
-    email: "jamzilsch@yahoo.com",
-    phone_number: "02997772112",
-    facebook: "https://www.facebook.com/jzsonline",
-    linkedin: "https://bd.linkedin.com/",
-    street_address: "Water Tank, Water Tank Rd, Jamalpur",
-    city: "Jamalpur",
-    division: "Mymensingh",
-    zip: "2000",
-    history: "Jamalpur Zilla School has a rich history..."
-  });
 
-  console.log(formData)
-  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({});
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      // Dispatch the action to update the user
-      dispatch(updateUserStart());
-
-      // Make the API call to update the user
-      const res = await fetch(`http://localhost:5000/api/admin/update/school`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        // Handle errors from the server
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          const errorText = await res.text();
-          const errorMessageRegex = /Error: (.+?)<br>/;
-          const matches = errorText.match(errorMessageRegex);
-          if (matches && matches.length > 1) {
-            const errorMessage = matches[1];
-            dispatch(updateUserFailure(errorMessage));
-          } else {
-            dispatch(updateUserFailure("An unexpected error occurred"));
-          }
+  useEffect(() => {
+    fetch('http://localhost:5000/api/admin/schoolView')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch school information');
         }
-        return;
-      }
+        return response.json();
+      })
+      .then(data => {
+        setFormData(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }, []);
 
-      const data = await res.json();
-
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
-    } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
-    }
-  };
+  const [uploadDisabled, setUploadDisabled] = useState(false);
+  const [schoolInfo, setSchoolInfo] = useState("");
 
   const handleUploadSuccess = (downloadURL) => {
-    setFormData({ ...formData, school_logo: downloadURL });
+    setFormData({ ...formData, logo: downloadURL });
+    setUploadDisabled(true);
   };
 
   const handleUploadError = (error) => {
     console.error('Image upload error:', error);
   };
+
+  const handleCreateOrUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:5000/api/admin/schoolCreateOrUpdate", formData);
+
+      const data = await response.data;
+      setSchoolInfo(data.message);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="teacher-info">
@@ -109,12 +76,13 @@ export default function SchoolInfo() {
             mb: 4,
           }}
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleCreateOrUpdate}>
             <div className="imageSchool">
               <Image
                 onUploadSuccess={handleUploadSuccess}
                 onUploadError={handleUploadError}
-                defaultValue={formData.school_logo}
+                defaultValue={formData.logo}
+                disabled={uploadDisabled}
               />
             </div>
 
@@ -173,8 +141,8 @@ export default function SchoolInfo() {
               variant="outlined"
               color="secondary"
               label="Phone Number"
-              onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-              value={formData.phone_number || ""}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              value={formData.phone || ""}
               fullWidth
               required
               sx={{ mb: 4 }}
@@ -229,9 +197,9 @@ export default function SchoolInfo() {
                   onChange={(e) => setFormData({ ...formData, division: e.target.value })}
                   value={formData.division || "Mymensingh"}
                 >
-                  <MenuItem value="" disabled>Select...</MenuItem>
-                  <MenuItem value="Mymensingh">Mymensingh</MenuItem>
-                  <MenuItem value="Option2">Option 2</MenuItem>
+
+                  {divisionMenuItems}
+
                 </Select>
               </FormControl>
 
@@ -277,6 +245,9 @@ export default function SchoolInfo() {
               Update
             </Button>
           </form>
+          <p className="reg-error">
+            {schoolInfo}
+          </p>
         </Paper>
 
         <h1>Principal Information</h1>

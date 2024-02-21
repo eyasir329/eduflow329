@@ -8,6 +8,7 @@ const Image = ({ onUploadSuccess, onUploadError, maxFileSizeMB = 5, defaultValue
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [imgURL, setImgURL] = useState('');
+
   useEffect(() => {
     setImgURL(defaultValue);
     
@@ -15,7 +16,6 @@ const Image = ({ onUploadSuccess, onUploadError, maxFileSizeMB = 5, defaultValue
       handleFileUpload(image);
     }
   }, [defaultValue, image]);
-  
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);

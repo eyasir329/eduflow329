@@ -60,7 +60,7 @@ export default function SchoolInfo() {
       setSchoolInfo(data.message);
 
     } catch (error) {
-      console.log(error);
+      setSchoolInfo(error.message);
     }
   }
 
@@ -228,6 +228,7 @@ export default function SchoolInfo() {
             />
 
             <TextField
+            InputLabelProps={{ shrink: true }}
               multiline
               rows={10}
               variant="outlined"

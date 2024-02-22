@@ -1,48 +1,37 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
   Stack,
-  FormLabel,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Typography,
   Paper,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import app from "../../../firebase";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
+
 import TeacherTableView from "./TeacherTableView";
+import Image from "../../../components/functionality/Image";
 
 const theme = createTheme();
 
+const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
+const divisionMenuItems = divisions.map((division, index) => (
+  <MenuItem key={index} value={division}>{division}</MenuItem>
+));
 
-function createTeacherId(department, lastId) {
+function createTeacherId(department, midId, lastId) {
   const currentYear = new Date().getFullYear().toString();
   const idPrefix = `${currentYear}${department}`;
   const previousId = parseInt(lastId, 10) + 1;
-  return idPrefix + previousId.toString().padStart(3, '0');
+  return idPrefix + midId + previousId.toString().padStart(3, '0');
 }
 
-
 export default function TeacherInfo() {
-  const { currentUser } = useSelector((state) => state.user);
-  const [teacherId, setTeacherId] = useState(null);
+  const [lastThreeDigit, setLastThreeDigit] = useState("000");
+  const [teacherId, setTeacherId] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -57,100 +46,120 @@ export default function TeacherInfo() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
+  const [profilePicture, setProfilePicture] = useState("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/587191957.png?alt=media&token=cc55bbb6-293b-40be-9412-091f66115b00");
+  const [uploadDisabled, setUploadDisabled] = useState(false);
+  const [teacherInfo, setTeacherInfo] = useState("");
 
-  const [image, setImage] = useState(undefined);
-  const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [imagePercent, setImagePercent] = useState(0);
-  const [imageError, setImageError] = useState(false);
-
-  const dispatch = useDispatch();
-  const fileRef = useRef(null);
-
-  useEffect(() => {
-    if (image) {
-      handleFileUpload(image);
-    }
-  }, [image]);
-
-  const handleFileUpload = async (image) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getDate() + image.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setImagePercent(Math.round(progress));
-      },
-      (error) => {
-        console.error("Error during image upload:", error);
-        setImageError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({ ...formData, profilePicture: downloadURL });
-        });
-      }
-    );
+  const fetchData = () => {
+    fetch('http://localhost:5000/api/admin/lastTeacherId')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch teacher information');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.teacherId) {
+          setLastThreeDigit(String(data.teacherId).slice(-3));
+        } else {
+          console.log("lastTeacherId is not yet available.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);  
+  
   const handleGenerateTeacherId = () => {
-    const newTeacherId = createTeacherId('04', '100');
+    const newTeacherId = createTeacherId('04', '0', lastThreeDigit);
     setTeacherId(newTeacherId);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      // Dispatch the action to update the user
-      dispatch(updateUserStart());
+    // Format joining date and date of birth to MySQL date format (YYYY-MM-DD)
+    const formattedJoiningDate = joiningDate ? new Date(joiningDate).toISOString().split('T')[0] : null;
+    const formattedDateOfBirth = dateOfBirth ? new Date(dateOfBirth).toISOString().split('T')[0] : null;
 
-      // Make the API call to update the user
-      const res = await fetch(`http://localhost:5000/api/guest/update/${currentUser._id}`, {
+    // Prepare the data to be sent to the backend API
+    const data = {
+      teacherId,
+      firstName,
+      lastName,
+      email,
+      dateOfBirth: formattedDateOfBirth,
+      phoneNumber,
+      joiningDate: formattedJoiningDate,
+      position,
+      salary,
+      facebook,
+      linkedin,
+      streetAddress,
+      city,
+      state,
+      zip,
+      profilePicture,
+    };
+
+    // Send the data to your backend API using fetch or axios
+    try {
+      const response = await fetch("http://localhost:5000/api/admin/createTeacher", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
-
-      if (!res.ok) {
-        // Handle errors from the server
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          const errorText = await res.text();
-          const errorMessageRegex = /Error: (.+?)<br>/;
-          const matches = errorText.match(errorMessageRegex);
-          if (matches && matches.length > 1) {
-            const errorMessage = matches[1];
-            dispatch(updateUserFailure(errorMessage));
-          } else {
-            dispatch(updateUserFailure("An unexpected error occurred"));
-          }
-        }
-        return;
+      if (!response.ok) {
+        throw new Error("Failed to register teacher");
       }
+      const responseData = await response.json();
+      console.log(responseData);
 
-      const data = await res.json();
-
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
+      if(responseData.success){
+          fetchData();
       }
+      
+      setTeacherInfo(responseData.message);
 
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
+      // Reset the form fields after successful submission
+      setTeacherId("");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setDateOfBirth("");
+      setPhoneNumber("");
+      setJoiningDate("");
+      setPosition("");
+      setSalary("");
+      setFacebook("");
+      setLinkedin("");
+      setStreetAddress("");
+      setCity("");
+      setState("");
+      setZip("");
+      setProfilePicture("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/587191957.png?alt=media&token=cc55bbb6-293b-40be-9412-091f66115b00");
+      setUploadDisabled(false);
+      // Handle any success UI feedback
     } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
+      console.error("Error:", error);
+      setTeacherInfo(error.message);
     }
   };
+
+  const handleUploadSuccess = (downloadURL) => {
+    setProfilePicture(downloadURL);
+    setUploadDisabled(true);
+  };
+
+  const handleUploadError = (error) => {
+    console.error('Image upload error:', error);
+  };
+
 
   return (
     <div className="teacher-info">
@@ -164,34 +173,15 @@ export default function TeacherInfo() {
             mb: 4,
           }}
         >
-
-          <form onSubmit={handleSubmit} action={<Link to="/login" />}>
-            <input
-              type='file'
-              ref={fileRef}
-              hidden
-              accept='image/*'
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            <img
-              src={formData.profilePicture || currentUser.profilePicture}
-              alt='profile'
-              className='circle-img'
-              onClick={() => fileRef.current.click()}
-            />
-            <p className='image-below'>
-              {imageError ? (
-                <span>Error uploading image (filesize must be less than 2 MB)</span>
-              ) : (
-                imagePercent > 0 && imagePercent < 100 ? (
-                  <span>{`Uploading: ${imagePercent} %`}</span>
-                ) : imagePercent === 100 ? (
-                  <span>Image uploaded successfully</span>
-                ) : (
-                  ''
-                )
-              )}
-            </p>
+          <form onSubmit={handleSubmit}>
+            <div className="imageSchool">
+              <Image
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+                defaultValue={profilePicture}
+                disabled={uploadDisabled}
+              />
+            </div>
 
             <div className="create-teacher-id">
               <button onClick={handleGenerateTeacherId}>
@@ -210,7 +200,6 @@ export default function TeacherInfo() {
               required
               sx={{ mb: 4 }}
             />
-
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
@@ -319,7 +308,7 @@ export default function TeacherInfo() {
               sx={{ mb: 4 }}
             />
 
-            
+
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 label="City"
@@ -335,15 +324,14 @@ export default function TeacherInfo() {
                 <InputLabel id="inputStateLabel">State</InputLabel>
                 <Select
                   labelId="inputStateLabel"
+                  InputLabelProps={{ shrink: true }}
                   id="inputState"
                   variant="outlined"
                   color="secondary"
                   onChange={(e) => setState(e.target.value)}
                   value={state}
                 >
-                  <MenuItem value="" disabled>Select...</MenuItem>
-                  <MenuItem value="option1">Option 1</MenuItem>
-                  <MenuItem value="option2">Option 2</MenuItem>
+                  {divisionMenuItems}
                 </Select>
               </FormControl>
               <TextField
@@ -373,6 +361,9 @@ export default function TeacherInfo() {
               Register
             </Button>
           </form>
+          <p className="reg-error">
+            {teacherInfo}
+          </p>
         </Paper>
       </div>
 
@@ -384,9 +375,7 @@ export default function TeacherInfo() {
             </button>
           </div>
           <ThemeProvider theme={theme}>
-
             <TeacherTableView />
-
           </ThemeProvider>
         </div>
       </div>

@@ -74,7 +74,7 @@ function getSocialId(email, phone, facebook, linkedin, twitter) {
 // extra function end
 
 exports.schoolView = async (req, res, next) => {
-    const eiin_number = 109873; 
+    const eiin_number = 109873;
 
     try {
         const sqlSelectSchool = `
@@ -165,5 +165,81 @@ exports.schoolCreateOrUpdate = async (req, res, next) => {
     }
 }
 
+exports.lastTeacherId = async (req, res, next) => {
+    try {
+        const sql = "SELECT teacher_id FROM teaches ORDER BY teacher_id DESC LIMIT 1";
+        const [rows, fields] = await connection.promise().query(sql);
+        console.log(rows);
+        if (rows.length > 0) {
+            res.status(200).json({ teacherId: rows[0].teacher_id });
+        } else {
+            res.status(404).json({ error: "No teacher ID found" });
+        }
+    } catch (error) {
+        console.error("Error retrieving last teacher ID:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+exports.createTeacher = async (req, res, next) => {
+    try {
+        const data = req.body;
+        console.log(data);
+
+        // Create address id
+        const city = data.city;
+        const division = data.state;
+        const zip = data.zip;
+        const street_address = data.streetAddress;
+
+        const addressValues = [city, division, zip, street_address];
+        const address_id = await getAddressId(addressValues);
+
+        // Create social id
+        const email = data.email;
+        const phone = data.phoneNumber;
+        const facebook = data.facebook;
+        const linkedin = data.linkedin;
+        const twitter = data.twitter || "";
+
+        const social_id = await getSocialId(email, phone, facebook, linkedin, twitter);
+
+        const teacher_id = data.teacherId;
+        const first_name = data.firstName;
+        const last_name = data.lastName;
+        const joining_date = data.joiningDate;
+        const position = data.position;
+        const salary = data.salary;
+        const date_of_birth = data.dateOfBirth;
+        const profile_pic = data.profilePicture;
+
+        const teacherInfo = [teacher_id, first_name, last_name, joining_date, position, salary, date_of_birth, profile_pic, social_id, address_id];
+
+        const sqlInsertTeacher = `
+            INSERT INTO teaches (teacher_id,first_name,last_name,joining_date,position,salary,date_of_birth,profile_pic,social_id,address_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        connection.query(sqlInsertTeacher, teacherInfo, (error, results) => {
+            if (error) {
+                console.error('Error inserting data into MySQL:', error);
+                if (error.code === 'ER_DUP_ENTRY') {
+                    res.status(400).send('Duplicate entry error: The provided teacher ID already exists.');
+                } else {
+                    res.status(500).send('Internal Server Error');
+                }
+            } else {
+                console.log('Data inserted successfully into MySQL:', results);
+                res.status(200).json({ success: true, message: 'Data inserted successfully' });
+            }
+        });
+
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 

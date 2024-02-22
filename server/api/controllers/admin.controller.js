@@ -249,7 +249,6 @@ exports.viewTeacher = async (req, res, next) => {
             LEFT JOIN socials s ON t.social_id = s.social_id
             LEFT JOIN addresses a ON t.address_id = a.address_id
         `;
-
         // Execute the query
         connection.query(teacherInfoQuery, (error, results) => {
             if (error) {
@@ -257,6 +256,11 @@ exports.viewTeacher = async (req, res, next) => {
                 res.status(500).json({ error: 'Internal server error' });
             } else {
                 if (results.length > 0) {
+                    // Convert timestamps to date format
+                    results.forEach(teacher => {
+                        teacher.joiningDate = convertTimestampToDate(teacher.joiningDate);
+                        teacher.dateOfBirth = convertTimestampToDate(teacher.dateOfBirth);
+                    });
                     // Teachers found, return their information
                     res.status(200).json(results);
                 } else {
@@ -269,7 +273,6 @@ exports.viewTeacher = async (req, res, next) => {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-
 }
 
 function convertTimestampToDate(timestamp) {
@@ -349,7 +352,7 @@ exports.deleteTeacher = async (req, res, next) => {
         await connection.execute('DELETE FROM teaches WHERE teacher_id = ?', [teacher_id]);
 
         res.status(200).json({ message: `Teacher with ID ${teacher_id} deleted successfully` });
-        
+
     } catch (error) {
         console.error('Error deleting teacher:', error);
         res.status(500).json({ error: 'Internal server error' });

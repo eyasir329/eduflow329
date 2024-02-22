@@ -53,6 +53,8 @@ const TeacherTable = () => {
         throw new Error('Failed to fetch teacher data');
       }
       const data = await response.json();
+      console.log(data)
+
       setTeacherData(data);
       setFilteredData(data);
     } catch (error) {
@@ -75,7 +77,7 @@ const TeacherTable = () => {
   };
 
   const handleSave = async () => {
-
+    console.log(editableData);
     editableData.profilePicture = profilePicture;
     try {
       const res = await fetch(`http://localhost:5000/api/admin/updateTeacher`, {

@@ -12,8 +12,8 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
-import TeacherTableView from "./TeacherTableView";
 import Image from "../../../components/functionality/Image";
+import TeacherTable from "./TeacherTable";
 
 const theme = createTheme();
 
@@ -47,7 +47,6 @@ export default function TeacherInfo() {
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
   const [profilePicture, setProfilePicture] = useState("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/587191957.png?alt=media&token=cc55bbb6-293b-40be-9412-091f66115b00");
-  const [uploadDisabled, setUploadDisabled] = useState(false);
   const [teacherInfo, setTeacherInfo] = useState("");
 
   const fetchData = () => {
@@ -143,7 +142,6 @@ export default function TeacherInfo() {
       setState("");
       setZip("");
       setProfilePicture("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/587191957.png?alt=media&token=cc55bbb6-293b-40be-9412-091f66115b00");
-      setUploadDisabled(false);
       // Handle any success UI feedback
     } catch (error) {
       console.error("Error:", error);
@@ -153,7 +151,6 @@ export default function TeacherInfo() {
 
   const handleUploadSuccess = (downloadURL) => {
     setProfilePicture(downloadURL);
-    setUploadDisabled(true);
   };
 
   const handleUploadError = (error) => {
@@ -178,9 +175,9 @@ export default function TeacherInfo() {
               <Image
                 onUploadSuccess={handleUploadSuccess}
                 onUploadError={handleUploadError}
-                defaultValue={profilePicture}
-                disabled={uploadDisabled}
+                defaultValue={profilePicture ||"https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/23Screenshot%20from%202024-02-20%2023-19-34.png?alt=media&token=c1c5cf84-4169-4cbd-bbc2-3170dcb5a065"}
               />
+
             </div>
 
             <div className="create-teacher-id">
@@ -370,12 +367,12 @@ export default function TeacherInfo() {
       <div className="teacher-view-ex">
         <div className="teacher-view">
           <div className="create-teacher-id view-teacher-info">
-            <button >
+            <button>
               Update Teacher Information
             </button>
           </div>
           <ThemeProvider theme={theme}>
-            <TeacherTableView />
+            <TeacherTable />
           </ThemeProvider>
         </div>
       </div>

@@ -169,7 +169,6 @@ exports.lastTeacherId = async (req, res, next) => {
     try {
         const sql = "SELECT teacher_id FROM teaches ORDER BY teacher_id DESC LIMIT 1";
         const [rows, fields] = await connection.promise().query(sql);
-        console.log(rows);
         if (rows.length > 0) {
             res.status(200).json({ teacherId: rows[0].teacher_id });
         } else {
@@ -241,5 +240,127 @@ exports.createTeacher = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+exports.viewTeacher = async (req, res, next) => {
+    try {
+        const teacherInfoQuery = `
+            SELECT t.teacher_id as teacherId,t.first_name as firstName,t.last_name as lastName,t.joining_date as joiningDate,t.position as position,t.salary as salary,t.date_of_birth as dateOfBirth,t.profile_pic as profilePicture, s.email, s.phone, s.facebook, s.linkedin, s.twitter, a.city, a.division as state, a.zip, a.street_address as streetAddress,s.phone as phoneNumber
+            FROM teaches t
+            LEFT JOIN socials s ON t.social_id = s.social_id
+            LEFT JOIN addresses a ON t.address_id = a.address_id
+        `;
+
+        // Execute the query
+        connection.query(teacherInfoQuery, (error, results) => {
+            if (error) {
+                console.error('Error querying data from MySQL:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                if (results.length > 0) {
+                    // Teachers found, return their information
+                    res.status(200).json(results);
+                } else {
+                    // No teachers found
+                    res.status(404).json({ error: 'No teachers found' });
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+
+}
+
+function convertTimestampToDate(timestamp) {
+    const date = new Date(timestamp);
+    return date.toISOString().split('T')[0];
+}
+
+exports.updateTeacher = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const {
+            teacherId,
+            firstName,
+            lastName,
+            joiningDate,
+            position,
+            salary,
+            dateOfBirth,
+            profilePicture,
+        } = data;
+
+        // Convert joiningDate and dateOfBirth to date format
+        const formattedJoiningDate = convertTimestampToDate(joiningDate);
+        const formattedDateOfBirth = convertTimestampToDate(dateOfBirth);
+
+        // Create address id
+        const city = data.city;
+        const division = data.state;
+        const zip = data.zip;
+        const street_address = data.streetAddress;
+        const addressValues = [city, division, zip, street_address];
+        const address_id = await getAddressId(addressValues);
+
+        // Create social id
+        const email = data.email;
+        const phone = data.phoneNumber;
+        const facebook = data.facebook;
+        const linkedin = data.linkedin;
+        const twitter = data.twitter || "";
+
+        const social_id = await getSocialId(email, phone, facebook, linkedin, twitter);
+
+        // Update teacher information in the database
+        const sql = `UPDATE teaches 
+                    SET 
+                    first_name = ?,
+                    last_name = ?,
+                    joining_date = ?,
+                    position = ?,
+                    salary = ?,
+                    date_of_birth = ?,
+                    profile_pic = ?,
+                    social_id = ?,
+                    address_id = ?
+                    WHERE teacher_id = ?`;
+
+        connection.query(sql, [firstName, lastName, formattedJoiningDate, position, salary, formattedDateOfBirth, profilePicture, social_id, address_id, teacherId], (error, results) => {
+            if (error) {
+                console.error('Error updating teacher information:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                console.log('Teacher information updated successfully:', results);
+                res.status(200).json({ message: 'Teacher information for ' + teacherId + ' updated successfully' });
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.deleteTeacher = async (req, res, next) => {
+    try {
+        const teacher_id = req.params.teacherId;
+
+        await connection.execute('DELETE FROM teaches WHERE teacher_id = ?', [teacher_id]);
+
+        res.status(200).json({ message: `Teacher with ID ${teacher_id} deleted successfully` });
+        
+    } catch (error) {
+        console.error('Error deleting teacher:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+
+
+
+
 
 

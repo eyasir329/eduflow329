@@ -238,17 +238,20 @@ const TeacherTable = () => {
         </TableContainer>
 
 
+        {/* Update Dialog */}
         <Dialog open={openDialog} onClose={handleCancel}>
           <DialogTitle>Edit Teacher</DialogTitle>
           <DialogContent>
-            {/* Render different components based on the column */}
             {editableData && columns.map((column) => (
               <React.Fragment key={column.id}>
                 {column.id === 'profilePicture' ? (
                   <Image
-                    onUploadSuccess={handleUploadSuccess}
-                    onUploadError={handleUploadError}
                     defaultValue={editableData[column.id]}
+                    onUploadSuccess={(downloadURL) => {
+                      const updatedData = { ...editableData, [column.id]: downloadURL };
+                      setEditableData(updatedData);
+                    }}
+                    onUploadError={handleUploadError}
                   />
                 ) : (
                   <TextField
@@ -270,6 +273,7 @@ const TeacherTable = () => {
             <Button onClick={handleCancel}>Cancel</Button>
           </DialogActions>
         </Dialog>
+
 
         {/* Pagination */}
         <TablePagination

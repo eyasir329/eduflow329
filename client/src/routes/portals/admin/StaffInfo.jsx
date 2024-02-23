@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -11,23 +11,15 @@ import {
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import app from "../../../firebase";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
+import Image from "../../../components/functionality/Image";
 import StaffTable from "./StaffTable";
 
 const theme = createTheme();
+
+const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
+const divisionMenuItems = divisions.map((division, index) => (
+  <MenuItem key={index} value={division}>{division}</MenuItem>
+));
 
 function createStaffId(department, lastId) {
   const currentYear = new Date().getFullYear().toString();
@@ -37,8 +29,8 @@ function createStaffId(department, lastId) {
 }
 
 export default function StaffInfo() {
-  const { currentUser } = useSelector((state) => state.user);
-  const [staffId, setStaffId] = useState(null);
+  const [lastThreeDigit, setLastThreeDigit] = useState("000");
+  const [staffId, setStaffId] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,99 +45,117 @@ export default function StaffInfo() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
+  const [profilePicture, setProfilePicture] = useState("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/587191957.png?alt=media&token=cc55bbb6-293b-40be-9412-091f66115b00");
 
-  const [image, setImage] = useState(undefined);
-  const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [imagePercent, setImagePercent] = useState(0);
-  const [imageError, setImageError] = useState(false);
+  const [staffInfo, setStaffInfo] = useState("");
 
-  const dispatch = useDispatch();
-  const fileRef = useRef(null);
-
-  useEffect(() => {
-    if (image) {
-      handleFileUpload(image);
-    }
-  }, [image]);
-
-  const handleFileUpload = async (image) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getDate() + image.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setImagePercent(Math.round(progress));
-      },
-      (error) => {
-        console.error("Error during image upload:", error);
-        setImageError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({ ...formData, profilePicture: downloadURL });
-        });
-      }
-    );
+  const fetchData = () => {
+    fetch('http://localhost:5000/api/admin/lastStaffId')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch staff information');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.staffId) {
+          setLastThreeDigit(String(data.staffId).slice(-3));
+        } else {
+          console.log("lastStaffId is not yet available.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleGenerateStaffId = () => {
-    const newStaffId = createStaffId('00', '00');
+    const newStaffId = createStaffId('00', lastThreeDigit);
     setStaffId(newStaffId);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      // Dispatch the action to update the user
-      dispatch(updateUserStart());
+    // Format joining date and date of birth to MySQL date format (YYYY-MM-DD)
+    const formattedJoiningDate = joiningDate ? new Date(joiningDate).toISOString().split('T')[0] : null;
+    const formattedDateOfBirth = dateOfBirth ? new Date(dateOfBirth).toISOString().split('T')[0] : null;
 
-      // Make the API call to update the user
-      const res = await fetch(`http://localhost:5000/api/guest/update/${currentUser._id}`, {
+    // Prepare the data to be sent to the backend API
+    const data = {
+      staffId,
+      firstName,
+      lastName,
+      email,
+      dateOfBirth: formattedDateOfBirth,
+      phoneNumber,
+      joiningDate: formattedJoiningDate,
+      position,
+      salary,
+      facebook,
+      linkedin,
+      streetAddress,
+      city,
+      state,
+      zip,
+      profilePicture,
+    };
+  
+    // Send the data to your backend API using fetch or axios
+    try {
+      const response = await fetch("http://localhost:5000/api/admin/createStaff", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
+      if (!response.ok) {
+        throw new Error("Failed to register staff");
+      }
+      const responseData = await response.json();
+      console.log(responseData);
 
-      if (!res.ok) {
-        // Handle errors from the server
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          const errorText = await res.text();
-          const errorMessageRegex = /Error: (.+?)<br>/;
-          const matches = errorText.match(errorMessageRegex);
-          if (matches && matches.length > 1) {
-            const errorMessage = matches[1];
-            dispatch(updateUserFailure(errorMessage));
-          } else {
-            dispatch(updateUserFailure("An unexpected error occurred"));
-          }
-        }
-        return;
+      if (responseData.success) {
+        fetchData();
       }
 
-      const data = await res.json();
+      setStaffInfo(responseData.message);
 
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
+      // Reset the form fields after successful submission
+      setStaffId("");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setDateOfBirth("");
+      setPhoneNumber("");
+      setJoiningDate("");
+      setPosition("");
+      setSalary("");
+      setFacebook("");
+      setLinkedin("");
+      setStreetAddress("");
+      setCity("");
+      setState("");
+      setZip("");
+      setProfilePicture("");
+      // Handle any success UI feedback
     } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
+      console.error("Error:", error);
+      setStaffInfo(error.message);
     }
+  };
+
+  const handleUploadSuccess = (downloadURL) => {
+    setProfilePicture(downloadURL);
+    console.log(profilePicture)
+  };
+
+  const handleUploadError = (error) => {
+    console.error('Image upload error:', error);
   };
 
   return (
@@ -160,33 +170,14 @@ export default function StaffInfo() {
             mb: 4,
           }}
         >
-          <form onSubmit={handleSubmit} action={<Link to="/login" />}>
-            <input
-              type='file'
-              ref={fileRef}
-              hidden
-              accept='image/*'
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            <img
-              src={formData.profilePicture || currentUser.profilePicture}
-              alt='profile'
-              className='circle-img'
-              onClick={() => fileRef.current.click()}
-            />
-            <p className='image-below'>
-              {imageError ? (
-                <span>Error uploading image (filesize must be less than 2 MB)</span>
-              ) : (
-                imagePercent > 0 && imagePercent < 100 ? (
-                  <span>{`Uploading: ${imagePercent} %`}</span>
-                ) : imagePercent === 100 ? (
-                  <span>Image uploaded successfully</span>
-                ) : (
-                  ''
-                )
-              )}
-            </p>
+          <form onSubmit={handleSubmit}>
+            <div className="imageSchool">
+              <Image
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+                defaultValue={profilePicture}
+              />
+            </div>
 
             <div className="create-teacher-id">
               <button onClick={handleGenerateStaffId}>
@@ -250,139 +241,127 @@ export default function StaffInfo() {
               required
               sx={{ mb: 4 }}
             />
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="date"
-                variant="outlined"
-                color="secondary"
-                label="Joining Date"
-                InputLabelProps={{ shrink: true }}
-                className="no-shrink-label"
-                onChange={(e) => setJoiningDate(e.target.value)}
-                value={joiningDate}
-                fullWidth
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                color="secondary"
-                label="Position"
-                onChange={(e) => setPosition(e.target.value)}
-                value={position}
-                fullWidth
-              />
-              <TextField
-                type="number"
-                variant="outlined"
-                color="secondary"
-                label="Salary"
-                onChange={(e) => setSalary(e.target.value)}
-                value={salary}
-                fullWidth
-              />
-            </Stack>
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="url"
-                variant="outlined"
-                color="secondary"
-                label="Facebook"
-                onChange={(e) => setFacebook(e.target.value)}
-                value={facebook}
-                fullWidth
-              />
-              <TextField
-                type="url"
-                variant="outlined"
-                color="secondary"
-                label="Linkedin"
-                onChange={(e) => setLinkedin(e.target.value)}
-                value={linkedin}
-                fullWidth
-              />
-            </Stack>
             <TextField
               type="date"
               variant="outlined"
               color="secondary"
-              label="Date Of Birth"
+              label="Date of Birth"
               InputLabelProps={{ shrink: true }}
               onChange={(e) => setDateOfBirth(e.target.value)}
               value={dateOfBirth}
               fullWidth
+              required
               sx={{ mb: 4 }}
             />
-
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                label="City"
-                type="text"
-                variant="outlined"
-                color="secondary"
-                onChange={(e) => setCity(e.target.value)}
-                value={city}
-                fullWidth
-                margin="normal"
-              />
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="inputStateLabel">State</InputLabel>
-                <Select
-                  labelId="inputStateLabel"
-                  id="inputState"
-                  variant="outlined"
-                  color="secondary"
-                  onChange={(e) => setState(e.target.value)}
-                  value={state}
-                >
-                  <MenuItem value="" disabled>Select...</MenuItem>
-                  <MenuItem value="option1">Option 1</MenuItem>
-                  <MenuItem value="option2">Option 2</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                label="Zip"
-                type="text"
-                variant="outlined"
-                color="secondary"
-                onChange={(e) => setZip(e.target.value)}
-                value={zip}
-                fullWidth
-                margin="normal"
-              />
-            </Stack>
-
             <TextField
-              label="Street Address"
+              type="date"
+              variant="outlined"
+              color="secondary"
+              label="Joining Date"
+              InputLabelProps={{ shrink: true }}
+              onChange={(e) => setJoiningDate(e.target.value)}
+              value={joiningDate}
+              fullWidth
+              required
+              sx={{ mb: 4 }}
+            />
+            <TextField
               type="text"
               variant="outlined"
               color="secondary"
-              onChange={(e) => setStreetAddress(e.target.value)}
-              value={streetAddress}
+              label="Position"
+              onChange={(e) => setPosition(e.target.value)}
+              value={position}
+              fullWidth
+              required
+              sx={{ mb: 4 }}
+            />
+            <TextField
+              type="number"
+              variant="outlined"
+              color="secondary"
+              label="Salary"
+              onChange={(e) => setSalary(e.target.value)}
+              value={salary}
+              fullWidth
+              required
+              sx={{ mb: 4 }}
+            />
+            <TextField
+              type="text"
+              variant="outlined"
+              color="secondary"
+              label="Facebook"
+              onChange={(e) => setFacebook(e.target.value)}
+              value={facebook}
               fullWidth
               sx={{ mb: 4 }}
             />
-
-            <Button variant="outlined" color="secondary" type="submit">
-              Register
+            <TextField
+              type="text"
+              variant="outlined"
+              color="secondary"
+              label="Linkedin"
+              onChange={(e) => setLinkedin(e.target.value)}
+              value={linkedin}
+              fullWidth
+              sx={{ mb: 4 }}
+            />
+            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+              <TextField
+                type="text"
+                variant="outlined"
+                color="secondary"
+                label="Street Address"
+                onChange={(e) => setStreetAddress(e.target.value)}
+                value={streetAddress}
+                fullWidth
+                required
+              />
+              <TextField
+                type="text"
+                variant="outlined"
+                color="secondary"
+                label="City"
+                onChange={(e) => setCity(e.target.value)}
+                value={city}
+                fullWidth
+                required
+              />
+            </Stack>
+            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+              <TextField
+                type="text"
+                variant="outlined"
+                color="secondary"
+                label="State"
+                onChange={(e) => setState(e.target.value)}
+                value={state}
+                fullWidth
+                required
+              />
+              <TextField
+                type="text"
+                variant="outlined"
+                color="secondary"
+                label="Zip"
+                onChange={(e) => setZip(e.target.value)}
+                value={zip}
+                fullWidth
+                required
+              />
+            </Stack>
+            <Button variant="contained" type="submit" sx={{ backgroundColor: '#4caf50', color: '#fff' }}>
+              Add Staff
             </Button>
+
           </form>
+          <div className="reg-error">
+            {staffInfo}
+          </div>
         </Paper>
       </div>
-
-      <div className="teacher-view-ex">
-        <div className="teacher-view">
-          <div className="create-teacher-id view-teacher-info">
-            <button >
-              Update Staff Information
-            </button>
-          </div>
-          <ThemeProvider theme={theme}>
-
-            <StaffTable />
-
-          </ThemeProvider>
-        </div>
-      </div>
+      <StaffTable />
     </div>
   );
 }

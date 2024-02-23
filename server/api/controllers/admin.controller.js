@@ -360,6 +360,196 @@ exports.deleteTeacher = async (req, res, next) => {
 };
 
 
+// staff
+exports.lastStaffId = async (req, res, next) => {
+    try {
+        const sql = "SELECT staff_id FROM staffs ORDER BY staff_id DESC LIMIT 1";
+        const [rows, fields] = await connection.promise().query(sql);
+        if (rows.length > 0) {
+            res.status(200).json({ staffId: rows[0].staff_id });
+        } else {
+            res.status(404).json({ error: "No staff ID found" });
+        }
+    } catch (error) {
+        console.error("Error retrieving last staff ID:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+exports.createStaff = async (req, res, next) => {
+    try {
+        const data = req.body;
+        console.log(data);
+
+        // Create address id
+        const city = data.city;
+        const division = data.state;
+        const zip = data.zip;
+        const street_address = data.streetAddress;
+
+        const addressValues = [city, division, zip, street_address];
+        const address_id = await getAddressId(addressValues);
+
+        // Create social id
+        const email = data.email;
+        const phone = data.phoneNumber;
+        const facebook = data.facebook;
+        const linkedin = data.linkedin;
+
+        const social_id = await getSocialId(email, phone, facebook, linkedin);
+
+        const staff_id = data.staffId;
+        const first_name = data.firstName;
+        const last_name = data.lastName;
+        const joining_date = data.joiningDate;
+        const position = data.position;
+        const salary = data.salary;
+        const date_of_birth = data.dateOfBirth;
+        const profile_pic = data.profilePicture;
+
+        const staffInfo = [staff_id, first_name, last_name, joining_date, position, salary, date_of_birth, profile_pic, social_id, address_id];
+
+        const sqlInsertStaff = `
+            INSERT INTO staffs (staff_id,first_name,last_name,joining_date,position,salary,date_of_birth,profile_pic,social_id,address_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        connection.query(sqlInsertStaff, staffInfo, (error, results) => {
+            if (error) {
+                console.error('Error inserting data into MySQL:', error);
+                if (error.code === 'ER_DUP_ENTRY') {
+                    res.status(400).send('Duplicate entry error: The provided staff ID already exists.');
+                } else {
+                    res.status(500).send('Internal Server Error');
+                }
+            } else {
+                console.log('Data inserted successfully into MySQL:', results);
+                res.status(200).json({ success: true, message: 'Data inserted successfully' });
+            }
+        });
+
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+exports.viewStaff = async (req, res, next) => {
+    try {
+        const staffInfoQuery = `
+            SELECT s.staff_id as staffId, s.first_name as firstName, s.last_name as lastName, s.joining_date as joiningDate, s.position, s.salary, s.date_of_birth as dateOfBirth, s.profile_pic as profilePicture, soc.email, soc.phone as phoneNumber, soc.facebook, soc.linkedin, ad.city, ad.division as state, ad.zip, ad.street_address as streetAddress
+            FROM staffs s
+            LEFT JOIN socials soc ON s.social_id = soc.social_id
+            LEFT JOIN addresses ad ON s.address_id = ad.address_id
+        `;
+        // Execute the query
+        connection.query(staffInfoQuery, (error, results) => {
+            if (error) {
+                console.error('Error querying data from MySQL:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                if (results.length > 0) {
+                    // Convert timestamps to date format
+                    results.forEach(staff => {
+                        staff.joiningDate = convertTimestampToDate(staff.joiningDate);
+                        staff.dateOfBirth = convertTimestampToDate(staff.dateOfBirth);
+                    });
+                    // Staff found, return their information
+                    res.status(200).json(results);
+                } else {
+                    // No staff found
+                    res.status(404).json({ error: 'No staff found' });
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.updateStaff = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const {
+            staffId,
+            firstName,
+            lastName,
+            joiningDate,
+            position,
+            salary,
+            dateOfBirth,
+            profilePicture,
+        } = data;
+
+        // Convert joiningDate and dateOfBirth to date format
+        const formattedJoiningDate = convertTimestampToDate(joiningDate);
+        const formattedDateOfBirth = convertTimestampToDate(dateOfBirth);
+
+        // Create address id
+        const city = data.city;
+        const division = data.state;
+        const zip = data.zip;
+        const street_address = data.streetAddress;
+        const addressValues = [city, division, zip, street_address];
+        const address_id = await getAddressId(addressValues);
+
+        // Create social id
+        const email = data.email;
+        const phone = data.phoneNumber;
+        const facebook = data.facebook;
+        const linkedin = data.linkedin;
+
+        const social_id = await getSocialId(email, phone, facebook, linkedin);
+
+        // Update staff information in the database
+        const sql = `UPDATE staffs 
+                    SET 
+                    first_name = ?,
+                    last_name = ?,
+                    joining_date = ?,
+                    position = ?,
+                    salary = ?,
+                    date_of_birth = ?,
+                    profile_pic = ?,
+                    social_id = ?,
+                    address_id = ?
+                    WHERE staff_id = ?`;
+
+        connection.query(sql, [firstName, lastName, formattedJoiningDate, position, salary, formattedDateOfBirth, profilePicture, social_id, address_id, staffId], (error, results) => {
+            if (error) {
+                console.error('Error updating staff information:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                console.log('Staff information updated successfully:', results);
+                res.status(200).json({ message: 'Staff information for ' + staffId + ' updated successfully' });
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.deleteStaff = async (req, res, next) => {
+    try {
+        const staff_id = req.params.staffId;
+
+        await connection.execute('DELETE FROM staffs WHERE staff_id = ?', [staff_id]);
+
+        res.status(200).json({ message: `Staff with ID ${staff_id} deleted successfully` });
+
+    } catch (error) {
+        console.error('Error deleting staff:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,8 +8,10 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import Image from '../../../components/functionality/Image';
 
 const columns = [
+  { id: 'profilePicture', label: 'Profile Picture', minWidth: 200 },
   { id: 'staffId', label: 'Staff ID', minWidth: 200 },
   { id: 'firstName', label: 'First Name', minWidth: 200 },
   { id: 'lastName', label: 'Last Name', minWidth: 200 },
@@ -27,87 +29,34 @@ const columns = [
   { id: 'zip', label: 'Zip', minWidth: 100 },
 ];
 
-function createData(
-  staffId,
-  firstName,
-  lastName,
-  email,
-  dateOfBirth,
-  phoneNumber,
-  joiningDate,
-  position,
-  salary,
-  facebook,
-  linkedin,
-  streetAddress,
-  city,
-  state,
-  zip
-) {
-  return {
-    staffId,
-    firstName,
-    lastName,
-    email,
-    dateOfBirth,
-    phoneNumber,
-    joiningDate,
-    position,
-    salary,
-    facebook,
-    linkedin,
-    streetAddress,
-    city,
-    state,
-    zip,
-  };
-}
-
-const teacherData = [
-  createData(
-    'T001',
-    'John',
-    'Doe',
-    'john.doe@example.com',
-    '1990-01-01',
-    '123-456-7890',
-    '2022-01-01',
-    'Teacher',
-    '50000',
-    'john.facebook',
-    'john.linkedin',
-    '123 Main St',
-    'Cityville',
-    'Stateville',
-    '12345'
-  ),
-  createData(
-    'T002',
-    'Jane',
-    'Smith',
-    'jane.smith@example.com',
-    '1992-02-02',
-    '987-654-3210',
-    '2022-02-02',
-    'Teacher',
-    '60000',
-    'jane.facebook',
-    'jane.linkedin',
-    '456 Oak St',
-    'Townsville',
-    'Stateville',
-    '67890'
-  ),
-  // Add more teacher data as needed
-];
-
 const StaffTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [editableData, setEditableData] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [searchId, setSearchId] = useState('');
-  const [filteredData, setFilteredData] = useState(teacherData);
+  const [filteredData, setFilteredData] = useState([]);
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [deleteMessage, setDeleteMessage] = useState('');
+  const [profilePicture, setProfilePicture] = useState("");
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/admin/viewStaff');
+      if (!response.ok) {
+        throw new Error('Failed to fetch staff data');
+      }
+      const data = await response.json();
+      console.log(data);
+      setFilteredData(data);
+    } catch (error) {
+      console.error('Error fetching staff data:', error);
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -123,42 +72,86 @@ const StaffTable = () => {
     setOpenDialog(true);
   };
 
-  const handleSave = () => {
-    // Add logic to save changes
+  const handleSave = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/admin/updateStaff`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(editableData),
+      });
+      const data = await res.json();
+      fetchData();
+      if (res.ok) {
+        setUpdateMessage(data.message);
+        fetchData();
+      } else {
+        setUpdateMessage('Something went wrong while updating.');
+      }
+    } catch (error) {
+      console.error('Error updating staff:', error);
+      setUpdateMessage('Error updating staff.');
+    }
     setEditableData(null);
     setOpenDialog(false);
   };
 
   const handleCancel = () => {
-    // Add logic to cancel changes
     setEditableData(null);
     setOpenDialog(false);
   };
 
-  const handleDelete = (row) => {
-    // Add logic to delete the row
-    console.log(`Delete teacher with ID: ${row.teacherId}`);
+  const handleDelete = async (row) => {
+    setUpdateMessage("");
+    try {
+      console.log(row);
+      const res = await fetch(`http://localhost:5000/api/admin/deleteStaff/${row.staffId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const responseData = await res.json();
+      fetchData();
+      console.log(responseData);
+      if (res.ok) {
+        setDeleteMessage(responseData.message);
+      } else {
+        setDeleteMessage('Something went wrong while deleting.');
+        console.error('Failed to delete staff:', res.statusText);
+      }
+    } catch (error) {
+      console.error('Error deleting staff:', error);
+      setDeleteMessage('Error deleting staff.');
+    }
   };
 
   const handleSearch = () => {
     const searchTerm = searchId.toLowerCase().trim();
-    const searchResult = teacherData.filter((row) =>
-      row.teacherId.toLowerCase().includes(searchTerm) ||
+    const searchResult = filteredData.filter((row) =>
+      row.staffId.toLowerCase().includes(searchTerm) ||
       row.firstName.toLowerCase().includes(searchTerm) ||
       row.lastName.toLowerCase().includes(searchTerm)
     );
-  
     setFilteredData(searchResult);
   };
 
   const handleRefresh = () => {
     setSearchId('');
-    setFilteredData(teacherData);
+    fetchData();
   };
+
+  const handleUploadSuccess = (downloadURL) => {
+    setProfilePicture(downloadURL);
+  };
+
+  const handleUploadError = (error) => {
+    console.error('Image upload error:', error);
+  };
+
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66' }}>
-
       <TextField
         label="Search by Staff ID, First Name, or Last Name"
         value={searchId}
@@ -166,14 +159,13 @@ const StaffTable = () => {
         fullWidth
         margin="normal"
       />
-      <Button onClick={handleSearch} variant="contained" color="primary" sx={{ m:5}}>
+      <Button onClick={handleSearch} variant="contained" color="primary" sx={{ ml: 2 }}>
         Search
       </Button>
-      <Button onClick={handleRefresh} variant="contained" color="secondary" sx={{ m:5 }}>
+      <Button onClick={handleRefresh} variant="contained" color="secondary" sx={{ ml: 2 }}>
         Refresh
       </Button>
 
-      {/* Table */}
       <TableContainer sx={{ maxHeight: 540 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -187,7 +179,7 @@ const StaffTable = () => {
                   {column.label}
                 </TableCell>
               ))}
-              <TableCell align="left" style={{ minWidth: 100, fontWeight: 'bold', fontSize: '20px', padding: "10px 15px" }}>
+              <TableCell align="left" style={{ minWidth: 100, fontWeight: 'bold', fontSize: '20px', padding: '10px 15px' }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -196,7 +188,7 @@ const StaffTable = () => {
             {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.teacherId}>
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.staffId}>
                   {columns.map((column) => (
                     <TableCell key={column.id} align="left" sx={{ fontSize: '16px' }}>
                       {editableData === row ? (
@@ -208,7 +200,11 @@ const StaffTable = () => {
                           }}
                         />
                       ) : (
-                        row[column.id]
+                        column.id === 'profilePicture' ? (
+                          <img src={row.profilePicture} alt="Profile" style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
+                        ) : (
+                          row[column.id]
+                        )
                       )}
                     </TableCell>
                   ))}
@@ -226,33 +222,44 @@ const StaffTable = () => {
         </Table>
       </TableContainer>
 
-      {/* Update Dialog */}
-      <Dialog open={openDialog} onClose={handleCancel}>
-        <DialogTitle>Edit Teacher</DialogTitle>
-        <DialogContent>
-          {editableData && columns.map((column) => (
-            <TextField
-              key={column.id}
-              label={column.label}
-              value={editableData[column.id]}
-              onChange={(e) => {
-                const updatedData = { ...editableData, [column.id]: e.target.value };
-                setEditableData(updatedData);
-              }}
-              fullWidth
-              margin="normal"
-            />
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleSave}>Save</Button>
-          <Button onClick={handleCancel}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+       {/* Update Dialog */}
+       <Dialog open={openDialog} onClose={handleCancel}>
+          <DialogTitle>Edit Teacher</DialogTitle>
+          <DialogContent>
+            {editableData && columns.map((column) => (
+              <React.Fragment key={column.id}>
+                {column.id === 'profilePicture' ? (
+                  <Image
+                    defaultValue={editableData[column.id]}
+                    onUploadSuccess={(downloadURL) => {
+                      const updatedData = { ...editableData, [column.id]: downloadURL };
+                      setEditableData(updatedData);
+                    }}
+                    onUploadError={handleUploadError}
+                  />
+                ) : (
+                  <TextField
+                    label={column.label}
+                    value={editableData[column.id]}
+                    onChange={(e) => {
+                      const updatedData = { ...editableData, [column.id]: e.target.value };
+                      setEditableData(updatedData);
+                    }}
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleCancel}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
 
-      {/* Pagination */}
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10, 25, 50]}
         component="div"
         count={filteredData.length}
         rowsPerPage={rowsPerPage}
@@ -260,6 +267,9 @@ const StaffTable = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <p className="reg-error" style={{ marginTop: '15px' }}>
+        {updateMessage || deleteMessage}
+      </p>
     </Paper>
   );
 };

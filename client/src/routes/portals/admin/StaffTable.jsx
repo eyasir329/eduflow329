@@ -51,7 +51,6 @@ const StaffTable = () => {
         throw new Error('Failed to fetch staff data');
       }
       const data = await response.json();
-      console.log(data);
       setFilteredData(data);
     } catch (error) {
       console.error('Error fetching staff data:', error);
@@ -136,9 +135,11 @@ const StaffTable = () => {
     setFilteredData(searchResult);
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setSearchId('');
-    fetchData();
+    setUpdateMessage('');
+    setDeleteMessage('');
+    await fetchData();
   };
 
   const handleUploadSuccess = (downloadURL) => {
@@ -148,7 +149,6 @@ const StaffTable = () => {
   const handleUploadError = (error) => {
     console.error('Image upload error:', error);
   };
-
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66' }}>
@@ -222,41 +222,40 @@ const StaffTable = () => {
         </Table>
       </TableContainer>
 
-       {/* Update Dialog */}
-       <Dialog open={openDialog} onClose={handleCancel}>
-          <DialogTitle>Edit Teacher</DialogTitle>
-          <DialogContent>
-            {editableData && columns.map((column) => (
-              <React.Fragment key={column.id}>
-                {column.id === 'profilePicture' ? (
-                  <Image
-                    defaultValue={editableData[column.id]}
-                    onUploadSuccess={(downloadURL) => {
-                      const updatedData = { ...editableData, [column.id]: downloadURL };
-                      setEditableData(updatedData);
-                    }}
-                    onUploadError={handleUploadError}
-                  />
-                ) : (
-                  <TextField
-                    label={column.label}
-                    value={editableData[column.id]}
-                    onChange={(e) => {
-                      const updatedData = { ...editableData, [column.id]: e.target.value };
-                      setEditableData(updatedData);
-                    }}
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleSave}>Save</Button>
-            <Button onClick={handleCancel}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={openDialog} onClose={handleCancel}>
+        <DialogTitle>Edit Teacher</DialogTitle>
+        <DialogContent>
+          {editableData && columns.map((column) => (
+            <React.Fragment key={column.id}>
+              {column.id === 'profilePicture' ? (
+                <Image
+                  defaultValue={editableData[column.id]}
+                  onUploadSuccess={(downloadURL) => {
+                    const updatedData = { ...editableData, [column.id]: downloadURL };
+                    setEditableData(updatedData);
+                  }}
+                  onUploadError={handleUploadError}
+                />
+              ) : (
+                <TextField
+                  label={column.label}
+                  value={editableData[column.id]}
+                  onChange={(e) => {
+                    const updatedData = { ...editableData, [column.id]: e.target.value };
+                    setEditableData(updatedData);
+                  }}
+                  fullWidth
+                  margin="normal"
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
 
       <TablePagination
         rowsPerPageOptions={[10, 25, 50]}

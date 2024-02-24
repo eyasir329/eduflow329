@@ -175,7 +175,7 @@ export default function TeacherInfo() {
               <Image
                 onUploadSuccess={handleUploadSuccess}
                 onUploadError={handleUploadError}
-                defaultValue={profilePicture ||"https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/23Screenshot%20from%202024-02-20%2023-19-34.png?alt=media&token=c1c5cf84-4169-4cbd-bbc2-3170dcb5a065"}
+                defaultValue={profilePicture}
               />
 
             </div>

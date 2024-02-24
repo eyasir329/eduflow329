@@ -29,16 +29,17 @@ import StudentTable from "./StudentTable";
 
 const theme = createTheme();
 
-function createStudentId(batch, lastId) {
+function createStudentId(batch, mid, lastId) {
   const currentYear = new Date().getFullYear().toString();
   const idPrefix = `${currentYear}${batch}`;
   const previousId = parseInt(lastId, 10) + 1;
-  return idPrefix + previousId.toString().padStart(3, '0');
+  return idPrefix + mid + previousId.toString().padStart(3, "0");
 }
 
 export default function StudentInfo() {
   const { currentUser } = useSelector((state) => state.user);
   const [studentId, setStudentId] = useState(null);
+  const [parentId, setParentId] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,7 +57,6 @@ export default function StudentInfo() {
   const [zip, setZip] = useState("");
   const [gender, setGender] = useState(""); // Added state for gender
   const [enrollClass, setEnrollClass] = useState("");
-
 
   const dispatch = useDispatch();
   const fileRef = useRef(null);
@@ -76,7 +76,8 @@ export default function StudentInfo() {
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImagePercent(Math.round(progress));
       },
       (error) => {
@@ -92,46 +93,29 @@ export default function StudentInfo() {
   };
 
   const handleGenerateStudentId = () => {
-    const newStudentId = createStudentId('00', '00');
+    const newStudentId = createStudentId("04", "1", "000");
+    const newParentId = createStudentId("04", "2", "000");
     setStudentId(newStudentId);
+    setParentId(newParentId);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      dispatch(updateUserStart());
-
-      const res = await fetch(`http://localhost:5000/api/student/update/${currentUser._id}`, {
+      const res = await fetch(`http://localhost:5000/api/admin/createStudent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) {
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          dispatch(updateUserFailure("An unexpected error occurred"));
-        }
-        return;
-      }
 
       const data = await res.json();
 
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
     } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
+      
     }
   };
 
@@ -140,28 +124,28 @@ export default function StudentInfo() {
       <div className="create-teacher">
         <Paper
           sx={{
-            width: '100%',
-            overflow: 'hidden',
-            padding: '10px 15px',
-            backgroundColor: '#ffffff66',
+            width: "100%",
+            overflow: "hidden",
+            padding: "10px 15px",
+            backgroundColor: "#ffffff66",
             mb: 4,
           }}
         >
           <form onSubmit={handleSubmit} action={<Link to="/login" />}>
             <input
-              type='file'
+              type="file"
               ref={fileRef}
               hidden
-              accept='image/*'
+              accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
             />
             <img
               src={formData.profilePicture || currentUser.profilePicture}
-              alt='profile'
-              className='circle-img'
+              alt="profile"
+              className="circle-img"
               onClick={() => fileRef.current.click()}
             />
-            <p className='image-below'>
+            <p className="image-below">
               {imageError ? (
                 <span>Error uploading image (filesize must be less than 2 MB)</span>
               ) : (
@@ -170,17 +154,18 @@ export default function StudentInfo() {
                 ) : imagePercent === 100 ? (
                   <span>Image uploaded successfully</span>
                 ) : (
-                  ''
+                  ""
                 )
               )}
             </p>
 
             <div className="create-teacher-id">
               <button onClick={handleGenerateStudentId}>
-                Create a Unique Student ID
+                Create a Unique ID
               </button>
             </div>
 
+            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
             <TextField
               type="text"
               variant="outlined"
@@ -192,6 +177,19 @@ export default function StudentInfo() {
               required
               sx={{ mb: 4 }}
             />
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Unique Pareny ID"
+              InputLabelProps={{ shrink: true }}
+              color="secondary"
+              value={parentId}
+              fullWidth
+              required
+              sx={{ mb: 4 }}
+            />
+            </Stack>
+            
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
@@ -309,9 +307,7 @@ export default function StudentInfo() {
                 value={joiningDate}
                 fullWidth
               />
-
             </Stack>
-
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
@@ -334,7 +330,9 @@ export default function StudentInfo() {
                   onChange={(e) => setState(e.target.value)}
                   value={state}
                 >
-                  <MenuItem value="" disabled>Select...</MenuItem>
+                  <MenuItem value="" disabled>
+                    Select...
+                  </MenuItem>
                   <MenuItem value="option1">Option 1</MenuItem>
                   <MenuItem value="option2">Option 2</MenuItem>
                 </Select>
@@ -373,7 +371,6 @@ export default function StudentInfo() {
               sx={{ mb: 4 }}
             />
 
-
             <Button variant="outlined" color="secondary" type="submit">
               Register
             </Button>
@@ -384,9 +381,7 @@ export default function StudentInfo() {
       <div className="teacher-view-ex">
         <div className="teacher-view">
           <div className="create-teacher-id view-teacher-info">
-            <button>
-              Update Student Information
-            </button>
+            <button>Update Student Information</button>
           </div>
           <ThemeProvider theme={theme}>
             <StudentTable />

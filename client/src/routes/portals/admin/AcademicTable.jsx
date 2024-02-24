@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,41 +15,52 @@ import {
   TextField,
 } from "@mui/material";
 
-const defaultAcademicData = [
-  {
-    classId: "C001",
-    className: "Mathematics",
-    session: "2022-2023",
-    classTeacherId: "T001",
-    classCaptainId: "S001",
-  },
-  {
-    classId: "C002",
-    className: "Physics",
-    session: "2022-2023",
-    classTeacherId: "T002",
-    classCaptainId: "S002",
-  },
-  {
-    classId: "C003",
-    className: "Chemistry",
-    session: "2022-2023",
-    classTeacherId: "T003",
-    classCaptainId: "S003",
-  },
-  // Add more academic data as needed
-];
-
 const AcademicTable = () => {
-  const [academicData, setAcademicData] = useState(defaultAcademicData);
+  const [academicData, setAcademicData] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [editedData, setEditedData] = useState({});
+  const [academicMessage, setAcademicMessage] = useState("");
 
-  const handleDelete = (index) => {
-    const updatedAcademicData = [...academicData];
-    updatedAcademicData.splice(index, 1);
-    setAcademicData(updatedAcademicData);
+  useEffect(() => {
+    fetchAcademicData();
+  }, []);
+
+  const fetchAcademicData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/admin/viewAcademic");
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+      setAcademicData(data);
+    } catch (error) {
+      console.error("Error fetching academic data:", error);
+    }
+  };
+
+  const handleDelete = async (classId) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/admin/deleteAcademic", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ classId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete academic data");
+      }
+
+      // Remove the deleted item from the client-side state
+      const updatedAcademicData = academicData.filter((item) => item.classId !== classId);
+      setAcademicData(updatedAcademicData);
+      setAcademicMessage("Academic data deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting academic data:", error);
+      setAcademicMessage("Failed to delete academic data.");
+    }
   };
 
   const handleUpdate = (data) => {
@@ -63,12 +74,36 @@ const AcademicTable = () => {
   };
 
   const handleSave = () => {
-    // Implement logic to save updated data
-    const updatedAcademicData = academicData.map((item) =>
-      item.classId === editedData.classId ? editedData : item
-    );
-    setAcademicData(updatedAcademicData);
-    setOpen(false);
+    // Implement logic to save updated data to the server
+    const updateAcademicData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/admin/updateAcademic", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update data");
+        }
+
+        // Update the academic data in the client-side state
+        const updatedAcademicData = academicData.map((item) =>
+          item.classId === editedData.classId ? editedData : item
+        );
+        setAcademicData(updatedAcademicData);
+        setOpen(false);
+        setAcademicMessage("Academic data updated successfully.");
+      } catch (error) {
+        console.error("Error updating academic data:", error);
+        setAcademicMessage("Failed to update academic data.");
+      }
+    };
+
+    // Call the function to update the data
+    updateAcademicData();
   };
 
   const handleInputChange = (e) => {
@@ -76,15 +111,28 @@ const AcademicTable = () => {
     setEditedData({ ...editedData, [name]: value });
   };
 
+  const handleRefresh = () => {
+    fetchAcademicData();
+  };
+
   return (
     <>
-      <TableContainer component={Paper} sx={{backgroundColor: '#ffffff66' }}>
+      <Button
+        onClick={handleRefresh}
+        variant="contained"
+        color="primary"
+        style={{ marginBottom: "10px" }}
+      >
+        Refresh
+      </Button>
+      <TableContainer component={Paper} sx={{ backgroundColor: "#ffffff66" }}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Class ID</TableCell>
               <TableCell>Class Name</TableCell>
               <TableCell>Session</TableCell>
+              <TableCell>Room Number</TableCell>
               <TableCell>Class Teacher ID</TableCell>
               <TableCell>Class Captain ID</TableCell>
               <TableCell>Actions</TableCell>
@@ -96,6 +144,7 @@ const AcademicTable = () => {
                 <TableCell>{row.classId}</TableCell>
                 <TableCell>{row.className}</TableCell>
                 <TableCell>{row.session}</TableCell>
+                <TableCell>{row.roomNumber}</TableCell>
                 <TableCell>{row.classTeacherId}</TableCell>
                 <TableCell>{row.classCaptainId}</TableCell>
                 <TableCell>
@@ -109,7 +158,7 @@ const AcademicTable = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(row.classId)}
                   >
                     Delete
                   </Button>
@@ -130,7 +179,7 @@ const AcademicTable = () => {
             fullWidth
             onChange={handleInputChange}
             disabled
-            sx={{ margin: '10px 0px 10px 0px', }}
+            sx={{ margin: "10px 0px 10px 0px" }}
           />
           <TextField
             label="Class Name"
@@ -138,7 +187,7 @@ const AcademicTable = () => {
             value={editedData.className || ""}
             fullWidth
             onChange={handleInputChange}
-            sx={{ mb: '10px' }}
+            sx={{ mb: "10px" }}
           />
           <TextField
             label="Session"
@@ -146,7 +195,15 @@ const AcademicTable = () => {
             value={editedData.session || ""}
             fullWidth
             onChange={handleInputChange}
-            sx={{ mb: '10px' }}
+            sx={{ mb: "10px" }}
+          />
+          <TextField
+            label="Room Number"
+            name="roomNumber" // Change name to "roomNumber"
+            value={editedData.roomNumber || ""} // Access roomNumber property in editedData
+            fullWidth
+            onChange={handleInputChange}
+            sx={{ mb: "10px" }}
           />
           <TextField
             label="Class Teacher ID"
@@ -154,7 +211,7 @@ const AcademicTable = () => {
             value={editedData.classTeacherId || ""}
             fullWidth
             onChange={handleInputChange}
-            sx={{ mb: '10px' }}
+            sx={{ mb: "10px" }}
           />
           <TextField
             label="Class Captain ID"
@@ -162,7 +219,7 @@ const AcademicTable = () => {
             value={editedData.classCaptainId || ""}
             fullWidth
             onChange={handleInputChange}
-            sx={{ mb: '10px' }}
+            sx={{ mb: "10px" }}
           />
         </DialogContent>
         <DialogActions>
@@ -174,6 +231,7 @@ const AcademicTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <div className="reg-error" style={{ marginTop: 10 }}>{academicMessage}</div>
     </>
   );
 };

@@ -3,17 +3,10 @@ import {
   TextField,
   Button,
   Stack,
-  Typography,
   Paper,
   createTheme,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
 import AcademicTable from "./AcademicTable";
 import { ThemeProvider } from "@emotion/react";
 import SubjectInfo from "./SubjectInfo";
@@ -21,28 +14,28 @@ import SubjectInfo from "./SubjectInfo";
 const theme = createTheme();
 
 export default function AcademicInfo() {
-  const { currentUser } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
 
   const [classId, setClassId] = useState("");
   const [className, setClassName] = useState("");
+  const [roomNumber, setRoomNumber] = useState("");
   const [session, setSession] = useState("");
   const [classTeacherId, setClassTeacherId] = useState("");
   const [classCaptainId, setClassCaptainId] = useState("");
+  const [academicMessage, setAcademicMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
       classId,
       className,
+      roomNumber,
       session,
       classTeacherId,
       classCaptainId,
     };
     try {
-      dispatch(updateUserStart());
 
-      const res = await fetch(`http://localhost:5000/api/guest/update/${currentUser._id}`, {
+      const res = await fetch(`http://localhost:5000/api/admin/createAcademic`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,35 +44,11 @@ export default function AcademicInfo() {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) {
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          const errorText = await res.text();
-          const errorMessageRegex = /Error: (.+?)<br>/;
-          const matches = errorText.match(errorMessageRegex);
-          if (matches && matches.length > 1) {
-            const errorMessage = matches[1];
-            dispatch(updateUserFailure(errorMessage));
-          } else {
-            dispatch(updateUserFailure("An unexpected error occurred"));
-          }
-        }
-        return;
-      }
-
       const data = await res.json();
+      console.log(data)
+      setAcademicMessage(data.message)
 
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
     } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
     }
   };
 
@@ -112,6 +81,16 @@ export default function AcademicInfo() {
                 value={className}
                 onChange={(e) => setClassName(e.target.value)}
               />
+              <TextField
+                type="text"
+                variant="outlined"
+                label="Room Number"
+                InputLabelProps={{ shrink: true }}
+                color="secondary"
+                fullWidth
+                value={roomNumber}
+                onChange={(e) => setRoomNumber(e.target.value)}
+              />
             </Stack>
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
@@ -133,7 +112,6 @@ export default function AcademicInfo() {
                 InputLabelProps={{ shrink: true }}
                 color="secondary"
                 fullWidth
-                required
                 value={classTeacherId}
                 onChange={(e) => setClassTeacherId(e.target.value)}
               />
@@ -144,7 +122,6 @@ export default function AcademicInfo() {
                 InputLabelProps={{ shrink: true }}
                 color="secondary"
                 fullWidth
-                required
                 value={classCaptainId}
                 onChange={(e) => setClassCaptainId(e.target.value)}
               />
@@ -154,6 +131,9 @@ export default function AcademicInfo() {
               Register
             </Button>
           </form>
+          <div className="reg-error">
+            {academicMessage}
+          </div>
         </Paper>
 
         <div className="teacher-view-ex">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,42 +15,53 @@ import {
   TextField,
 } from "@mui/material";
 
-const defaultSubjectData = [
-  {
-    subjectId: "S001",
-    subjectName: "Biology",
-    teacherId: "T004",
-    classId: "C001", // Reference to the class ID
-  },
-  {
-    subjectId: "S002",
-    subjectName: "History",
-    teacherId: "T005",
-    classId: "C002", // Reference to the class ID
-  },
-  {
-    subjectId: "S003",
-    subjectName: "Literature",
-    teacherId: "T006",
-    classId: "C003", // Reference to the class ID
-  },
-  // Add more subject data as needed
-];
-
 const SubjectTable = () => {
-  const [subjectData, setSubjectData] = useState(defaultSubjectData);
+  const [subjectData, setSubjectData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null);
   const [editedData, setEditedData] = useState({});
+  const [academicMessage, setAcademicMessage] = useState("");
 
-  const handleDelete = (index) => {
-    const updatedSubjectData = [...subjectData];
-    updatedSubjectData.splice(index, 1);
-    setSubjectData(updatedSubjectData);
+  // Define the fetchSubjectData function
+  const fetchSubjectData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/admin/viewSubject');
+      if (!response.ok) {
+        throw new Error('Failed to fetch subjects');
+      }
+      const data = await response.json();
+      setSubjectData(data);
+    } catch (error) {
+      console.error('Error fetching subjects:', error.message);
+    }
   };
 
+  useEffect(() => {
+    fetchSubjectData();
+  }, []); // Run once on component mount
+
+  const handleDelete = (subjectId, index) => {
+    fetch(`http://localhost:5000/api/admin/deleteSubject/${subjectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to delete subject');
+      }
+      const updatedSubjectData = [...subjectData];
+      updatedSubjectData.splice(index, 1);
+      setSubjectData(updatedSubjectData);
+      setAcademicMessage("Subject deleted successfully.");
+    })
+    .catch(error => {
+      console.error('Error deleting subject:', error.message);
+    });
+  };
+  
+
   const handleUpdate = (data) => {
-    setSelectedData(data);
     setEditedData(data);
     setOpen(true);
   };
@@ -60,12 +71,24 @@ const SubjectTable = () => {
   };
 
   const handleSave = () => {
-    // Implement logic to save updated data
-    const updatedSubjectData = subjectData.map((item) =>
-      item.subjectId === editedData.subjectId ? editedData : item
-    );
-    setSubjectData(updatedSubjectData);
-    setOpen(false);
+    fetch('http://localhost:5000/api/admin/updateSubject', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(editedData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to update subject');
+        }
+        setAcademicMessage("Subject updated successfully.");
+        setOpen(false);
+        fetchSubjectData(); // Fetch the updated data again
+      })
+      .catch(error => {
+        console.error('Error updating subject:', error.message);
+      });
   };
 
   const handleInputChange = (e) => {
@@ -73,9 +96,17 @@ const SubjectTable = () => {
     setEditedData({ ...editedData, [name]: value });
   };
 
+  // Function to manually refresh data
+  const handleRefresh = () => {
+    fetchSubjectData();
+  };
+
   return (
     <>
-      <TableContainer component={Paper} sx={{ backgroundColor: "#ffffff66" }}>
+      <Button onClick={handleRefresh} variant="contained" color="primary" style={{ marginBottom: '10px' }}>
+        Refresh
+      </Button>
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
@@ -87,7 +118,7 @@ const SubjectTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {subjectData.map((row, index) => (
+            {subjectData && subjectData.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.subjectId}</TableCell>
                 <TableCell>{row.subjectName}</TableCell>
@@ -104,13 +135,14 @@ const SubjectTable = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(row.subjectId, index)} // Pass subjectId and index to handleDelete
                   >
                     Delete
                   </Button>
                 </TableCell>
               </TableRow>
             ))}
+
           </TableBody>
         </Table>
       </TableContainer>
@@ -161,6 +193,7 @@ const SubjectTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <div className="reg-error" style={{ marginTop: 10 }}>{academicMessage}</div>
     </>
   );
 };

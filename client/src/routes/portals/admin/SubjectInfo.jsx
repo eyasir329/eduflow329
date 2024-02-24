@@ -1,5 +1,3 @@
-// SubjectInfo.js
-
 import React, { useState } from "react";
 import {
   TextField,
@@ -8,12 +6,6 @@ import {
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
 import SubjectTable from "./SubjectTable";
 
 const theme = createTheme();
@@ -23,16 +15,14 @@ export default function SubjectInfo() {
     subjectID: "",
     classID: "",
     subjectName: "",
+    teacherId: "",
   });
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const dispatch = useDispatch();
+  const [subjectMessage, setSubjectMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      dispatch(updateUserStart());
-
-      const res = await fetch(`http://localhost:5000/api/student/update/`, {
+      const res = await fetch(`http://localhost:5000/api/admin/createSubject/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,32 +31,14 @@ export default function SubjectInfo() {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) {
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          dispatch(updateUserFailure("An unexpected error occurred"));
-        }
-        return;
-      }
-
       const data = await res.json();
-
-      if (data.success === false) {
-        dispatch(
-          updateUserFailure(
-            data.message || "An unexpected error occurred"
-          )
-        );
-        return;
+      if (res.ok) {
+        setSubjectMessage("Subject created successfully");
+      } else {
+        setSubjectMessage(data.message || "Failed to create subject");
       }
-
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
     } catch (error) {
-      dispatch(updateUserFailure("An unexpected error occurred"));
+      setSubjectMessage("An unexpected error occurred");
     }
   };
 
@@ -76,17 +48,6 @@ export default function SubjectInfo() {
       ...prevFormData,
       [name]: value,
     }));
-  };
-
-  // Handler to get previous subject information
-  const previousInfoHandler = () => {
-    // Logic to retrieve previous subject information
-    const previousSubjectInfo = {
-      subjectID: "PreviousSubjectID",
-      classID: "PreviousClassID",
-      subjectName: "PreviousSubjectName",
-    };
-    return previousSubjectInfo;
   };
 
   return (
@@ -132,10 +93,22 @@ export default function SubjectInfo() {
               required
               sx={{ mb: 2 }}
             />
+            <TextField
+              type="text"
+              name="teacherId"
+              label="Teacher Id"
+              value={formData.teacherId}
+              onChange={handleChange}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
             <Button variant="outlined" color="secondary" type="submit">
               Register
             </Button>
           </form>
+          <div className="reg-error">
+            {subjectMessage}
+          </div>
         </Paper>
       </div>
 
@@ -146,10 +119,7 @@ export default function SubjectInfo() {
           </div>
           <ThemeProvider theme={theme}>
             {/* Pass props to SubjectTable */}
-            <SubjectTable
-              previousInfoHandler={previousInfoHandler}
-              teacherData={[]} // Pass your teacher data array here
-            />
+            <SubjectTable />
           </ThemeProvider>
         </div>
       </div>

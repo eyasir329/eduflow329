@@ -37,7 +37,7 @@ const TeacherTable = () => {
   const [searchId, setSearchId] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
-  const [profilePicture, setProfilePicture] = useState("");
+  const [profilePicture, setProfilePicture] = useState("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/241-intro-photo-final.jpg?alt=media&token=66f5d1f3-d93d-4478-aef2-8213c526155c");
   const [uploadDisabled, setUploadDisabled] = useState(false);
   const [updateMessage, setUpdateMessage] = useState("");
   const [deleteMessage, setDeleteMessage] = useState("");
@@ -78,7 +78,6 @@ const TeacherTable = () => {
 
   const handleSave = async () => {
     console.log(editableData);
-    editableData.profilePicture = profilePicture;
     try {
       const res = await fetch(`http://localhost:5000/api/admin/updateTeacher`, {
         method: "POST",

@@ -1,5 +1,5 @@
 const express = require("express");
-const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff } = require("../controllers/admin.controller");
+const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createSubject, viewSubject, updateSubject, deleteSubject } = require("../controllers/admin.controller");
 
 const router = express.Router();
 
@@ -19,5 +19,22 @@ router.get("/lastStaffId", lastStaffId);
 router.get("/viewStaff", viewStaff);
 router.post("/updateStaff", updateStaff);
 router.delete('/deleteStaff/:staffId', deleteStaff);
+
+// Academic endpoints
+router.post("/createAcademic", createAcademic);
+router.get("/viewAcademic", viewAcademic);
+router.post("/updateAcademic", updateAcademic);
+router.delete("/deleteAcademic", deleteAcademic);
+
+// subject 
+router.post("/createSubject", createSubject);
+router.get("/viewSubject", viewSubject);
+router.post("/updateSubject", updateSubject);
+router.delete("/deleteSubject/:subjectId", deleteSubject);
+
+// student
+
+router.post("/createSubject", createSubject);
+
 
 module.exports = router;

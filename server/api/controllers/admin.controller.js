@@ -548,6 +548,283 @@ exports.deleteStaff = async (req, res, next) => {
 };
 
 
+// Academic
+
+exports.createAcademic = async (req, res, next) => {
+    try {
+        const { classId, className, roomNumber, session, classTeacherId, classCaptainId } = req.body;
+
+        // Convert empty strings to null for integer fields
+        const classTeacherIdValue = classTeacherId === '' ? null : classTeacherId;
+        const classCaptainIdValue = classCaptainId === '' ? null : classCaptainId;
+
+        // SQL query for insert or update
+        const sqlQuery = `
+            INSERT INTO academics (class_id, class_name, room_number, session, class_teacher_id, class_captain_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            class_name = VALUES(class_name),
+            room_number = VALUES(room_number),
+            session = VALUES(session),
+            class_teacher_id = VALUES(class_teacher_id),
+            class_captain_id = VALUES(class_captain_id)
+        `;
+
+        // Execute the SQL query
+        connection.query(sqlQuery, [classId, className, roomNumber, session, classTeacherIdValue, classCaptainIdValue], (error, results) => {
+            if (error) {
+                throw error;
+            }
+
+            // Respond with the ID of the newly created or updated academic record
+            res.status(201).json({ message:"classId "+classId +" create or updated successfully" });
+        });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
+
+exports.viewAcademic = async (req, res, next) => {
+    try {
+        // Perform a query to fetch academic data from the database
+        connection.query('SELECT * FROM academics', (error, results, fields) => {
+            if (error) {
+                throw error;
+            }
+
+            // Transform the keys in the results
+            const transformedResults = results.map(row => ({
+                classId: row.class_id,
+                className: row.class_name,
+                session: row.session,
+                classTeacherId: row.class_teacher_id,
+                classCaptainId: row.class_captain_id,
+                roomNumber: row.room_number
+            }));
+
+            // Send the transformed data as a response
+            res.status(200).json(transformedResults);
+        });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
+
+exports.updateAcademic = async (req, res, next) => {
+    try {
+        const { classId, className, session, classTeacherId, classCaptainId, roomNumber } = req.body;
+
+        console.log(req.body);
+
+        // Perform a query to update academic data in the database
+        connection.query(
+            'UPDATE academics SET class_name = ?, session = ?, class_teacher_id = ?, class_captain_id = ?, room_number = ? WHERE class_id = ?',
+            [className, session, classTeacherId, classCaptainId, roomNumber, classId],
+            (error, results, fields) => {
+                if (error) {
+                    throw error;
+                }
+
+                // Send success response
+                res.status(200).json({ message: 'Academic data updated successfully' });
+            }
+        );
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
+
+exports.deleteAcademic = async (req, res, next) => {
+    try {
+        const { classId } = req.body;
+
+        // Perform a query to delete academic data from the database
+        connection.query('DELETE FROM academics WHERE class_id = ?', [classId], (error, results) => {
+            if (error) {
+                throw error;
+            }
+
+            // Check if any rows were affected by the delete operation
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ message: "Academic data not found" });
+            }
+
+            // Send a success response
+            res.status(200).json({ message: "Academic data deleted successfully" });
+        });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
+
+// subject
+exports.createSubject = async (req, res, next) => {
+    try {
+        // Extract data from request body
+        const { subjectID, subjectName, classID, teacherId } = req.body;
+
+        // Convert string inputs to integers
+        const parsedSubjectID = parseInt(subjectID);
+        const parsedClassID = parseInt(classID);
+        const parsedTeacherId = teacherId ? parseInt(teacherId) : null; // Convert to integer only if provided
+
+        // Insert a new subject into the database
+        const query = `INSERT INTO subjects (subject_id, sub_name, class_id, teacher_id) 
+                       VALUES (?, ?, ?, ?)`;
+        connection.query(query, [parsedSubjectID, subjectName, parsedClassID, parsedTeacherId], (error, results, fields) => {
+            if (error) {
+                console.error('Error creating subject:', error);
+                res.status(500).json({ message: 'Failed to create subject' });
+                return;
+            }
+            console.log('Subject created successfully');
+            res.status(201).json({ message: 'Subject created successfully'});
+        });
+    } catch (error) {
+        // Handle any errors
+        console.error('Error creating subject:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+exports.viewSubject = async (req, res, next) => {
+    try {
+      // Assuming you have a MySQL connection pool set up
+      connection.query('SELECT * FROM subjects', (error, results) => {
+        if (error) {
+          console.error('Error fetching subject data:', error);
+          res.status(500).json({ error: 'Failed to fetch subject data' });
+          return;
+        }
+        
+        // Convert keys and send the converted data as JSON response
+        const convertedResults = results.map(row => ({
+          subjectId: row.subject_id,
+          subjectName: row.sub_name,
+          teacherId: row.teacher_id,
+          classId: row.class_id
+        }));
+        
+        res.status(200).json(convertedResults); // Send fetched subject data with converted keys as JSON response
+      });
+    } catch (error) {
+      console.error('Error fetching subject data:', error);
+      res.status(500).json({ error: 'Failed to fetch subject data' });
+    }
+  };
+
+  exports.updateSubject = async (req, res, next) => {
+    try {
+      // Extract updated subject data from the request body
+      const { subjectId, subjectName, teacherId, classId } = req.body;
+  
+      // Validate the input (if necessary)
+        console.log(req.body)
+      // Assuming you have a MySQL connection pool set up
+      connection.query(
+        'UPDATE subjects SET sub_name = ?, teacher_id = ?, class_id = ? WHERE subject_id = ?',
+        [subjectName, teacherId, classId, subjectId],
+        (error, results) => {
+          if (error) {
+            console.error('Error updating subject:', error);
+            res.status(500).json({ error: 'Failed to update subject' });
+            return;
+          }
+  
+          // Check if the subject was updated successfully
+          if (results.affectedRows === 0) {
+            res.status(404).json({ error: 'Subject not found' });
+            return;
+          }
+  
+          // Subject updated successfully
+          res.status(200).json({ message: 'Subject updated successfully' });
+        }
+      );
+    } catch (error) {
+      console.error('Error updating subject:', error);
+      res.status(500).json({ error: 'Failed to update subject' });
+    }
+  };
+
+  exports.deleteSubject = async (req, res, next) => {
+    try {
+      const { subjectId } = req.params; // Extract subject ID from request parameters
+      
+      // Ensure connection is established before executing queries
+      if (!connection) {
+        throw new Error('Database connection is not established');
+      }
+  
+      // Execute the DELETE query
+      connection.query('DELETE FROM subjects WHERE subject_id = ?', [subjectId], (error, results) => {
+        if (error) {
+          console.error('Error deleting subject:', error);
+          // Send an error response
+          res.status(500).json({ error: 'Failed to delete subject' });
+          return;
+        }
+        
+        // Check if any row was affected
+        if (results.affectedRows === 0) {
+          // If no row was affected, it means subject with provided ID doesn't exist
+          res.status(404).json({ error: 'Subject not found' });
+          return;
+        }
+  
+        // Send a success response
+        res.status(200).json({ message: 'Subject deleted successfully' });
+      });
+    } catch (error) {
+      console.error('Error deleting subject:', error);
+      // Send an error response
+      res.status(500).json({ error: 'Failed to delete subject' });
+    }
+  };
+
+//   student
+exports.createStudent = async (req, res, next) => {
+    try {
+      // Your code to create a student goes here
+  
+      // Example code:
+      const { firstName, lastName, email, phoneNumber, dateOfBirth, joiningDate, image, streetAddress, city, state, zip, gender, enrollClass } = req.body;
+
+      console.log(req.body)
+  
+      // Here you can use the data received in req.body to create a new student record in your database
+      // For example, if you're using MongoDB with Mongoose:
+      // const newStudent = new Student({ firstName, lastName, email, phoneNumber, dateOfBirth, joiningDate, image, streetAddress, city, state, zip, gender, enrollClass });
+      // await newStudent.save();
+  
+      // Respond with success message or created student data
+      res.status(201).json({ success: true, message: "Student created successfully" });
+    } catch (error) {
+      // Handle errors
+      console.error("Error creating student:", error);
+      res.status(500).json({ success: false, message: "Failed to create student" });
+    }
+  };
+  
+
+
+  
+  
+  
+  
+
+
+
+
+
+
+
+  
+  
 
 
 

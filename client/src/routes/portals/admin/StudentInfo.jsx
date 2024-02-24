@@ -20,43 +20,44 @@ import {
 } from "firebase/storage";
 import app from "../../../firebase";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-} from "../../../redux/user/userSlice";
+
 import StudentTable from "./StudentTable";
 
 const theme = createTheme();
 
-function createStudentId(batch, mid, lastId) {
+const divisions = [
+  "Barishal",
+  "Chattogram",
+  "Dhaka",
+  "Khulna",
+  "Mymensingh",
+  "Rajshahi",
+  "Rangpur",
+  "Sylhet",
+];
+const divisionMenuItems = divisions.map((division, index) => (
+  <MenuItem key={index} value={division}>
+    {division}
+  </MenuItem>
+));
+
+function createStudentId(department, midId, lastId) {
   const currentYear = new Date().getFullYear().toString();
-  const idPrefix = `${currentYear}${batch}`;
+  const idPrefix = `${currentYear}${department}`;
   const previousId = parseInt(lastId, 10) + 1;
-  return idPrefix + mid + previousId.toString().padStart(3, "0");
+  return idPrefix + midId + previousId.toString().padStart(3, '0');
 }
 
 export default function StudentInfo() {
   const { currentUser } = useSelector((state) => state.user);
   const [studentId, setStudentId] = useState(null);
   const [parentId, setParentId] = useState(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [joiningDate, setJoiningDate] = useState("");
-  const [image, setImage] = useState(undefined);
   const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const [streetAddress, setStreetAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const [gender, setGender] = useState(""); // Added state for gender
-  const [enrollClass, setEnrollClass] = useState("");
+  const [createMessage, setCreateMessage] = useState();
+  const [lastThreeDigit, setLastThreeDigit] = useState("000");
 
   const dispatch = useDispatch();
   const fileRef = useRef(null);
@@ -66,6 +67,11 @@ export default function StudentInfo() {
       handleFileUpload(image);
     }
   }, [image]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -92,11 +98,43 @@ export default function StudentInfo() {
     );
   };
 
+  const fetchData = () => {
+    fetch('http://localhost:5000/api/admin/lastStudentId')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch teacher information');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data)
+        if (data.lastStudentId) {
+          console.log(data.lastStudentId)
+          setLastThreeDigit(String(data.lastStudentId).slice(-3));
+        } else {
+          console.log("lastTeacherId is not yet available.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);  
+
   const handleGenerateStudentId = () => {
-    const newStudentId = createStudentId("04", "1", "000");
-    const newParentId = createStudentId("04", "2", "000");
+    const newStudentId = createStudentId("04", "1", lastThreeDigit);
+    const newParentId = createStudentId("04", "2", lastThreeDigit);
+
     setStudentId(newStudentId);
     setParentId(newParentId);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      studentId: newStudentId,
+      parentId: newParentId,
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -111,11 +149,11 @@ export default function StudentInfo() {
         body: JSON.stringify(formData),
       });
 
-
       const data = await res.json();
-
+      setCreateMessage(data.message);
+      console.log(data)
     } catch (error) {
-      
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -166,30 +204,33 @@ export default function StudentInfo() {
             </div>
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Unique Student ID"
-              InputLabelProps={{ shrink: true }}
-              color="secondary"
-              value={studentId}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
-            />
-            <TextField
-              type="text"
-              variant="outlined"
-              label="Unique Pareny ID"
-              InputLabelProps={{ shrink: true }}
-              color="secondary"
-              value={parentId}
-              fullWidth
-              required
-              sx={{ mb: 4 }}
-            />
+              <TextField
+                type="text"
+                variant="outlined"
+                label="Unique Student ID"
+                InputLabelProps={{ shrink: true }}
+                color="secondary"
+                name="studentId"
+                value={formData.studentId || ""}
+                fullWidth
+                required
+                sx={{ mb: 4 }}
+                onChange={handleChange}
+              />
+              <TextField
+                type="text"
+                variant="outlined"
+                label="Unique Parent ID"
+                InputLabelProps={{ shrink: true }}
+                color="secondary"
+                name="parentId"
+                value={formData.parentId || ""}
+                fullWidth
+                required
+                sx={{ mb: 4 }}
+                onChange={handleChange}
+              />
             </Stack>
-            
 
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
@@ -197,93 +238,105 @@ export default function StudentInfo() {
                 variant="outlined"
                 color="secondary"
                 label="First Name"
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
+                name="firstName"
+                value={formData.firstName || ""}
                 fullWidth
                 required
+                onChange={handleChange}
               />
               <TextField
                 type="text"
                 variant="outlined"
                 color="secondary"
                 label="Last Name"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
+                name="lastName"
+                value={formData.lastName || ""}
                 fullWidth
                 required
+                onChange={handleChange}
               />
-            </Stack>
-            {/* Gender selection */}
-            <FormControl variant="outlined" fullWidth sx={{ mb: 4 }}>
-              <InputLabel id="gender-label">Gender</InputLabel>
-              <Select
-                labelId="gender-label"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
+              <TextField
+                select
+                variant="outlined"
+                color="secondary"
                 label="Gender"
+                name="gender"
+                value={formData.gender || ""}
+                fullWidth
                 required
+                onChange={handleChange}
               >
                 <MenuItem value="male">Male</MenuItem>
                 <MenuItem value="female">Female</MenuItem>
                 <MenuItem value="other">Other</MenuItem>
-              </Select>
-            </FormControl>
-            {/* Additional fields */}
+              </TextField>
+
+            </Stack>
+
+            {/* Add other form fields similarly */}
+            {/* Father's Name */}
             <TextField
               type="text"
               variant="outlined"
               color="secondary"
               label="Father's Name"
-              onChange={(e) => setLastName(e.target.value)}
-              value={lastName}
+              name="fatherName"
+              value={formData.fatherName || ""}
               fullWidth
-              required
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
+            {/* Mother's Name */}
             <TextField
               type="text"
               variant="outlined"
               color="secondary"
               label="Mother's Name"
-              onChange={(e) => setLastName(e.target.value)}
-              value={lastName}
+              name="motherName"
+              value={formData.motherName || ""}
               fullWidth
-              required
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
+            {/* Guardian's Name */}
             <TextField
               type="text"
               variant="outlined"
               color="secondary"
               label="Guardian's Name"
-              onChange={(e) => setLastName(e.target.value)}
-              value={lastName}
+              name="guardianName"
+              value={formData.guardianName || ""}
               fullWidth
-              required
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
+            {/* Email */}
             <TextField
               type="email"
               variant="outlined"
               color="secondary"
               label="Email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
+              name="email"
+              value={formData.email || ""}
               fullWidth
               required
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
+            {/* Phone Number */}
             <TextField
               type="tel"
               variant="outlined"
               color="secondary"
               label="Phone Number"
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              value={phoneNumber}
+              name="phoneNumber"
+              value={formData.phoneNumber || ""}
               fullWidth
               required
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
+            {/* Date Of Birth */}
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 type="date"
@@ -291,34 +344,38 @@ export default function StudentInfo() {
                 color="secondary"
                 label="Date Of Birth"
                 InputLabelProps={{ shrink: true }}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                value={dateOfBirth}
+                name="dateOfBirth"
+                value={formData.dateOfBirth || ""}
                 fullWidth
                 sx={{ mb: 4 }}
+                onChange={handleChange}
               />
-
+              {/* Joining Date */}
               <TextField
                 type="date"
                 variant="outlined"
                 color="secondary"
-                label="Joining Date"
+                label="Enroll Date"
                 InputLabelProps={{ shrink: true }}
-                onChange={(e) => setJoiningDate(e.target.value)}
-                value={joiningDate}
+                name="joiningDate"
+                value={formData.joiningDate || ""}
                 fullWidth
+                onChange={handleChange}
               />
             </Stack>
 
+            {/* City, State, Zip */}
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 label="City"
                 type="text"
                 variant="outlined"
                 color="secondary"
-                onChange={(e) => setCity(e.target.value)}
-                value={city}
+                name="city"
+                value={formData.city || ""}
                 fullWidth
                 margin="normal"
+                onChange={handleChange}
               />
               <FormControl fullWidth margin="normal">
                 <InputLabel id="inputStateLabel">State</InputLabel>
@@ -327,14 +384,11 @@ export default function StudentInfo() {
                   id="inputState"
                   variant="outlined"
                   color="secondary"
-                  onChange={(e) => setState(e.target.value)}
-                  value={state}
+                  name="state"
+                  value={formData.state || ""}
+                  onChange={handleChange}
                 >
-                  <MenuItem value="" disabled>
-                    Select...
-                  </MenuItem>
-                  <MenuItem value="option1">Option 1</MenuItem>
-                  <MenuItem value="option2">Option 2</MenuItem>
+                  {divisionMenuItems}
                 </Select>
               </FormControl>
               <TextField
@@ -342,39 +396,47 @@ export default function StudentInfo() {
                 type="text"
                 variant="outlined"
                 color="secondary"
-                onChange={(e) => setZip(e.target.value)}
-                value={zip}
+                name="zip"
+                value={formData.zip || ""}
                 fullWidth
                 margin="normal"
+                onChange={handleChange}
               />
             </Stack>
 
+            {/* Street Address */}
             <TextField
               label="Street Address"
               type="text"
               variant="outlined"
               color="secondary"
-              onChange={(e) => setStreetAddress(e.target.value)}
-              value={streetAddress}
+              name="streetAddress"
+              value={formData.streetAddress || ""}
               fullWidth
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
 
+            {/* Enroll Class */}
             <TextField
               label="Enroll Class"
               type="text"
               variant="outlined"
               color="secondary"
-              onChange={(e) => setEnrollClass(e.target.value)}
-              value={enrollClass}
+              name="enrollClass"
+              value={formData.enrollClass || ""}
               fullWidth
               sx={{ mb: 4 }}
+              onChange={handleChange}
             />
 
             <Button variant="outlined" color="secondary" type="submit">
               Register
             </Button>
           </form>
+          <p className="reg-error">
+            {createMessage}
+          </p>
         </Paper>
       </div>
 

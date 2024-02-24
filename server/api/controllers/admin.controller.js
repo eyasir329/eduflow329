@@ -4,6 +4,9 @@ const connection = require("../sql/db.js");
 
 // extra function start
 function getAddressId(addressValues) {
+    // If any address value is undefined, set it to "N/A"
+    addressValues = addressValues.map(value => value || "N/A");
+
     return new Promise((resolve, reject) => {
         const sqlSelectAddress = `SELECT address_id FROM addresses WHERE city = ? AND division = ? AND zip = ? AND street_address = ?`;
 
@@ -37,10 +40,13 @@ function getAddressId(addressValues) {
     });
 }
 
+
 function getSocialId(email, phone, facebook, linkedin, twitter) {
+    // If any social value is undefined, set it to "N/A"
+    const socialValues = [email || "N/A", phone || "N/A", facebook || "N/A", linkedin || "N/A", twitter || "N/A"];
+
     return new Promise((resolve, reject) => {
         const sqlSelectSocial = `SELECT social_id FROM socials WHERE email = ? AND phone = ? AND facebook = ? AND linkedin = ? AND twitter = ?`;
-        const socialValues = [email, phone, facebook, linkedin, twitter];
 
         connection.query(sqlSelectSocial, socialValues, (error, results) => {
             if (error) {
@@ -71,6 +77,7 @@ function getSocialId(email, phone, facebook, linkedin, twitter) {
         });
     });
 }
+
 // extra function end
 
 exports.schoolView = async (req, res, next) => {
@@ -577,7 +584,7 @@ exports.createAcademic = async (req, res, next) => {
             }
 
             // Respond with the ID of the newly created or updated academic record
-            res.status(201).json({ message:"classId "+classId +" create or updated successfully" });
+            res.status(201).json({ message: "classId " + classId + " create or updated successfully" });
         });
     } catch (error) {
         // If an error occurs, pass it to the error handling middleware
@@ -682,7 +689,7 @@ exports.createSubject = async (req, res, next) => {
                 return;
             }
             console.log('Subject created successfully');
-            res.status(201).json({ message: 'Subject created successfully'});
+            res.status(201).json({ message: 'Subject created successfully' });
         });
     } catch (error) {
         // Handle any errors
@@ -693,129 +700,297 @@ exports.createSubject = async (req, res, next) => {
 
 exports.viewSubject = async (req, res, next) => {
     try {
-      // Assuming you have a MySQL connection pool set up
-      connection.query('SELECT * FROM subjects', (error, results) => {
-        if (error) {
-          console.error('Error fetching subject data:', error);
-          res.status(500).json({ error: 'Failed to fetch subject data' });
-          return;
-        }
-        
-        // Convert keys and send the converted data as JSON response
-        const convertedResults = results.map(row => ({
-          subjectId: row.subject_id,
-          subjectName: row.sub_name,
-          teacherId: row.teacher_id,
-          classId: row.class_id
-        }));
-        
-        res.status(200).json(convertedResults); // Send fetched subject data with converted keys as JSON response
-      });
-    } catch (error) {
-      console.error('Error fetching subject data:', error);
-      res.status(500).json({ error: 'Failed to fetch subject data' });
-    }
-  };
+        // Assuming you have a MySQL connection pool set up
+        connection.query('SELECT * FROM subjects', (error, results) => {
+            if (error) {
+                console.error('Error fetching subject data:', error);
+                res.status(500).json({ error: 'Failed to fetch subject data' });
+                return;
+            }
 
-  exports.updateSubject = async (req, res, next) => {
+            // Convert keys and send the converted data as JSON response
+            const convertedResults = results.map(row => ({
+                subjectId: row.subject_id,
+                subjectName: row.sub_name,
+                teacherId: row.teacher_id,
+                classId: row.class_id
+            }));
+
+            res.status(200).json(convertedResults); // Send fetched subject data with converted keys as JSON response
+        });
+    } catch (error) {
+        console.error('Error fetching subject data:', error);
+        res.status(500).json({ error: 'Failed to fetch subject data' });
+    }
+};
+
+exports.updateSubject = async (req, res, next) => {
     try {
-      // Extract updated subject data from the request body
-      const { subjectId, subjectName, teacherId, classId } = req.body;
-  
-      // Validate the input (if necessary)
+        // Extract updated subject data from the request body
+        const { subjectId, subjectName, teacherId, classId } = req.body;
+
+        // Validate the input (if necessary)
         console.log(req.body)
-      // Assuming you have a MySQL connection pool set up
-      connection.query(
-        'UPDATE subjects SET sub_name = ?, teacher_id = ?, class_id = ? WHERE subject_id = ?',
-        [subjectName, teacherId, classId, subjectId],
-        (error, results) => {
-          if (error) {
-            console.error('Error updating subject:', error);
-            res.status(500).json({ error: 'Failed to update subject' });
-            return;
-          }
-  
-          // Check if the subject was updated successfully
-          if (results.affectedRows === 0) {
-            res.status(404).json({ error: 'Subject not found' });
-            return;
-          }
-  
-          // Subject updated successfully
-          res.status(200).json({ message: 'Subject updated successfully' });
-        }
-      );
-    } catch (error) {
-      console.error('Error updating subject:', error);
-      res.status(500).json({ error: 'Failed to update subject' });
-    }
-  };
+        // Assuming you have a MySQL connection pool set up
+        connection.query(
+            'UPDATE subjects SET sub_name = ?, teacher_id = ?, class_id = ? WHERE subject_id = ?',
+            [subjectName, teacherId, classId, subjectId],
+            (error, results) => {
+                if (error) {
+                    console.error('Error updating subject:', error);
+                    res.status(500).json({ error: 'Failed to update subject' });
+                    return;
+                }
 
-  exports.deleteSubject = async (req, res, next) => {
-    try {
-      const { subjectId } = req.params; // Extract subject ID from request parameters
-      
-      // Ensure connection is established before executing queries
-      if (!connection) {
-        throw new Error('Database connection is not established');
-      }
-  
-      // Execute the DELETE query
-      connection.query('DELETE FROM subjects WHERE subject_id = ?', [subjectId], (error, results) => {
-        if (error) {
-          console.error('Error deleting subject:', error);
-          // Send an error response
-          res.status(500).json({ error: 'Failed to delete subject' });
-          return;
-        }
-        
-        // Check if any row was affected
-        if (results.affectedRows === 0) {
-          // If no row was affected, it means subject with provided ID doesn't exist
-          res.status(404).json({ error: 'Subject not found' });
-          return;
-        }
-  
-        // Send a success response
-        res.status(200).json({ message: 'Subject deleted successfully' });
-      });
+                // Check if the subject was updated successfully
+                if (results.affectedRows === 0) {
+                    res.status(404).json({ error: 'Subject not found' });
+                    return;
+                }
+
+                // Subject updated successfully
+                res.status(200).json({ message: 'Subject updated successfully' });
+            }
+        );
     } catch (error) {
-      console.error('Error deleting subject:', error);
-      // Send an error response
-      res.status(500).json({ error: 'Failed to delete subject' });
+        console.error('Error updating subject:', error);
+        res.status(500).json({ error: 'Failed to update subject' });
     }
-  };
+};
+
+exports.deleteSubject = async (req, res, next) => {
+    try {
+        const { subjectId } = req.params; // Extract subject ID from request parameters
+
+        // Ensure connection is established before executing queries
+        if (!connection) {
+            throw new Error('Database connection is not established');
+        }
+
+        // Execute the DELETE query
+        connection.query('DELETE FROM subjects WHERE subject_id = ?', [subjectId], (error, results) => {
+            if (error) {
+                console.error('Error deleting subject:', error);
+                // Send an error response
+                res.status(500).json({ error: 'Failed to delete subject' });
+                return;
+            }
+
+            // Check if any row was affected
+            if (results.affectedRows === 0) {
+                // If no row was affected, it means subject with provided ID doesn't exist
+                res.status(404).json({ error: 'Subject not found' });
+                return;
+            }
+
+            // Send a success response
+            res.status(200).json({ message: 'Subject deleted successfully' });
+        });
+    } catch (error) {
+        console.error('Error deleting subject:', error);
+        // Send an error response
+        res.status(500).json({ error: 'Failed to delete subject' });
+    }
+};
 
 //   student
+
 exports.createStudent = async (req, res, next) => {
     try {
-      // Your code to create a student goes here
-  
-      // Example code:
-      const { firstName, lastName, email, phoneNumber, dateOfBirth, joiningDate, image, streetAddress, city, state, zip, gender, enrollClass } = req.body;
+        // Extracting data from the request body
+        const { studentId, parentId, firstName, lastName, phoneNumber, fatherName, motherName, guardianName, dateOfBirth, joiningDate, profilePicture, gender, enrollClass } = req.body;
 
-      console.log(req.body)
-  
-      // Here you can use the data received in req.body to create a new student record in your database
-      // For example, if you're using MongoDB with Mongoose:
-      // const newStudent = new Student({ firstName, lastName, email, phoneNumber, dateOfBirth, joiningDate, image, streetAddress, city, state, zip, gender, enrollClass });
-      // await newStudent.save();
-  
-      // Respond with success message or created student data
-      res.status(201).json({ success: true, message: "Student created successfully" });
+        // Parsing the strings and constructing Date objects
+        const dateOfBirth1 = new Date(dateOfBirth);
+        const joiningDate1 = new Date(joiningDate);
+
+        // Formatting the dates to MySQL date format 'YYYY-MM-DD'
+        const formattedDateOfBirth = dateOfBirth1.toISOString().split('T')[0];
+        const formattedJoiningDate = joiningDate1.toISOString().split('T')[0];
+
+        // Create address id
+        const city = req.body.city;
+        const division = req.body.state;
+        const zip = req.body.zip;
+        const street_address = req.body.streetAddress;
+        const addressValues = [city, division, zip, street_address];
+        const address_id = await getAddressId(addressValues);
+
+        // Create social id
+        const email = req.body.email;
+        const phone = req.body.phoneNumber;
+        const facebook = req.body.facebook;
+        const linkedin = req.body.linkedin;
+        const social_id = await getSocialId(email, phone, facebook, linkedin);
+
+        // Execute the query with data
+        const query = `
+            INSERT INTO students (student_id, parent_id, first_name, last_name, gender, father_name, mother_name, guardian_name, date_of_birth, admitted_date, profile_pic, class_id, social_id, address_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        connection.query(query, [studentId, parentId, firstName, lastName, gender, fatherName, motherName, guardianName, formattedDateOfBirth, formattedJoiningDate, profilePicture, enrollClass, social_id, address_id]);
+
+        // Respond with success message
+        res.status(201).json({ success: true, message: "Student created successfully" });
     } catch (error) {
-      // Handle errors
-      console.error("Error creating student:", error);
-      res.status(500).json({ success: false, message: "Failed to create student" });
+        // Handle errors
+        console.error("Error creating student:", error);
+        res.status(500).json({ success: false, message: "Failed to create student" });
     }
-  };
-  
+};
+
+exports.lastStudentId = async (req, res, next) => {
+    try {
+        const sql = "SELECT student_id FROM students ORDER BY student_id DESC LIMIT 1";
+        const [rows, fields] = await connection.promise().query(sql);
+        if (rows.length > 0) {
+            res.status(200).json({ lastStudentId: rows[0].student_id });
+        } else {
+            res.status(404).json({ error: "No lastStudent ID found" });
+        }
+    } catch (error) {
+        console.error("Error retrieving last staff ID:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+// Route handler to update a student
+exports.updateStudent = async (req, res, next) => {
+    try {
+        const data = req.body;
+        console.log(data)
+        const {
+            studentId,
+            parentId,
+            firstName,
+            lastName,
+            phoneNumber,
+            fatherName,
+            motherName,
+            guardianName,
+            dateOfBirth,
+            admittedDate,
+            profilePicture,
+            gender,
+            classId
+        } = data;
+
+        // Create address id
+        const city = data.city;
+        const division = data.state;
+        const zip = data.zip;
+        const street_address = data.streetAddress;
+        const addressValues = [city, division, zip, street_address];
+        const address_id = await getAddressId(addressValues);
+
+        // Create social id
+        const email = data.email;
+        const phone = data.phoneNumber;
+        const facebook = data.facebook;
+        const linkedin = data.linkedin;
+        const social_id = await getSocialId(email, phone, facebook, linkedin);
+
+        // Update the student in the database
+        const sql = `
+            UPDATE students
+            SET first_name=?, last_name=?, father_name=?, mother_name=?, guardian_name=?, date_of_birth=?, admitted_date=?, profile_pic=?, gender=?, class_id=?, social_id=?, address_id=?
+            WHERE student_id=?
+        `;
+        connection.query(sql, [firstName, lastName, fatherName, motherName, guardianName, dateOfBirth, admittedDate, profilePicture, gender, classId, social_id, address_id, studentId]);
+        console.log("Student updated successfully");
+        // Send success response
+        res.status(200).json({ success: true, message: "Student updated successfully" });
+    } catch (error) {
+        console.error("Error updating student:", error);
+        res.status(500).json({ success: false, message: "Failed to update student" });
+    }
+};
 
 
-  
-  
-  
-  
+// Route handler to delete a student
+exports.deleteStudent = async (req, res, next) => {
+    try {
+        const studentId = req.params.studentId;
+
+        // Delete the student from the database
+        const query = `
+        DELETE FROM students
+        WHERE student_id=?
+      `;
+        connection.query(query, [studentId]);
+
+        // Send success response
+        res.status(200).json({ success: true, message: "Student deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting student:", error);
+        res.status(500).json({ success: false, message: "Failed to delete student" });
+    }
+};
+
+exports.viewStudent = async (req, res, next) => {
+    try {
+        const studentInfoQuery = `
+  SELECT
+    s.student_id as studentId,
+    s.parent_id as parentId,
+    s.first_name as firstName,
+    s.last_name as lastName,
+    s.gender,
+    s.father_name as fatherName,
+    s.mother_name as motherName,
+    s.guardian_name as guardianName,
+    s.date_of_birth as dateOfBirth,
+    s.admitted_date as admittedDate,
+    s.profile_pic as profilePicture,
+    sc.email,
+    sc.phone as phoneNumber,
+    sc.facebook,
+    sc.linkedin,
+    sc.twitter,
+    a.city,
+    a.division as state,
+    a.zip,
+    a.street_address as streetAddress,
+    aa.class_id as classId
+  FROM
+    students s
+  LEFT JOIN
+    socials sc ON s.social_id = sc.social_id
+  LEFT JOIN
+    addresses a ON s.address_id = a.address_id
+    LEFT JOIN
+    academics aa ON s.class_id = aa.class_id
+`;
+
+        // Execute the query
+        connection.query(studentInfoQuery, (error, results) => {
+            if (error) {
+                console.error('Error querying data from MySQL:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                if (results.length > 0) {
+                    // Convert timestamps to date format
+                    results.forEach(student => {
+                        student.dateOfBirth = convertTimestampToDate(student.dateOfBirth);
+                        student.admittedDate = convertTimestampToDate(student.admittedDate);
+                    });
+                    // Students found, return their information
+                    res.status(200).json(results);
+                } else {
+                    // No students found
+                    res.status(404).json({ error: 'No students found' });
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+// principal
 
 
 
@@ -823,8 +998,28 @@ exports.createStudent = async (req, res, next) => {
 
 
 
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

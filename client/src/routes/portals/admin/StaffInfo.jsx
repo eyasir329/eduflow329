@@ -14,6 +14,20 @@ import {
 import Image from "../../../components/functionality/Image";
 import StaffTable from "./StaffTable";
 
+const staffPositions = [
+  "Principal",
+  "Vice Principal",
+  "Administrative Assistant",
+  "Accountant",
+  "Counselor",
+  "Librarian",
+  "Nurse",
+  "Security Guard",
+  "Janitor/Cleaner",
+  "IT Technician",
+  "Teacher Assistant"
+];
+
 const theme = createTheme();
 
 const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
@@ -103,7 +117,7 @@ export default function StaffInfo() {
       zip,
       profilePicture,
     };
-  
+
     // Send the data to your backend API using fetch or axios
     try {
       const response = await fetch("http://localhost:5000/api/admin/createStaff", {
@@ -156,6 +170,10 @@ export default function StaffInfo() {
 
   const handleUploadError = (error) => {
     console.error('Image upload error:', error);
+  };
+
+  const handleChange = (event) => {
+    setPosition(event.target.value);
   };
 
   return (
@@ -266,16 +284,22 @@ export default function StaffInfo() {
               sx={{ mb: 4 }}
             />
             <TextField
-              type="text"
+              select
+              label="Position"
+              value={position}
+              onChange={handleChange}
               variant="outlined"
               color="secondary"
-              label="Position"
-              onChange={(e) => setPosition(e.target.value)}
-              value={position}
               fullWidth
               required
               sx={{ mb: 4 }}
-            />
+            >
+              {staffPositions.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               type="number"
               variant="outlined"

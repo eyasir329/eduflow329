@@ -53,7 +53,6 @@ const TeacherTable = () => {
         throw new Error('Failed to fetch teacher data');
       }
       const data = await response.json();
-      console.log(data)
 
       setTeacherData(data);
       setFilteredData(data);
@@ -149,6 +148,8 @@ const TeacherTable = () => {
     setSearchId('');
     setFilteredData(teacherData);
     fetchData();
+    setUpdateMessage();
+    setDeleteMessage();
   };
 
   const handleUploadSuccess = (downloadURL) => {

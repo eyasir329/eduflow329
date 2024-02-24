@@ -1,5 +1,5 @@
 const express = require("express");
-const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createSubject, viewSubject, updateSubject, deleteSubject, createStudent, lastStudentId, updateStudent, deleteStudent, viewStudent } = require("../controllers/admin.controller");
+const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createSubject, viewSubject, updateSubject, deleteSubject, createStudent, lastStudentId, updateStudent, deleteStudent, viewStudent, createOrUpdatePrincipal, viewPrincipal, viewNotice, createNotice, updateNotice, deleteNotice } = require("../controllers/admin.controller");
 
 const router = express.Router();
 
@@ -38,6 +38,16 @@ router.get("/lastStudentId", lastStudentId);
 router.post("/updateStudent", updateStudent);
 router.delete('/deleteStudent/:studentId', deleteStudent);
 router.get('/viewStudent', viewStudent);
+
+// principal
+router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
+router.get('/viewPrincipal', viewPrincipal);
+
+// notice board
+router.get('/viewNotices', viewNotice);
+router.post('/createNotice', createNotice);
+router.put('/notices/:noticeId', updateNotice);
+router.delete('/notices/:noticeId', deleteNotice);
 
 
 module.exports = router;

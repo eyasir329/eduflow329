@@ -71,8 +71,8 @@ export default function TeacherInfo() {
 
   useEffect(() => {
     fetchData();
-  }, []);  
-  
+  }, []);
+
   const handleGenerateTeacherId = () => {
     const newTeacherId = createTeacherId('04', '0', lastThreeDigit);
     setTeacherId(newTeacherId);
@@ -119,10 +119,10 @@ export default function TeacherInfo() {
       const responseData = await response.json();
       console.log(responseData);
 
-      if(responseData.success){
-          fetchData();
+      if (responseData.success) {
+        fetchData();
       }
-      
+
       setTeacherInfo(responseData.message);
 
       // Reset the form fields after successful submission
@@ -255,14 +255,24 @@ export default function TeacherInfo() {
                 fullWidth
               />
               <TextField
-                type="text"
+                select
                 variant="outlined"
                 color="secondary"
                 label="Position"
                 onChange={(e) => setPosition(e.target.value)}
                 value={position}
                 fullWidth
-              />
+              >
+                <MenuItem value="Head Teacher">Head Teacher</MenuItem>
+                <MenuItem value="Assistant Head Teacher">Assistant Head Teacher</MenuItem>
+                <MenuItem value="Subject Teacher">Subject Teacher</MenuItem>
+                <MenuItem value="Language Teacher">Language Teacher</MenuItem>
+                <MenuItem value="Physical Education Teacher">Physical Education Teacher</MenuItem>
+                <MenuItem value="Librarian">Librarian</MenuItem>
+                <MenuItem value="Special Education Teacher">Special Education Teacher</MenuItem>
+                <MenuItem value="Counselor">Counselor</MenuItem>
+              </TextField>
+
               <TextField
                 type="number"
                 variant="outlined"

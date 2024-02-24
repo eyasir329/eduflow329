@@ -992,6 +992,162 @@ exports.viewStudent = async (req, res, next) => {
 
 // principal
 
+const formatDateForBackend = (dateString) => {
+    const [month, day, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
+};
+
+exports.createOrUpdatePrincipal = (req, res, next) => {
+    const data = req.body;
+    const { teacherid, speech, joiningDate, endingDate } = data;
+
+    // Format the dates for the backend
+    const formattedJoiningDate = formatDateForBackend(joiningDate);
+    const formattedEndingDate = formatDateForBackend(endingDate);
+
+    // Check if the principal already exists in the database
+    connection.query('SELECT * FROM principals WHERE teacher_id = ?', [teacherid], (err, results) => {
+        if (err) {
+            console.error("Error querying principal:", err);
+            res.status(500).json({ success: false, message: "Failed to query principal" });
+            return;
+        }
+
+        if (results.length === 0) {
+            // If the principal doesn't exist, insert a new record
+            const insertQuery = `
+                INSERT INTO principals (teacher_id, principal_speech, joining_date, ending_date)
+                VALUES (?, ?, ?, ?)
+            `;
+            connection.query(insertQuery, [teacherid, speech, formattedJoiningDate, formattedEndingDate], (err) => {
+                if (err) {
+                    console.error("Error creating principal:", err);
+                    res.status(500).json({ success: false, message: "Failed to create principal" });
+                } else {
+                    res.status(200).json({ success: true, message: "Principal created successfully" });
+                }
+            });
+        } else {
+            // If the principal already exists, update the existing record
+            const updateQuery = `
+                UPDATE principals
+                SET principal_speech=?, joining_date=?, ending_date=?
+                WHERE teacher_id=?
+            `;
+            connection.query(updateQuery, [speech, formattedJoiningDate, formattedEndingDate, teacherid], (err) => {
+                if (err) {
+                    console.error("Error updating principal:", err);
+                    res.status(500).json({ success: false, message: "Failed to update principal" });
+                } else {
+                    res.status(200).json({ success: true, message: "Principal updated successfully" });
+                }
+            });
+        }
+    });
+};
+
+
+exports.viewPrincipal = (req, res, next) => {
+    // Query the database to get the principal with the most recent joining date
+    const sql = 'SELECT * FROM principals ORDER BY joining_date DESC LIMIT 1';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.error("Error retrieving principal:", error);
+            res.status(500).json({ success: false, message: "Failed to retrieve principal" });
+        } else {
+            if (results.length === 0) {
+                res.status(404).json({ success: false, message: "Principal not found" });
+            } else {
+                const principal = results[0];
+                // Format the joining date (assuming it's in YYYY-MM-DD format)
+                principal.joining_date = formatDate(principal.joining_date);
+                principal.ending_date = formatDate(principal.ending_date);
+                res.status(200).json({ success: true, principal });
+            }
+        }
+    });
+};
+
+// Function to format date in YYYY-MM-DD to MM/DD/YYYY format
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}/${day}/${year}`;
+}
+
+
+// notice board
+
+// Function to view all notices
+exports.viewNotice = (req, res, next) => {
+    // Query the database to retrieve all notices ordered by updated_at in descending order
+    const sql = 'SELECT * FROM notice_board ORDER BY notice_id DESC';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.error("Error retrieving notices:", error);
+            res.status(500).json({ success: false, message: "Failed to retrieve notices" });
+        } else {
+            res.status(200).json({ success: true, notices: results });
+        }
+    });
+};
+
+
+// Function to create a new notice
+exports.createNotice = (req, res, next) => {
+    const { title, category, text_message, link } = req.body;
+    // Insert the new notice into the database
+    const sql = 'INSERT INTO notice_board (title, category, text_message, link) VALUES (?, ?, ?, ?)';
+    connection.query(sql, [title, category, text_message, link], (error, result) => {
+        if (error) {
+            console.error("Error creating notice:", error);
+            res.status(500).json({ success: false, message: "Failed to create notice" });
+        } else {
+            res.status(201).json({ success: true, message: "Notice created successfully", noticeId: result.insertId });
+        }
+    });
+};
+
+// Function to update an existing notice
+exports.updateNotice = (req, res, next) => {
+    const { noticeId } = req.params;
+    const { title, category, text_message, link } = req.body;
+
+    console.log(req.body)
+
+    // Update the notice in the database
+    const sql = 'UPDATE notice_board SET title=?, category=?, text_message=?, link=? WHERE notice_id=?';
+    connection.query(sql, [title, category, text_message, link, noticeId], (error, result) => {
+        if (error) {
+            console.error("Error updating notice:", error);
+            res.status(500).json({ success: false, message: "Failed to update notice" });
+        } else {
+            res.status(200).json({ success: true, message: "Notice updated successfully" });
+        }
+    });
+};
+
+// Function to delete a notice
+exports.deleteNotice = (req, res, next) => {
+    const { noticeId } = req.params;
+
+    // Delete the notice from the database
+    const sql = 'DELETE FROM notice_board WHERE notice_id=?';
+    connection.query(sql, [noticeId], (error, result) => {
+        if (error) {
+            console.error("Error deleting notice:", error);
+            res.status(500).json({ success: false, message: "Failed to delete notice" });
+        } else {
+            res.status(200).json({ success: true, message: "Notice deleted successfully" });
+        }
+    });
+};
+
+
+
+
 
 
 

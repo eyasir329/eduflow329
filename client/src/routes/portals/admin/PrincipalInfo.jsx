@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -16,64 +16,62 @@ import {
 export default function PrincipalInfo() {
   const [formData, setFormData] = useState({
     teacherid: "2020050100",
-    joiningDate: "2020-12-10",
-    endingDate: "2024-12-10", 
-    speech: "lorem200word"
+    joiningDate: "",
+    endingDate: "",
+    speech: ""
   });
 
-  const [updateSuccess, setUpdateSuccess] = useState(false);
+  useEffect(() => {
+    fetch('http://localhost:5000/api/admin/viewPrincipal')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const { teacher_id, joining_date, ending_date, principal_speech } = data.principal;
+          setFormData({
+            teacherid: teacher_id,
+            joiningDate: joining_date,
+            endingDate: ending_date,
+            speech: principal_speech
+          });
+        } else {
+          console.error(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching principal data:', error);
+      });
+  }, []);
 
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      dispatch(updateUserStart());
-      const res = await fetch(`http://localhost:5000/api/admin/update/school`, {
+      const res = await fetch(`http://localhost:5000/api/admin/createOrUpdatePrincipal`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: 'include',
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          joiningDate: formData.joiningDate,
+          endingDate: formData.endingDate
+        }),
       });
-
-      if (!res.ok) {
-        const contentType = res.headers.get("Content-Type");
-        if (contentType && contentType.startsWith("application/json")) {
-          const errorData = await res.json();
-          dispatch(updateUserFailure(errorData.message));
-        } else {
-          const errorText = await res.text();
-          const errorMessageRegex = /Error: (.+?)<br>/;
-          const matches = errorText.match(errorMessageRegex);
-          if (matches && matches.length > 1) {
-            const errorMessage = matches[1];
-            dispatch(updateUserFailure(errorMessage));
-          } else {
-            dispatch(updateUserFailure("An unexpected error occurred"));
-          }
-        }
-        return;
-      }
-
       const data = await res.json();
-
-      if (data.success === false) {
-        dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
-        return;
-      }
-
-      dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
-
     } catch (error) {
       dispatch(updateUserFailure("An unexpected error occurred"));
     }
   };
 
   const handleDateChange = (e, fieldName) => {
-    setFormData({ ...formData, [fieldName]: e.target.value });
+    const updatedFormData = {
+      ...formData,
+      [fieldName]: e.target.value
+    };
+    setFormData(updatedFormData);
   };
 
   return (
@@ -115,7 +113,7 @@ export default function PrincipalInfo() {
             />
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
-                type="date"
+                type="text"
                 variant="outlined"
                 color="secondary"
                 label="Joining Date"
@@ -126,7 +124,7 @@ export default function PrincipalInfo() {
                 required
               />
               <TextField
-                type="date"
+                type="text" 
                 variant="outlined"
                 color="secondary"
                 label="Ending Date"

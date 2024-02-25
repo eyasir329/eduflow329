@@ -8,10 +8,10 @@ export default function teacherSidebar() {
                     <div className="admin-sidebar">
                         <div className="admin-extra">
                             <ul>
-                                <a href="#teacher-profile"><li>profile</li></a>
+                                <a href="#login-profile"><li>User</li></a>
+                                <a href="#user-profile"><li>Profile</li></a>
                                 <a href="#teacher-student-info"><li>Student</li></a>
                                 <a href="#teacher-attendance-info"><li>Attendance</li></a>
-                                {/* <a href="#teacher-homework-info"><li>Homework</li></a> */}
                                 <a href="#teacher-result-info"><li>Result</li></a>
                             </ul>
                         </div>

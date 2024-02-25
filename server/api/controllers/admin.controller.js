@@ -1,5 +1,3 @@
-const { errorHandler } = require("../utils/error.js");
-const jwt = require("jsonwebtoken");
 const connection = require("../sql/db.js");
 
 // extra function start

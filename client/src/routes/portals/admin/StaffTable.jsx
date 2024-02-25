@@ -126,14 +126,15 @@ const StaffTable = () => {
   };
 
   const handleSearch = () => {
-    const searchTerm = searchId.toLowerCase().trim();
+    const searchTerm = searchId.toString().toLowerCase().trim(); // Convert to string
     const searchResult = filteredData.filter((row) =>
-      row.staffId.toLowerCase().includes(searchTerm) ||
-      row.firstName.toLowerCase().includes(searchTerm) ||
-      row.lastName.toLowerCase().includes(searchTerm)
+        row.staffId.toString().toLowerCase().includes(searchTerm) || // Convert to string
+        row.firstName.toLowerCase().includes(searchTerm) ||
+        row.lastName.toLowerCase().includes(searchTerm)
     );
     setFilteredData(searchResult);
-  };
+};
+
 
   const handleRefresh = async () => {
     setSearchId('');

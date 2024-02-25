@@ -1,16 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Profile from "../../../components/functionality/Profile";
 import StudentTable from "./StudentTable";
 import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
+import TeacherProfile from "./TeacherProfile";
+import { useSelector } from "react-redux";
 
 export default function TeacherContent() {
+    const { currentUser } = useSelector((state) => state.user);
+    const [teacherData, setTeacherData] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (currentUser) {
+                try {
+                    const response = await fetch(
+                        "http://localhost:5000/api/teacher/teacherProfile",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userId: currentUser.userId }),
+                        }
+                    );
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch teacher profile");
+                    }
+                    const responseData = await response.json();
+                    setTeacherData(responseData);
+
+                } catch (error) {
+                    console.error("Error:", error.message);
+                }
+            }
+        };
+        fetchData();
+    }, [currentUser]);
+
     return (
         <div className="admin-content">
-            <div id="teacher-profile">
-                <Profile
-                    title="Teacher Profile"
-                />
+            <div id="login-profile">
+                <Profile title="User Profile" />
+            </div>
+
+            <div id="user-profile" className="admin-details teacher-profile-dashboard">
+                <h1>Teacher Information</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <TeacherProfile teacherData={teacherData} />
+                    </div>
+                </div>
             </div>
 
             <div id="teacher-student-info" className="admin-details teacher-profile-dashboard">
@@ -19,10 +59,9 @@ export default function TeacherContent() {
                     <div className="col-lg-12">
                         <div className="teacher-view-ex">
                             <div className="teacher-view">
-                                <StudentTable />
+                                <StudentTable teacherData={teacherData}/>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -35,15 +74,6 @@ export default function TeacherContent() {
                     </div>
                 </div>
             </div>
-            {/* next time  */}
-            {/* <div id="teacher-homework-info" className="admin-details">
-                <h1>Homework Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <HomeworkInfo />
-                    </div>
-                </div>
-            </div> */}
 
             <div id="teacher-result-info" className="admin-details">
                 <h1>Result Information</h1>
@@ -53,7 +83,6 @@ export default function TeacherContent() {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

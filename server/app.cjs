@@ -12,6 +12,7 @@ const _ = require("lodash");
 const authRoutes = require("./api/routes/auth.route.js");
 const guestUserRoutes = require("./api/routes/user.route.js");
 const adminRoutes = require("./api/routes/admin.route.js");
+const teacherRoutes = require("./api/routes/teacher.route.js");
 
 
 const app = express();
@@ -66,6 +67,10 @@ app.use("/api/guest", guestUserRoutes);
 // admin panel start
 app.use("/api/admin", adminRoutes);
 // admin panel end
+
+// teacher panel start
+app.use("/api/teacher", teacherRoutes);
+// teacher panel end
 
 
 

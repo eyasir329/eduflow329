@@ -9,6 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import Image from '../../../components/functionality/Image';
+import { useSelector } from 'react-redux';
 
 const columns = [
   { id: 'profilePicture', label: 'Profile Picture', minWidth: 200 },
@@ -31,7 +32,7 @@ const columns = [
   { id: 'classId', label: 'Enroll Class', minWidth: 200 },
 ];
 
-const StudentTable = (props) => {
+const StudentTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [editableData, setEditableData] = useState(null);
@@ -43,29 +44,59 @@ const StudentTable = (props) => {
   const [uploadDisabled, setUploadDisabled] = useState(false);
   const [updateMessage, setUpdateMessage] = useState("");
   const [deleteMessage, setDeleteMessage] = useState("");
+  const [ID, setID] = useState();
+  const { currentUser } = useSelector((state) => state.user);
 
-  console.log(props.teacherData[0].teacherId)
+  const fetchTeacherId = async () => {
+    if (currentUser) {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/teacher/teacherProfile",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: currentUser.userId }),
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch teacher profile");
+        }
+        const responseData = await response.json();
+        console.log(responseData[0].teacherId)
+        setID(responseData[0].teacherId);
+
+      } catch (error) {
+        console.error("Error:", error.message);
+      }
+    }
+  };
 
   useEffect(() => {
+    fetchTeacherId();
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/teacher/studentByClassTeacher/${props.teacherData[0].teacherId}');
+      const response = await fetch(`http://localhost:5000/api/teacher/studentByClassTeacher/${ID}`);
 
-      
       if (!response.ok) {
         throw new Error('Failed to fetch student data');
       }
+
       const data = await response.json();
 
       setStudentData(data);
       setFilteredData(data);
+
+
     } catch (error) {
       console.error('Error fetching student data:', error);
     }
   };
+
 
   useEffect(() => {
     setFilteredData(studentData);
@@ -88,7 +119,7 @@ const StudentTable = (props) => {
   const handleSave = async () => {
     console.log(editableData);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/updateStudent`, {
+      const res = await fetch(`http://localhost:5000/api/teacher/updateStudentByClassTeacher`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +153,8 @@ const StudentTable = (props) => {
 
   const handleDelete = async (row) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/deleteStudent/${row.studentId}`, {
+      console.log(row);
+      const res = await fetch(`http://localhost:5000/api/teacher/deleteStudentByClassTeacher/${row.studentId}`, {
         method: "DELETE",
         credentials: 'include',
       });
@@ -159,7 +191,7 @@ const StudentTable = (props) => {
     setFilteredData(studentData);
     fetchData();
     setDeleteMessage();
-
+    setUpdateMessage();
   };
 
   const handleUploadSuccess = (downloadURL) => {

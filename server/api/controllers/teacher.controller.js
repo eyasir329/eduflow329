@@ -149,25 +149,26 @@ exports.teacherProfileUpdate = async (req, res, next) => {
 
 exports.studentByClassTeacher = async (req, res, next) => {
     const teacherId = req.params.teacherId;
-    console.log(teacherId)
-    // Validate teacherId to prevent SQL injection or other security risks
-    // if (!teacherId || isNaN(teacherId)) {
-    //     return res.status(400).json({ error: 'Invalid teacher ID' });
-    // }
+    console.log(teacherId);
 
     const classIdsQuery = `
         SELECT class_id 
         FROM academics
-        WHERE class_teacher_id = ?`;
+        WHERE class_teacher_id = ?
+        LIMIT 1`; // Add LIMIT 1 to limit the result to one row
 
     try {
         // Assuming you have a database connection named 'connection'
         connection.query(classIdsQuery, [teacherId], (error, classIds) => {
             if (error) {
-                console.error('Error fetching class IDs:', error);
-                return res.status(500).json({ error: 'Failed to fetch class IDs' });
+                console.error('Error fetching class ID:', error);
+                return res.status(500).json({ error: 'Failed to fetch class ID' });
             } else {
-                const classIdsArray = classIds.map(({ class_id }) => class_id);
+                if (classIds.length === 0) {
+                    // If no class ID found for the teacher, return empty response
+                    return res.status(200).json([]);
+                }
+                const classId = classIds[0].class_id; // Take the first class ID
                 const studentQuery = `
                     SELECT
                         s.student_id as studentId,
@@ -199,9 +200,9 @@ exports.studentByClassTeacher = async (req, res, next) => {
                         addresses a ON s.address_id = a.address_id
                     LEFT JOIN
                         academics aa ON s.class_id = aa.class_id
-                    WHERE s.class_id IN (?)`;
+                    WHERE s.class_id = ?`; // Directly pass class ID to IN clause
 
-                connection.query(studentQuery, [classIdsArray], (error, students) => {
+                connection.query(studentQuery, [classId], (error, students) => {
                     if (error) {
                         console.error('Error fetching students:', error);
                         return res.status(500).json({ error: 'Failed to fetch students' });
@@ -216,5 +217,100 @@ exports.studentByClassTeacher = async (req, res, next) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
+
+exports.updateStudentByClassTeacher = async (req, res, next) => {
+    try {
+        const data = req.body;
+        console.log(data);
+        const {
+            studentId,
+            parentId,
+            firstName,
+            lastName,
+            phoneNumber,
+            fatherName,
+            motherName,
+            guardianName,
+            dateOfBirth,
+            admittedDate,
+            profilePicture,
+            gender,
+            classId
+        } = data;
+
+        // Create address id
+        const city = data.city;
+        const division = data.state;
+        const zip = data.zip;
+        const street_address = data.streetAddress;
+        const addressValues = [city, division, zip, street_address];
+
+        // Create social id
+        const email = data.email;
+        const phone = data.phoneNumber;
+        const facebook = data.facebook;
+        const linkedin = data.linkedin;
+        const twitter = data.twitter || "";
+
+        Promise.all([
+            getAddressId(addressValues),
+            getSocialId(email, phone, facebook, linkedin, twitter)
+        ])
+        .then(([addressId, socialId]) => {
+            const address_id = parseInt(addressId);
+            const social_id = parseInt(socialId);
+
+            // Convert date strings to MySQL format
+            const formattedDateOfBirth = new Date(dateOfBirth).toISOString().slice(0, 19).replace('T', ' ');
+            const formattedAdmittedDate = new Date(admittedDate).toISOString().slice(0, 19).replace('T', ' ');
+
+            // Update the student in the database
+            const sql = `
+                UPDATE students
+                SET first_name=?, last_name=?, father_name=?, mother_name=?, guardian_name=?, date_of_birth=?, admitted_date=?, profile_pic=?, gender=?, class_id=?, social_id=?, address_id=?
+                WHERE student_id=?
+            `;
+            connection.query(sql, [firstName, lastName, fatherName, motherName, guardianName, formattedDateOfBirth, formattedAdmittedDate, profilePicture, gender, classId, social_id, address_id, studentId], (error, results) => {
+                if (error) {
+                    console.error('Error updating student information:', error);
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    console.log('Student information updated successfully:', results);
+                    res.status(200).json({ message: 'Student information for ' + studentId + ' updated successfully' });
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error getting address ID or social ID:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        });
+    } catch (error) {
+        console.error('Error updating student:', error);
+        res.status(500).json({ success: false, message: "Failed to update student" });
+    }
+}
+
+exports.deleteStudentByClassTeacher = async (req, res, next) => {
+    try {
+        const studentId = req.params.studentId;
+        console.log(studentId)
+        // Delete the student from the database
+        const query = `
+        DELETE FROM students
+        WHERE student_id=?
+      `;
+        connection.query(query, [studentId]);
+
+        // Send success response
+        res.status(200).json({ success: true, message: "Student deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting student:", error);
+        res.status(500).json({ success: false, message: "Failed to delete student" });
+    }
+};
+
+
 
 

@@ -5,6 +5,7 @@ import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
 import TeacherProfile from "./TeacherProfile";
 import { useSelector } from "react-redux";
+import CreateStudent from "./CreateStudent";
 
 export default function TeacherContent() {
     const { currentUser } = useSelector((state) => state.user);
@@ -59,7 +60,17 @@ export default function TeacherContent() {
                     <div className="col-lg-12">
                         <div className="teacher-view-ex">
                             <div className="teacher-view">
-                                <StudentTable teacherData={teacherData}/>
+                                <StudentTable/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-lg-12">
+                    <h1>Enroll A Student</h1>
+                        <div className="teacher-view-ex">
+                            <div className="teacher-view">
+                                <CreateStudent/>
                             </div>
                         </div>
                     </div>

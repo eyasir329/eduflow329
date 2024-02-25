@@ -103,7 +103,7 @@ export default function AttendanceInfo() {
                                             <TableCell>{student.name}</TableCell>
                                             <TableCell>
                                                 <Checkbox
-                                                placeholder='Present'
+                                                    placeholder='Present'
                                                     checked={attendanceData[student.studentId]?.[subjectId] === 'Present'}
                                                     onChange={(e) => handleAttendanceChange(student.studentId, e.target.checked)}
                                                 />

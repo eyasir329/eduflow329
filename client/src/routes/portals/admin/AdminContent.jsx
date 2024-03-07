@@ -7,6 +7,8 @@ import StudentInfo from "./StudentInfo";
 import AcademicInfo from "./AcademicInfo";
 import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
+import UserCreate from "./UserCreate";
+import NoticeBoard from "./NoticeBoard";
 
 export default function AdminContent() {
     return (
@@ -21,6 +23,27 @@ export default function AdminContent() {
                 <div className="row">
                     <div className="col-lg-12">
                         <SchoolInfo />
+                    </div>
+                </div>
+            </div>
+            <div id="notice-info" className="admin-details">
+                <h1>Notice Board</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                    <div className="teacher-info">
+      <div className="create-teacher">
+      <NoticeBoard />
+      </div>
+      </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div id="create-user" className="admin-details">
+                <h1>Create User</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <UserCreate />
                     </div>
                 </div>
             </div>
@@ -56,14 +79,14 @@ export default function AdminContent() {
                     </div>
                 </div>
             </div>
-            <div id="attendance-info" className="admin-details">
+            {/* <div id="attendance-info" className="admin-details">
                 <h1>Attendance Information</h1>
                 <div className="row">
                     <div className="col-lg-12">
                         <AttendanceInfo />
                     </div>
                 </div>
-            </div>
+            </div> */}
             <div id="result-info" className="admin-details">
                 <h1>Result Information</h1>
                 <div className="row">

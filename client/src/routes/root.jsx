@@ -28,6 +28,7 @@ export default function Root() {
       </div>
 
       {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage) && <Footer />}
+
       {!(isLoginPage || isSignupPage) && (
         <div className="row footer-main">
           <div className="col-lg-12">

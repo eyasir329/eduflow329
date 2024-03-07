@@ -12,8 +12,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
-import Image from "../../../components/functionality/Image";
-import TeacherTable from "./TeacherTable";
+import Image from "../../components/functionality/Image";
 
 const theme = createTheme();
 
@@ -22,14 +21,7 @@ const divisionMenuItems = divisions.map((division, index) => (
   <MenuItem key={index} value={division}>{division}</MenuItem>
 ));
 
-function createTeacherId(department, midId, lastId) {
-  const currentYear = new Date().getFullYear().toString();
-  const idPrefix = `${currentYear}${department}`;
-  const previousId = parseInt(lastId, 10) + 1;
-  return idPrefix + midId + previousId.toString().padStart(3, '0');
-}
-
-export default function TeacherInfo() {
+export default function UserData() {
   const [lastThreeDigit, setLastThreeDigit] = useState("000");
   const [teacherId, setTeacherId] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -72,11 +64,6 @@ export default function TeacherInfo() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const handleGenerateTeacherId = () => {
-    const newTeacherId = createTeacherId('04', '0', lastThreeDigit);
-    setTeacherId(newTeacherId);
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -179,12 +166,6 @@ export default function TeacherInfo() {
                 defaultValue={profilePicture}
               />
 
-            </div>
-
-            <div className="create-teacher-id">
-              <button onClick={handleGenerateTeacherId}>
-                Create a Unique Teacher ID
-              </button>
             </div>
 
             <TextField
@@ -375,18 +356,6 @@ export default function TeacherInfo() {
         </Paper>
       </div>
 
-      <div className="teacher-view-ex">
-        <div className="teacher-view">
-          {/* <div className="create-teacher-id view-teacher-info">
-            <button>
-              Update Teacher Information
-            </button>
-          </div> */}
-          <ThemeProvider theme={theme}>
-            <TeacherTable />
-          </ThemeProvider>
-        </div>
-      </div>
     </div>
   );
 }

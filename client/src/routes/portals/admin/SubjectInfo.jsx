@@ -114,9 +114,9 @@ export default function SubjectInfo() {
 
       <div className="teacher-view-ex">
         <div className="teacher-view">
-          <div className="create-teacher-id view-teacher-info">
+          {/* <div className="create-teacher-id view-teacher-info">
             <Button>Update Subject Information</Button>
-          </div>
+          </div> */}
           <ThemeProvider theme={theme}>
             {/* Pass props to SubjectTable */}
             <SubjectTable />

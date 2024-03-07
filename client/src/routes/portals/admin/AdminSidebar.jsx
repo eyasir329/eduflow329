@@ -10,11 +10,13 @@ export default function AdminSidebar() {
                             <ul>
                                 <a href="#admin-profile"><li>profile</li></a>
                                 <a href="#school-info"><li>School</li></a>
+                                <a href="#notice-info"><li>Notice</li></a>
+                                <a href="#create-user"><li>Create User</li></a>
                                 <a href="#teacher-info"><li>Teacher</li></a>
                                 <a href="#staff-info"><li>Staff</li></a>
                                 <a href="#student-info"><li>Student</li></a>
                                 <a href="#academic-info"><li>Academic</li></a>
-                                <a href="#attendance-info"><li>Attendance</li></a>
+                                {/* <a href="#attendance-info"><li>Attendance</li></a> */}
                                 <a href="#result-info"><li>Result</li></a>
                             </ul>
                         </div>

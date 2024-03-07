@@ -295,6 +295,7 @@ const ResultInfo = () => {
           </div>
         </div>
       </div>
+      <h1>Publish Result</h1>
     </>
   );
 };

@@ -714,12 +714,14 @@ p {
     color: #fff;
 }
 
-.extra-info{
+.extra-info {
     padding: 50px;
 }
-.exam-extra{
+
+.exam-extra {
     padding: 100px;
 }
+
 /* institute information end */
 
 .temporary {
@@ -735,8 +737,8 @@ p {
 }
 
 .portal {
-    background: rgb(255,255,255);
-background: linear-gradient(180deg, rgba(255,255,255,1) 12%, rgba(217,244,217,1) 63%, rgba(220,237,220,1) 100%);
+    background: rgb(255, 255, 255);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 12%, rgba(217, 244, 217, 1) 63%, rgba(220, 237, 220, 1) 100%);
 }
 
 .portal-heading {
@@ -774,8 +776,20 @@ background: linear-gradient(180deg, rgba(255,255,255,1) 12%, rgba(217,244,217,1)
 }
 
 footer {
-    background-color: #F3F3F3;
-    padding-bottom: 0px;
+    /* background-color: #F3F3F3;
+    padding-bottom: 0px; */
+    background: rgb(2, 0, 36);
+    background: -moz-linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    background: -webkit-linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024", endColorstr="#00d4ff", GradientType=1);
+    /* position: fixed; */
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    /* color: white; */
+    text-align: center;
+
 }
 
 .address-temp {
@@ -894,12 +908,22 @@ footer {
     text-decoration: none;
 }
 
-.footer-main{
-    background-color: #9DBC98;
-    padding: 5px;
+.footer-main {
+    background: rgb(2, 0, 36);
+    background: -moz-linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    background: -webkit-linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024", endColorstr="#00d4ff", GradientType=1);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    text-align: center;
+
 }
 
-.eyasir329{
+.eyasir329 {
     color: #000;
     text-decoration: none;
 }
@@ -1309,10 +1333,12 @@ p {
     align-items: center;
     /* height: 100vh;  */
 }
-.text-uppercase{
+
+.text-uppercase {
     margin-top: 30px;
     margin-right: 10px;
 }
+
 .passwordContainer {
     position: relative;
     width: 100%;
@@ -1346,9 +1372,10 @@ p {
     font-size: 18px;
 }
 
-.login-img{
+.login-img {
     margin-top: -150px;
 }
+
 .login-img img {
     color: #ffffff00;
     width: 130px;
@@ -1757,7 +1784,7 @@ form .form-align {
     color: #fff;
 }
 
-#admin-profile{
+#admin-profile {
     margin-bottom: 100px;
     /* padding-top: 100px; */
     background-color: #e8f4ec;
@@ -1790,13 +1817,14 @@ form .form-align {
     background-color: #436850;
 }
 
-.teacher-profile-dashboard{
+.teacher-profile-dashboard {
     margin-top: 100px;
 }
+
 /* admin header end */
 
 /* teacher */
-.teacher-attendance{
+.teacher-attendance {
     padding: 14px;
     margin-left: 80px;
 }
@@ -1821,7 +1849,7 @@ form .form-align {
     text-align: center;
 }
 
-.readOnly{
+.readOnly {
     border: none;
 }
 
@@ -1877,7 +1905,8 @@ form .form-align {
     font-size: 22px;
     width: 600px;
 }
-.guest-button:hover{
+
+.guest-button:hover {
     background-color: #115615;
     color: #fff;
 }
@@ -1928,11 +1957,12 @@ form .form-align {
     color: #ba1f1f;
 }
 
-.guest-wrong{
+.guest-wrong {
     font-size: 20px;
     color: #ba1f1f;
 }
-.guest-success{
+
+.guest-success {
     font-size: 20px;
     color: #115615;
 }
@@ -1944,36 +1974,40 @@ form .form-align {
 /* admin start */
 
 /* school info */
-.imageSchool{
+.imageSchool {
     margin-bottom: 30px;
 }
-.imageSchool .guest-content{
+
+.imageSchool .guest-content {
     padding: 0px;
     background-color: #D4E7C5;
 }
-.imageSchool .guest-content form{
+
+.imageSchool .guest-content form {
     background-color: #D4E7C5;
 }
-.school-info-address{
+
+.school-info-address {
     font-size: 14px;
     text-align: left;
 }
-.notice-table{
+
+.notice-table {
     margin: 10px 50px;
     background-color: #ffdd9555;
     border-radius: 10px;
 }
 
 /* teacherinfo */
-.teacher-info{
+.teacher-info {
     margin-top: 20px;
 }
 
-.teacher-info h1{
+.teacher-info h1 {
     margin: 20px 0px;
 }
 
-.teacher-info form{
+.teacher-info form {
     margin: 50px;
     font-size: 24px;
     background-color: #ffffff66;
@@ -1982,39 +2016,41 @@ form .form-align {
     margin-top: 20px;
 }
 
-.create-teacher-id button{
+.create-teacher-id button {
     background-color: #ffffff66;
     padding: 10px 15px;
     font-size: 22px;
     border-radius: 10px;
     margin-bottom: 30px;
 }
-.teacher-id{
+
+.teacher-id {
     margin-left: 10px;
     display: inline;
     font-size: 22px;
     color: #fff;
     padding: 10px 15px;
 }
-.create-teacher .form-label{
+
+.create-teacher .form-label {
     font-size: 18px;
     text-align: left;
 }
 
-.create-teacher .form-row{
+.create-teacher .form-row {
     margin-bottom: 20px;
 }
 
-.teacher-view-ex{
+.teacher-view-ex {
     background-color: #ffffff66;
     padding: 20px;
 }
 
-.teacher-view{
+.teacher-view {
     margin: 50px;
 }
 
-.view-teacher-info{
+.view-teacher-info {
     margin-bottom: 50px;
 }
 

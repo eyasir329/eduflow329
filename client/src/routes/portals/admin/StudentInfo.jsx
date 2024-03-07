@@ -159,8 +159,8 @@ export default function StudentInfo() {
 
   return (
     <div className="teacher-info">
-      <div className="create-teacher">
-        <Paper
+      {/* <div className="create-teacher"> */}
+        {/* <Paper
           sx={{
             width: "100%",
             overflow: "hidden",
@@ -273,8 +273,7 @@ export default function StudentInfo() {
 
             </Stack>
 
-            {/* Add other form fields similarly */}
-            {/* Father's Name */}
+            
             <TextField
               type="text"
               variant="outlined"
@@ -286,7 +285,7 @@ export default function StudentInfo() {
               sx={{ mb: 4 }}
               onChange={handleChange}
             />
-            {/* Mother's Name */}
+  
             <TextField
               type="text"
               variant="outlined"
@@ -298,7 +297,7 @@ export default function StudentInfo() {
               sx={{ mb: 4 }}
               onChange={handleChange}
             />
-            {/* Guardian's Name */}
+            
             <TextField
               type="text"
               variant="outlined"
@@ -310,7 +309,7 @@ export default function StudentInfo() {
               sx={{ mb: 4 }}
               onChange={handleChange}
             />
-            {/* Email */}
+          
             <TextField
               type="email"
               variant="outlined"
@@ -323,7 +322,7 @@ export default function StudentInfo() {
               sx={{ mb: 4 }}
               onChange={handleChange}
             />
-            {/* Phone Number */}
+           
             <TextField
               type="tel"
               variant="outlined"
@@ -336,7 +335,7 @@ export default function StudentInfo() {
               sx={{ mb: 4 }}
               onChange={handleChange}
             />
-            {/* Date Of Birth */}
+          
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 type="date"
@@ -350,7 +349,7 @@ export default function StudentInfo() {
                 sx={{ mb: 4 }}
                 onChange={handleChange}
               />
-              {/* Joining Date */}
+              
               <TextField
                 type="date"
                 variant="outlined"
@@ -364,7 +363,7 @@ export default function StudentInfo() {
               />
             </Stack>
 
-            {/* City, State, Zip */}
+            
             <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
               <TextField
                 label="City"
@@ -404,7 +403,7 @@ export default function StudentInfo() {
               />
             </Stack>
 
-            {/* Street Address */}
+           
             <TextField
               label="Street Address"
               type="text"
@@ -417,7 +416,7 @@ export default function StudentInfo() {
               onChange={handleChange}
             />
 
-            {/* Enroll Class */}
+            
             <TextField
               label="Enroll Class"
               type="text"
@@ -438,13 +437,13 @@ export default function StudentInfo() {
             {createMessage}
           </p>
         </Paper>
-      </div>
+      </div> */}
 
       <div className="teacher-view-ex">
         <div className="teacher-view">
-          <div className="create-teacher-id view-teacher-info">
+          {/* <div className="create-teacher-id view-teacher-info">
             <button>Update Student Information</button>
-          </div>
+          </div> */}
           <ThemeProvider theme={theme}>
             <StudentTable />
           </ThemeProvider>

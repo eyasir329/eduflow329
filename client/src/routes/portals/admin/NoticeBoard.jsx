@@ -221,9 +221,9 @@ export default function NoticeBoard() {
                     <Button variant="outlined" color="secondary" type="submit">
                         Submit
                     </Button>
-                    <Button variant="outlined" color="secondary" onClick={fetchNotices}>
+                    {/* <Button variant="outlined" color="secondary" onClick={fetchNotices}>
                         Refresh Notices
-                    </Button>
+                    </Button> */}
                     <div className="reg-error" style={{ marginTop: 10 }}>
                         {messageExtra && <p>{messageExtra}</p>}
                     </div>

@@ -138,11 +138,11 @@ export default function AcademicInfo() {
 
         <div className="teacher-view-ex">
           <div className="teacher-view">
-            <div className="create-teacher-id view-teacher-info">
+            {/* <div className="create-teacher-id view-teacher-info">
               <button >
                 Update Academic Information
               </button>
-            </div>
+            </div> */}
             <ThemeProvider theme={theme}>
 
               <AcademicTable />

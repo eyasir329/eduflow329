@@ -228,7 +228,7 @@ export default function SchoolInfo() {
             />
 
             <TextField
-            InputLabelProps={{ shrink: true }}
+              InputLabelProps={{ shrink: true }}
               multiline
               rows={10}
               variant="outlined"
@@ -254,8 +254,6 @@ export default function SchoolInfo() {
         <h1>Principal Information</h1>
         <PrincipalInfo />
 
-        <h1>Notice Board</h1>
-        <NoticeBoard />
       </div>
     </div>
   );

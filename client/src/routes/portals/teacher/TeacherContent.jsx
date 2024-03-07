@@ -42,7 +42,7 @@ export default function TeacherContent() {
     return (
         <div className="admin-content">
             <div id="login-profile">
-                <Profile title="User Profile" />
+                <Profile title="Teacher Profile" />
             </div>
 
             <div id="user-profile" className="admin-details teacher-profile-dashboard">
@@ -55,16 +55,7 @@ export default function TeacherContent() {
             </div>
 
             <div id="teacher-student-info" className="admin-details teacher-profile-dashboard">
-                <h1>Student Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <div className="teacher-view-ex">
-                            <div className="teacher-view">
-                                <StudentTable/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {/* <h1>Student Information</h1> */}
                 <div className="row">
                     <div className="col-lg-12">
                     <h1>Enroll A Student</h1>
@@ -75,6 +66,16 @@ export default function TeacherContent() {
                         </div>
                     </div>
                 </div>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="teacher-view-ex">
+                            <div className="teacher-view">
+                                <StudentTable/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div id="teacher-attendance-info" className="admin-details">

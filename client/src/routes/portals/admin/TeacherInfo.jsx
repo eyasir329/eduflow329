@@ -162,7 +162,7 @@ export default function TeacherInfo() {
     <div className="teacher-info">
     {/* <h1>Generate Id and route</h1> */}
       <div className="create-teacher">
-        <Paper
+        {/* <Paper
           sx={{
             width: '100%',
             overflow: 'hidden',
@@ -372,7 +372,7 @@ export default function TeacherInfo() {
           <p className="reg-error">
             {teacherInfo}
           </p>
-        </Paper>
+        </Paper> */}
       </div>
 
       <div className="teacher-view-ex">

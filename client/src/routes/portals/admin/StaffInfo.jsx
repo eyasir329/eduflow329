@@ -179,7 +179,7 @@ export default function StaffInfo() {
   return (
     <div className="teacher-info">
       <div className="create-teacher">
-        <Paper
+        {/* <Paper
           sx={{
             width: '100%',
             overflow: 'hidden',
@@ -383,7 +383,7 @@ export default function StaffInfo() {
           <div className="reg-error">
             {staffInfo}
           </div>
-        </Paper>
+        </Paper> */}
       </div>
       <StaffTable />
     </div>

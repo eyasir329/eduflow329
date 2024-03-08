@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get("/", test);
 
-router.post("/signup", signup);
+// router.post("/signup", signup);
 router.post("/signin", signin);
 router.post("/google",google);
-router.get("/signout",signoutUser);
+// router.get("/signout",signoutUser);
 
 module.exports = router;

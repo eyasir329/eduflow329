@@ -61,8 +61,10 @@ export default function Login() {
 
       const data = await response.json();
 
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
+      console.log(data)
+
+      if (!data) {
+        dispatch(signInFailure("Error to log in"));
         return;
       }
       dispatch(signInSuccess(data));
@@ -169,7 +171,7 @@ export default function Login() {
                   </form>
                 </div>
 
-                <div>
+                {/* <div>
                   <p className="mb-0">
                     Don't have an account?{" "}
                     <Link to="/portal/signup" className="text-white-50 fw-bold">
@@ -177,7 +179,7 @@ export default function Login() {
                       Sign Up
                     </Link>
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

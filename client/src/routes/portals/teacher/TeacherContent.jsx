@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Profile from "../../../components/functionality/Profile";
+import Profile from '../SignInfoProfile'
 import StudentTable from "./StudentTable";
 import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
@@ -45,7 +45,7 @@ export default function TeacherContent() {
                 <Profile title="Teacher Profile" />
             </div>
 
-            <div id="user-profile" className="admin-details teacher-profile-dashboard">
+            <div id="teacher-profile" className="admin-details teacher-profile-dashboard">
                 <h1>Teacher Information</h1>
                 <div className="row">
                     <div className="col-lg-12">

@@ -10,7 +10,7 @@ const Teacher = () => {
             <section id="admin">
                 <div className="container">
                     <PortalHead
-                        text="Teacher Portal"
+                        text="teacher"
                     />
                 </div>
             </section>

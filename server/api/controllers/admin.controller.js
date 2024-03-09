@@ -1,4 +1,75 @@
-// const connection = require("../sql/db.js");
+const currentUserProfile = require("../../helper/currentUser.js");
+const connection = require("../sql/db.js");
+
+// admin user profile
+exports.adminProfile = async (req, res, next) => {
+    try {
+        const { userId, type } = req.body;
+
+        // Call currentUserProfile and await its result
+        const data = await currentUserProfile({ userId, type });
+
+        // Send response with status 200 and the data returned by currentUserProfile
+        res.status(200).json(data);
+    } catch (error) {
+        // If an error occurs, catch it and send an appropriate error response
+        console.error('Error fetching admin profile:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+// position create
+exports.createPosition = async (req, res, next) => {
+    try {
+        const { positionName, salary } = req.body;
+
+        // Prepare the SQL query
+        const insertQuery = 'INSERT INTO positions (position_name, salary) VALUES (?, ?)';
+        
+        // Execute the SQL query
+        connection.query(insertQuery, [positionName, salary], (error, results) => {
+            if (error) {
+                // Handle errors
+                console.error('Error creating position:', error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                // Send a success response with the inserted position
+                const newPosition = { id: results.insertId, positionName, salary };
+                res.status(201).json(newPosition);
+            }
+        });
+    } catch (error) {
+        // Handle other errors
+        console.error('Error creating position:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+exports.viewPosition = async (req, res, next) => {
+    try {
+        // Prepare the SQL query to select all positions
+        const selectQuery = 'SELECT * FROM positions';
+        
+        // Execute the SQL query to retrieve all positions
+        connection.query(selectQuery, (error, results) => {
+            if (error) {
+                // Handle errors
+                console.error('Error fetching positions:', error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                // Send a success response with the retrieved positions
+                res.status(200).json(results);
+            }
+        });
+    } catch (error) {
+        // Handle other errors
+        console.error('Error fetching positions:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+
 
 // // extra function start
 // function getAddressId(addressValues) {

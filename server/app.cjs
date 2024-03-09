@@ -10,8 +10,8 @@ const _ = require("lodash");
 
 // routes
 const authRoutes = require("./api/routes/auth.route.js");
-// const guestUserRoutes = require("./api/routes/user.route.js");
-// const adminRoutes = require("./api/routes/admin.route.js");
+const userRoutes = require("./api/routes/user.route.js");
+const adminRoutes = require("./api/routes/admin.route.js");
 // const teacherRoutes = require("./api/routes/teacher.route.js");
 
 
@@ -61,11 +61,11 @@ connection.getConnection((err, conn) => {
 
 // user route
 app.use("/api/auth", authRoutes);
-// app.use("/api/guest", guestUserRoutes);
+app.use("/api/user", userRoutes);
 // user route end
 
 // admin panel start
-// app.use("/api/admin", adminRoutes);
+app.use("/api/admin", adminRoutes);
 // admin panel end
 
 // teacher panel start

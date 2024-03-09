@@ -13,6 +13,7 @@ import Image from "../../../components/functionality/Image";
 import PrincipalInfo from "./PrincipalInfo";
 import NoticeBoard from "./NoticeBoard";
 import axios from "axios";
+import CreatePosition from "./Position";
 
 const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
 const divisionMenuItems = divisions.map((division, index) => (
@@ -253,6 +254,9 @@ export default function SchoolInfo() {
 
         <h1>Principal Information</h1>
         <PrincipalInfo />
+        
+        <h1>Position Information</h1>
+        <CreatePosition />
 
       </div>
     </div>

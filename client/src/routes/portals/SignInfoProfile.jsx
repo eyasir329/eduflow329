@@ -2,18 +2,21 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOut } from "../../redux/user/userSlice"
-import Image from './Image';
 
 
 export default function Profile(props) {
+
+    const { currentUser, loading, error: errorMessage } = useSelector((state) => state.user);
+    console.log(currentUser)
+
+    const currentUserMail = currentUser.email;
+
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({});
     const [updateSuccess, setUpdateSuccess] = useState(false);
-    const { currentUser, loading, error: errorMessage } = useSelector((state) => state.user);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
-        console.log(formData);
     }
 
     const handleSubmit = async (e) => {
@@ -21,7 +24,7 @@ export default function Profile(props) {
         try {
             dispatch(updateUserStart());
 
-            const res = await fetch(`http://localhost:5000/api/guest/update/${currentUser._id}`, {
+            const res = await fetch(`http://localhost:5000/api/user/update/${currentUser.userId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +71,7 @@ export default function Profile(props) {
     const handleDeleteAccount = async () => {
         try {
             dispatch(deleteUserStart());
-            const res = await fetch(`http://localhost:5000/api/guest/delete/${currentUser._id}`, {
+            const res = await fetch(`http://localhost:5000/api/user/delete/${currentUser._id}`, {
                 method: 'DELETE',
                 credentials: 'include',
             });
@@ -88,7 +91,7 @@ export default function Profile(props) {
                         const errorMessage = matches[1];
                         dispatch(deleteUserFailure(errorMessage));
                     } else {
-                        dispatch(deleteUserFailure("An unexpected error occurred  hh"));
+                        dispatch(deleteUserFailure("An unexpected error occurred (Under Construction)"));
                     }
                 }
                 return;
@@ -120,15 +123,6 @@ export default function Profile(props) {
         }
     }
 
-    const handleUploadSuccess = (downloadURL) => {
-        setFormData({ ...formData, profilePicture: downloadURL });
-    };
-
-    const handleUploadError = (error) => {
-        // Handle error, e.g., display an error message
-        console.error('Image upload error:', error);
-    };
-
     return (
         <>
             <div className='user-heading'>{props.title}</div>
@@ -136,41 +130,11 @@ export default function Profile(props) {
                 <div className='row'>
                     <div className='col-lg-12'>
                         <form>
-                            <Image
-                                onUploadSuccess={handleUploadSuccess}
-                                onUploadError={handleUploadError}
-                                defaultValue={currentUser.profilePicture}
-                            />
-                            {props.title === "Guest User" && <div className='guest-extra'>
-                                <p>Enter your valid ID and update your account<br /> Then you automaticaly Access our portal</p>
-                            </div>}
-
-                            <div className='guest-extra top'>
-                                <input
-                                    type='text'
-                                    defaultValue={currentUser.userId || ''}
-                                    id='userId'
-                                    placeholder='Enter Your Unique ID'
-                                    className={`name${props.title === "Admin" || props.title === "Guest User" ? ' readOnly' : ''}`}
-
-                                    {...(props.title === "Admin" || props.title === "Guest User" ? { onChange: handleChange } : { readOnly: true })}
-                                />
-                            </div>
                             <div className='card'>
                                 <div className='top'>
                                     <input
-                                        type='text'
-                                        defaultValue={currentUser.userName}
-                                        id='userName'
-                                        placeholder='userName'
-                                        className='name'
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                                <div className='top'>
-                                    <input
                                         type='email'
-                                        defaultValue={currentUser.email}
+                                        defaultValue={currentUserMail}
                                         id='email'
                                         placeholder='Email'
                                         className=''

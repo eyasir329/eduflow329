@@ -1,5 +1,5 @@
 import React from "react";
-import Profile from "../../../components/functionality/Profile";
+import Profile from '../SignInfoProfile'
 import PresentInfo from "./PresentInfo";
 import ResultInfo from "./ResultInfo";
 

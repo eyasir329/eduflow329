@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SchoolInfo from "./SchoolInfo";
-import Profile from "../../../components/functionality/Profile";
+import Profile from "../SignInfoProfile";
 import TeacherInfo from "./TeacherInfo";
 import StaffInfo from "./StaffInfo";
 import StudentInfo from "./StudentInfo";
@@ -9,13 +9,57 @@ import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
 import UserCreate from "./UserCreate";
 import NoticeBoard from "./NoticeBoard";
+import UserProfile from "../UserProfile";
+import { useSelector } from "react-redux";
 
 export default function AdminContent() {
+
+    const { currentUser } = useSelector((state) => state.user);
+    const [adminData, setAdminData] = useState(null);
+
+    console.log(currentUser)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (currentUser) {
+                try {
+                    const response = await fetch(
+                        "http://localhost:5000/api/admin/adminProfile",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userId: currentUser.userId, type: currentUser.type }),
+                        }
+                    );
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch teacher profile");
+                    }
+                    const responseData = await response.json();
+
+                    console.log(responseData)
+
+
+                    setAdminData(responseData);
+
+                } catch (error) {
+                    console.error("Error:", error.message);
+                }
+            }
+        };
+        fetchData();
+    }, [currentUser]);
+
+
     return (
         <div className="admin-content">
             <div id="admin-profile">
+                <UserProfile
+                    userDataInfo={adminData}
+                />
                 <Profile
-                    title="Admin"
+                    title="Sign In Information"
                 />
             </div>
             <div id="school-info" className="admin-details">
@@ -30,12 +74,12 @@ export default function AdminContent() {
                 <h1>Notice Board</h1>
                 <div className="row">
                     <div className="col-lg-12">
-                    <div className="teacher-info">
-      <div className="create-teacher">
-      <NoticeBoard />
-      </div>
-      </div>
-                        
+                        <div className="teacher-info">
+                            <div className="create-teacher">
+                                <NoticeBoard />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

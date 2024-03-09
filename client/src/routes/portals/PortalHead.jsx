@@ -1,8 +1,11 @@
-// PortalHead.js
-
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux'
+import { signOut } from "../../redux/user/userSlice"
+import { Button } from "react-bootstrap";
 
 export default function PortalHead(props) {
+    const dispatch = useDispatch();
+    const role = useSelector((state) => state.user.currentUser?.type);
     useEffect(() => {
         const handleScroll = () => {
             const navbar = document.getElementById('navbar_top');
@@ -28,11 +31,26 @@ export default function PortalHead(props) {
         };
     }, []);
 
+    const userSignout = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('http://localhost:5000/api/auth/signout');
+            if (res.ok) {
+                dispatch(signOut());
+                window.location.href = '/portal/login';
+            } else {
+                console.log('signout failed');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <>
             <nav id="navbar_top" className="navbar navbar-expand-lg">
                 <div className="container">
-                    <h1><a className="navbar-brand" href="/portal/admin">{props.text}</a></h1>
+                    <h1><a className="navbar-brand" href={"/portal/" + role}>{props.text} Portal</a></h1>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -40,8 +58,8 @@ export default function PortalHead(props) {
                     <div className="collapse navbar-collapse" id="main_nav">
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item"><a className="portal-link text-white fw-bold" href="/">HOME</a></li>
-                            <li className="nav-item"><a className="portal-link text-white fw-bold" href="/">ABOUT</a></li>
-                            <li className="nav-item"><a className="portal-link text-white fw-bold" href="/">LOG OUT</a></li>
+                            <li className="nav-item"><a className="portal-link text-white fw-bold" href={"/portal/" + role + "#" + role + "-profile"}>PROFILE</a></li>
+                            <li className="nav-item" ><Button onClick={userSignout}>LOG OUT</Button></li>
                         </ul>
                     </div>
                 </div>

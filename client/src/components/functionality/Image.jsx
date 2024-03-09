@@ -1,21 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import app from '../../firebase';
 
-const Image = ({ onUploadSuccess, onUploadError, maxFileSizeMB = 5, defaultValue }) => {
+const Image = ({ defaultValue, onUploadSuccess, onUploadError, maxFileSizeMB = 5 }) => {
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [imgURL, setImgURL] = useState('');
+  const [uploadComplete, setUploadComplete] = useState(false); // State to track upload completion
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State to show success message
 
   useEffect(() => {
-    setImgURL(defaultValue);
-    
-    if (image) {
+    if (defaultValue) {
+      setImgURL(defaultValue);
+    }
+
+    if (image && !uploadComplete) { // Check if upload is not complete before proceeding
       handleFileUpload(image);
     }
-  }, [defaultValue, image]);
+  }, [defaultValue, image, uploadComplete]);
+
+  useEffect(() => {
+    let timer;
+    if (showSuccessMessage) {
+      timer = setTimeout(() => {
+        setShowSuccessMessage(false); // Reset success message after 20 seconds
+      }, 2000); // 2 seconds
+    }
+    return () => clearTimeout(timer);
+  }, [showSuccessMessage]);
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -40,6 +54,8 @@ const Image = ({ onUploadSuccess, onUploadError, maxFileSizeMB = 5, defaultValue
           setImgURL(downloadURL);
           if (onUploadSuccess) {
             onUploadSuccess(downloadURL);
+            setUploadComplete(true); // Set upload complete flag
+            setShowSuccessMessage(true); // Show success message
           }
         });
       }
@@ -48,38 +64,31 @@ const Image = ({ onUploadSuccess, onUploadError, maxFileSizeMB = 5, defaultValue
 
   return (
     <>
-      <div className="guest-content">
-        <div className="row">
-          <div className="col-lg-12">
-            <form>
-              <input
-                type="file"
-                ref={fileRef}
-                hidden
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
-              <img
-                src={imgURL}
-                alt="profile"
-                className="circle-img"
-                onClick={() => fileRef.current.click()}
-              />
-              <p className="image-below">
-                {imageError ? (
-                  <span>Error uploading image (filesize must be less than {maxFileSizeMB} MB)</span>
-                ) : imagePercent > 0 && imagePercent < 100 ? (
-                  <span>{`Uploading: ${imagePercent} %`}</span>
-                ) : imagePercent === 100 ? (
-                  <span>Image uploaded successfully</span>
-                ) : (
-                  ''
-                )}
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
+      <form>
+        <input
+          type="file"
+          ref={fileRef}
+          hidden
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
+        <img
+          src={imgURL}
+          alt="profile"
+          className="circle-img"
+          onClick={() => fileRef.current.click()}
+        />
+        <p className="image-below">
+          {imageError ? (
+            <span>Error uploading image (filesize must be less than {maxFileSizeMB} MB)</span>
+          ) : imagePercent > 0 && imagePercent < 100 ? (
+            <span>{`Uploading: ${imagePercent} %`}</span>
+          ) : uploadComplete && showSuccessMessage ? (
+            <span>Image uploaded successfully</span>
+          ) : null // Display success message only once
+          }
+        </p>
+      </form>
     </>
   );
 };

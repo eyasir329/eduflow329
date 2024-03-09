@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const { errorHandler } = require("../utils/error.js");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require('express-validator');
 const connection = require("../sql/db.js");
 // const User = require("../models/user.model.js");
 
@@ -47,105 +48,98 @@ exports.test = (req, res) => {
 //     }
 // };
 
-exports.signin = async (req, res, next) => {
+exports.signin = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(errorHandler(400, "Validation failed", errors.array()));
+    }
+
     const { email, password } = req.body;
 
-    if (!email || !password || email === "" || password === "") {
-        return next(errorHandler(400, "All fields are required"));
-    }
-    try {
-        const sqlUserEmail = `
-                    SELECT *
-                    FROM user_status
-                    WHERE email = ?
-                `;
-
-        // Execute the query
-        connection.query(sqlUserEmail, email, (error, validUser) => {
+    connection.query(
+        'SELECT * FROM user_status WHERE email = ?',
+        email,
+        async (error, validUser) => {
             if (error) {
-                return next(errorHandler(404, "Error Founding Data"));
-            } else {
+                return next(errorHandler(404, "Error finding data"));
+            }
+            try {
                 if (validUser[0]) {
-                    const validPassword = bcrypt.compare(password, validUser[0].password);
-
+                    const validPassword = await bcrypt.compare(password, validUser[0].password);
                     if (!validPassword) {
                         return next(errorHandler(400, "Invalid password"));
                     }
 
-                    // const { password: hashedPassword, ...rest } = validUser[0];
-
-                    const data = {
-                        userId:validUser[0].user_id,
-                        type:validUser[0].user_type
-                    }
-
                     const tokenPayload = { id: validUser[0].user_id };
-                    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+                    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '24h' });
 
-                    const expiryDate = new Date(Date.now() + 3600000); // 24 hours from now
+                    const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
 
-                    res.cookie("access_token", token, { expires: expiryDate })
+                    res.cookie("access_token", token, { expires: expiryDate, httpOnly: true })
                         .status(200)
-                        .json(data);
+                        .json({
+                            userId: validUser[0].user_id,
+                            type: validUser[0].user_type,
+                            email: validUser[0].email
+                        });
                 } else {
                     return next(errorHandler(404, "User not found"));
                 }
+            } catch (error) {
+                console.error('Error:', error);
+                return next(errorHandler(500, "Internal server error"));
             }
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+        }
+    );
 };
-
 
 
 exports.signoutUser = (req, res) => {
     res.clearCookie('access_token').status(200).json("Signout success");
 }
 
-exports.google = async (req, res, next) => {
-    try {
-        const user = await User.findOne({ email: req.body.email });
-        if (user) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-            const { password: hashedPassword, ...rest } = user._doc;
-            const expiryDate = new Date(Date.now() + 24 * 3600000);
-            res
-                .cookie("access_token", token, {
-                    expires: expiryDate,
-                })
-                .status(200)
-                .json(rest);
-        } else {
-            const generatedPassword =
-                Math.random().toString(36).slice(-8) +
-                Math.random().toString(36).slice(-8);
-            const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+// exports.google = async (req, res, next) => {
+//     try {
+//         const user = await User.findOne({ email: req.body.email });
+//         if (user) {
+//             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+//             const { password: hashedPassword, ...rest } = user._doc;
+//             const expiryDate = new Date(Date.now() + 24 * 3600000);
+//             res
+//                 .cookie("access_token", token, {
+//                     expires: expiryDate,
+//                 })
+//                 .status(200)
+//                 .json(rest);
+//         } else {
+//             const generatedPassword =
+//                 Math.random().toString(36).slice(-8) +
+//                 Math.random().toString(36).slice(-8);
+//             const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
-            const fullName = req.body.name;
-            const words = fullName.split(" ");
-            const firstName = words[0].toLowerCase();
+//             const fullName = req.body.name;
+//             const words = fullName.split(" ");
+//             const firstName = words[0].toLowerCase();
 
-            const newUser = new User({
-                userId: " ",
-                userName: firstName + Math.random().toString(10).slice(-4),
-                email: req.body.email,
-                password: hashedPassword,
-                profilePicture: req.body.photo,
-                role: "notAllocated",
-            });
+//             const newUser = new User({
+//                 userId: " ",
+//                 userName: firstName + Math.random().toString(10).slice(-4),
+//                 email: req.body.email,
+//                 password: hashedPassword,
+//                 profilePicture: req.body.photo,
+//                 role: "notAllocated",
+//             });
 
-            await newUser.save();
+//             await newUser.save();
 
-            const tokenPayload = { id: newUser._id };
-            const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+//             const tokenPayload = { id: newUser._id };
+//             const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
 
-            const { password: hashedPassword2, ...rest } = newUser._doc;
-            const expiryDate = new Date(Date.now() + 24 * 3600000); //24 hr ... second
-            res.cookie("access_token", token, { expires: expiryDate }).status(200).json(rest);
-        }
-    } catch (error) {
-        next(error);
-    }
-};
+//             const { password: hashedPassword2, ...rest } = newUser._doc;
+//             const expiryDate = new Date(Date.now() + 24 * 3600000); //24 hr ... second
+//             res.cookie("access_token", token, { expires: expiryDate }).status(200).json(rest);
+//         }
+//     } catch (error) {
+//         next(error);
+//     }
+// };

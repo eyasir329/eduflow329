@@ -772,7 +772,7 @@ p {
 /* footer start */
 /* school addresse */
 .content {
-    background-color: #9DBC98;
+    background-color: #61875cca;
 }
 
 footer {
@@ -1696,6 +1696,7 @@ form .form-align {
 #navbar_top .navbar-brand {
     color: #fff;
     font-size: 24px;
+    text-transform: capitalize;
 }
 
 #admin {
@@ -1820,6 +1821,22 @@ form .form-align {
 .teacher-profile-dashboard {
     margin-top: 100px;
 }
+
+.under-header{
+    padding-top: 100px;
+    /* background-color: #0063cc3a; */
+    background: rgb(2, 0, 36);
+    background: -moz-linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(71, 121, 9, 0.853) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    background: -webkit-linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(70, 121, 9, 1) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    background: linear-gradient(90deg, rgb(44, 112, 56) 0%, rgba(84, 128, 31, 0.779) 35%, rgba(0, 212, 255, 0.11808473389355745) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024", endColorstr="#00d4ff", GradientType=1);
+}
+
+/* school */
+.position-details{
+    padding: 50px;
+}
+
 
 /* admin header end */
 

@@ -1,10 +1,10 @@
 import React from 'react'
-import Profile from '../../../components/functionality/Profile'
+import GuestProfile from './GuestProfile'
 
 export default function UnknownUser() {
   return (
     <>
-      <Profile 
+    <GuestProfile
         title="Guest User"
       />
     </>

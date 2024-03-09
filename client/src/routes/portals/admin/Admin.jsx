@@ -10,7 +10,7 @@ const Admin = () => {
             <section id="admin">
                 <div className="container">
                     <PortalHead
-                        text="Admin Portal"
+                        text="admin"
                     />
                 </div>
             </section>

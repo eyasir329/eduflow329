@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView } = require("../controllers/admin.controller");
 // const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createSubject, viewSubject, updateSubject, deleteSubject, createStudent, lastStudentId, updateStudent, deleteStudent, viewStudent, createOrUpdatePrincipal, viewPrincipal, viewNotice, createNotice, updateNotice, deleteNotice } = require("../controllers/admin.controller");
 
 const router = express.Router();
@@ -8,9 +8,10 @@ const router = express.Router();
 router.post("/adminProfile", adminProfile);
 router.post("/createPosition", createPosition);
 router.get("/viewPosition", viewPosition);
+router.put("/updatePosition/:position_id", updatePosition);
 
-// router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
-// router.get("/schoolView", schoolView);
+router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
+router.get("/schoolView", schoolView);
 
 // // Teacher endpoints
 // router.get("/lastTeacherId", lastTeacherId);

@@ -1832,10 +1832,18 @@ form .form-align {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024", endColorstr="#00d4ff", GradientType=1);
 }
 
+/* position */
+.view-position{
+    background-color: #bfccc06c;
+    padding: 20px;
+}
+
 /* school */
 .position-details{
     padding: 50px;
 }
+
+
 
 
 /* admin header end */

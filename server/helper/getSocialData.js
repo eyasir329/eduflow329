@@ -1,6 +1,7 @@
 
 const connection = require("../api/sql/db.js");
 
+// view
 function getSocialData(social_id) {
     return new Promise((resolve, reject) => {
         const sqlSelectSocial = `SELECT * FROM socials WHERE social_id = ?`;
@@ -21,6 +22,27 @@ function getSocialData(social_id) {
     });
 }
 
+// insert new one
+function insertSocialData(socialData) {
+    return new Promise((resolve, reject) => {
+        const { phone, facebook, linkedin, twitter } = socialData;
+        const sqlInsertSocial = `INSERT INTO socials (phone, facebook, linkedin, twitter) VALUES (?, ?, ?, ?)`;
+
+        connection.query(sqlInsertSocial, [phone, facebook, linkedin, twitter], (error, results) => {
+            if (error) {
+                console.error('Error inserting data into MySQL:', error);
+                reject(error);
+            } else {
+                resolve(results.insertId);
+            }
+        });
+    });
+}
+
+
+
+
+// update by id
 async function getSocialUpdateId(userId, type, socialData) {
     return new Promise((resolve, reject) => {
         if (type === "admin" || type === "staff") {
@@ -63,4 +85,4 @@ function updateSocialData(socialId, socialData) {
     });
 }
 
-module.exports = { getSocialData, getSocialUpdateId };
+module.exports = { getSocialData, getSocialUpdateId,insertSocialData };

@@ -16,8 +16,8 @@ import axios from "axios";
 import CreatePosition from "./Position";
 
 const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
-const divisionMenuItems = divisions.map((division, index) => (
-  <MenuItem key={index} value={division}>{division}</MenuItem>
+const divisionMenuItems = divisions.map((state, index) => (
+  <MenuItem key={index} value={state}>{state}</MenuItem>
 ));
 
 export default function SchoolInfo() {
@@ -34,6 +34,9 @@ export default function SchoolInfo() {
       })
       .then(data => {
         setFormData(data);
+        console.log(data)
+
+        
       })
       .catch(error => {
         console.error('Error:', error);
@@ -53,6 +56,7 @@ export default function SchoolInfo() {
   };
 
   const handleCreateOrUpdate = async (e) => {
+    console.log(formData)
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/api/admin/schoolCreateOrUpdate", formData);
@@ -195,13 +199,12 @@ export default function SchoolInfo() {
                   id="inputDivision"
                   variant="outlined"
                   color="secondary"
-                  onChange={(e) => setFormData({ ...formData, division: e.target.value })}
-                  value={formData.division || "Mymensingh"}
+                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  value={formData.state || "Mymensingh"}  
                 >
-
                   {divisionMenuItems}
-
                 </Select>
+
               </FormControl>
 
 
@@ -254,7 +257,7 @@ export default function SchoolInfo() {
 
         <h1>Principal Information</h1>
         <PrincipalInfo />
-        
+
         <h1>Position Information</h1>
         <CreatePosition />
 

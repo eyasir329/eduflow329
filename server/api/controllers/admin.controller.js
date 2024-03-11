@@ -1,6 +1,7 @@
 const currentUserProfile = require("../../helper/currentUser.js");
 const { getAddressId } = require("../../helper/getAddressData.js");
 const { insertSocialData } = require("../../helper/getSocialData.js");
+const { getOrCreateSubjectID, getSubjectNameById } = require("../../helper/getSubjectId.js");
 const connection = require("../sql/db.js");
 
 // admin user profile
@@ -194,6 +195,78 @@ exports.schoolCreateOrUpdate = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+// notice board section
+
+// Function to view all notices
+exports.viewNotice = (req, res, next) => {
+    // Query the database to retrieve all notices ordered by updated_at in descending order
+    const sql = 'SELECT * FROM notice_board ORDER BY created_at DESC';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.error("Error retrieving notices:", error);
+            res.status(500).json({ success: false, message: "Failed to retrieve notices" });
+        } else {
+            res.status(200).json({ success: true, notices: results });
+        }
+    });
+};
+
+// Function to create a new notice
+exports.createNotice = (req, res, next) => {
+    console.log(req.body)
+    const { title, category, user_id, text_message, link } = req.body;
+    // Insert the new notice into the database
+    const sql = 'INSERT INTO notice_board (user_id,title, category, text_message, link) VALUES ( ?, ?, ?, ?, ?)';
+    connection.query(sql, [user_id, title, category, text_message, link], (error, result) => {
+        if (error) {
+            console.error("Error creating notice:", error);
+            res.status(500).json({ success: false, message: "Failed to create notice" });
+        } else {
+            res.status(201).json({ success: true, message: "Notice created successfully", noticeId: result.insertId });
+        }
+    });
+};
+
+// Function to update an existing notice
+exports.updateNotice = (req, res, next) => {
+    const { noticeId } = req.params;
+    const { title, category, text_message, link } = req.body;
+
+    console.log(req.body)
+
+    // Update the notice in the database
+    const sql = 'UPDATE notice_board SET title=?, category=?, text_message=?, link=? WHERE notice_id=?';
+    connection.query(sql, [title, category, text_message, link, noticeId], (error, result) => {
+        if (error) {
+            console.error("Error updating notice:", error);
+            res.status(500).json({ success: false, message: "Failed to update notice" });
+        } else {
+            res.status(200).json({ success: true, message: "Notice updated successfully" });
+        }
+    });
+};
+
+// Function to delete a notice
+exports.deleteNotice = (req, res, next) => {
+    const { noticeId } = req.params;
+
+    // Delete the notice from the database
+    const sql = 'DELETE FROM notice_board WHERE notice_id=?';
+    connection.query(sql, [noticeId], (error, result) => {
+        if (error) {
+            console.error("Error deleting notice:", error);
+            res.status(500).json({ success: false, message: "Failed to delete notice" });
+        } else {
+            res.status(200).json({ success: true, message: "Notice deleted successfully" });
+        }
+    });
+};
+
+// create user ...with last id
+
+
 
 
 // exports.lastTeacherId = async (req, res, next) => {
@@ -579,243 +652,259 @@ exports.schoolCreateOrUpdate = async (req, res, next) => {
 // };
 
 
-// // Academic
+// Academic
 
-// exports.createAcademic = async (req, res, next) => {
-//     try {
-//         const { classId, className, roomNumber, session, classTeacherId, classCaptainId } = req.body;
+exports.createAcademic = async (req, res, next) => {
+    try {
+        const { classId, className, roomNumber, session, classTeacherId, classCaptainId, syllabus } = req.body;
 
-//         // Convert empty strings to null for integer fields
-//         const classTeacherIdValue = classTeacherId === '' ? null : classTeacherId;
-//         const classCaptainIdValue = classCaptainId === '' ? null : classCaptainId;
+        // Convert empty strings to null for integer fields
+        const classTeacherIdValue = classTeacherId === '' ? null : classTeacherId;
+        const classCaptainIdValue = classCaptainId === '' ? null : classCaptainId;
 
-//         // SQL query for insert or update
-//         const sqlQuery = `
-//             INSERT INTO academics (class_id, class_name, room_number, session, class_teacher_id, class_captain_id)
-//             VALUES (?, ?, ?, ?, ?, ?)
-//             ON DUPLICATE KEY UPDATE
-//             class_name = VALUES(class_name),
-//             room_number = VALUES(room_number),
-//             session = VALUES(session),
-//             class_teacher_id = VALUES(class_teacher_id),
-//             class_captain_id = VALUES(class_captain_id)
-//         `;
+        // SQL query for insert or update
+        const sqlQuery = `
+            INSERT INTO academics (class_id, class_name, room_number, session, class_teacher_id, class_captain_id,syllabus)
+            VALUES (?, ?, ?, ?, ?, ?,?)
+            ON DUPLICATE KEY UPDATE
+            class_name = VALUES(class_name),
+            room_number = VALUES(room_number),
+            session = VALUES(session),
+            class_teacher_id = VALUES(class_teacher_id),
+            class_captain_id = VALUES(class_captain_id),
+            syllabus = VALUES(syllabus)
+        `;
 
-//         // Execute the SQL query
-//         connection.query(sqlQuery, [classId, className, roomNumber, session, classTeacherIdValue, classCaptainIdValue], (error, results) => {
-//             if (error) {
-//                 throw error;
-//             }
+        // Execute the SQL query
+        connection.query(sqlQuery, [classId, className, roomNumber, session, classTeacherIdValue, classCaptainIdValue, syllabus], (error, results) => {
+            if (error) {
+                throw error;
+            }
 
-//             // Respond with the ID of the newly created or updated academic record
-//             res.status(201).json({ message: "classId " + classId + " create or updated successfully" });
-//         });
-//     } catch (error) {
-//         // If an error occurs, pass it to the error handling middleware
-//         next(error);
-//     }
-// };
+            // Respond with the ID of the newly created or updated academic record
+            res.status(201).json({ message: "classId " + classId + " create or updated successfully" });
+        });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
 
-// exports.viewAcademic = async (req, res, next) => {
-//     try {
-//         // Perform a query to fetch academic data from the database
-//         connection.query('SELECT * FROM academics', (error, results, fields) => {
-//             if (error) {
-//                 throw error;
-//             }
+exports.viewAcademic = async (req, res, next) => {
+    try {
+        // Perform a query to fetch academic data from the database
+        connection.query('SELECT * FROM academics', (error, results, fields) => {
+            if (error) {
+                throw error;
+            }
 
-//             // Transform the keys in the results
-//             const transformedResults = results.map(row => ({
-//                 classId: row.class_id,
-//                 className: row.class_name,
-//                 session: row.session,
-//                 classTeacherId: row.class_teacher_id,
-//                 classCaptainId: row.class_captain_id,
-//                 roomNumber: row.room_number
-//             }));
+            // Transform the keys in the results
+            const transformedResults = results.map(row => ({
+                classId: row.class_id,
+                className: row.class_name,
+                session: row.session,
+                classTeacherId: row.class_teacher_id,
+                classCaptainId: row.class_captain_id,
+                roomNumber: row.room_number,
+                syllabus: row.syllabus
+            }));
 
-//             // Send the transformed data as a response
-//             res.status(200).json(transformedResults);
-//         });
-//     } catch (error) {
-//         // If an error occurs, pass it to the error handling middleware
-//         next(error);
-//     }
-// };
+            // Send the transformed data as a response
+            res.status(200).json(transformedResults);
+        });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
 
-// exports.updateAcademic = async (req, res, next) => {
-//     try {
-//         const { classId, className, session, classTeacherId, classCaptainId, roomNumber } = req.body;
+exports.updateAcademic = async (req, res, next) => {
+    try {
+        const { classId, className, session, classTeacherId, classCaptainId, roomNumber, syllabus } = req.body;
 
-//         console.log(req.body);
+        console.log(req.body);
 
-//         // Perform a query to update academic data in the database
-//         connection.query(
-//             'UPDATE academics SET class_name = ?, session = ?, class_teacher_id = ?, class_captain_id = ?, room_number = ? WHERE class_id = ?',
-//             [className, session, classTeacherId, classCaptainId, roomNumber, classId],
-//             (error, results, fields) => {
-//                 if (error) {
-//                     throw error;
-//                 }
+        // Perform a query to update academic data in the database
+        connection.query(
+            'UPDATE academics SET class_name = ?, session = ?, class_teacher_id = ?, class_captain_id = ?, room_number = ? ,syllabus = ? WHERE class_id = ?',
+            [className, session, classTeacherId, classCaptainId, roomNumber, syllabus, classId],
+            (error, results, fields) => {
+                if (error) {
+                    throw error;
+                }
 
-//                 // Send success response
-//                 res.status(200).json({ message: 'Academic data updated successfully' });
-//             }
-//         );
-//     } catch (error) {
-//         // If an error occurs, pass it to the error handling middleware
-//         next(error);
-//     }
-// };
+                // Send success response
+                res.status(200).json({ message: 'Academic data updated successfully' });
+            }
+        );
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
 
-// exports.deleteAcademic = async (req, res, next) => {
-//     try {
-//         const { classId } = req.body;
+exports.deleteAcademic = async (req, res, next) => {
+    try {
+        const { classId } = req.body;
 
-//         // Perform a query to delete academic data from the database
-//         connection.query('DELETE FROM academics WHERE class_id = ?', [classId], (error, results) => {
-//             if (error) {
-//                 throw error;
-//             }
+        // Perform a query to delete academic data from the database
+        connection.query('DELETE FROM academics WHERE class_id = ?', [classId], (error, results) => {
+            if (error) {
+                throw error;
+            }
 
-//             // Check if any rows were affected by the delete operation
-//             if (results.affectedRows === 0) {
-//                 return res.status(404).json({ message: "Academic data not found" });
-//             }
+            // Check if any rows were affected by the delete operation
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ message: "Academic data not found" });
+            }
 
-//             // Send a success response
-//             res.status(200).json({ message: "Academic data deleted successfully" });
-//         });
-//     } catch (error) {
-//         // If an error occurs, pass it to the error handling middleware
-//         next(error);
-//     }
-// };
+            // Send a success response
+            res.status(200).json({ message: "Academic data deleted successfully" });
+        });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
+    }
+};
 
-// // subject
-// exports.createSubject = async (req, res, next) => {
-//     try {
-//         // Extract data from request body
-//         const { subjectID, subjectName, classID, teacherId } = req.body;
+// subject
+exports.createClassSubject = async (req, res, next) => {
+    const { classSubjectID,subjectName, classID, teacherId, syllabus, book } = req.body;
 
-//         // Convert string inputs to integers
-//         const parsedSubjectID = parseInt(subjectID);
-//         const parsedClassID = parseInt(classID);
-//         const parsedTeacherId = teacherId ? parseInt(teacherId) : null; // Convert to integer only if provided
+    try {
+        // Get or create the subject ID
+        const subjectId = await getOrCreateSubjectID(subjectName);
 
-//         // Insert a new subject into the database
-//         const query = `INSERT INTO subjects (subject_id, sub_name, class_id, teacher_id) 
-//                        VALUES (?, ?, ?, ?)`;
-//         connection.query(query, [parsedSubjectID, subjectName, parsedClassID, parsedTeacherId], (error, results, fields) => {
-//             if (error) {
-//                 console.error('Error creating subject:', error);
-//                 res.status(500).json({ message: 'Failed to create subject' });
-//                 return;
-//             }
-//             console.log('Subject created successfully');
-//             res.status(201).json({ message: 'Subject created successfully' });
-//         });
-//     } catch (error) {
-//         // Handle any errors
-//         console.error('Error creating subject:', error);
-//         res.status(500).json({ message: 'Internal Server Error' });
-//     }
-// };
+        // Convert string inputs to integers
+        const parsedClassSubjectID = parseInt(classSubjectID);
+        const parsedClassID = parseInt(classID);
+        const parsedTeacherId = teacherId ? parseInt(teacherId) : null; // Convert to integer only if provided
 
-// exports.viewSubject = async (req, res, next) => {
-//     try {
-//         // Assuming you have a MySQL connection pool set up
-//         connection.query('SELECT * FROM subjects', (error, results) => {
-//             if (error) {
-//                 console.error('Error fetching subject data:', error);
-//                 res.status(500).json({ error: 'Failed to fetch subject data' });
-//                 return;
-//             }
+        // Insert a new subject into the database
+        const query = `INSERT INTO class_subjects (class_subject_id,subject_id, class_id, teacher_id, syllabus, book) 
+                       VALUES (?,?, ?, ?, ?, ?)`;
+        connection.query(query, [parsedClassSubjectID,subjectId, parsedClassID, parsedTeacherId, syllabus, book], (error, results, fields) => {
+            if (error) {
+                console.error('Error creating subject:', error);
+                return res.status(500).json({ message: 'Failed to create subject' });
+            }
+            console.log('Subject created successfully');
+            res.status(201).json({ message: 'Subject created successfully' });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Failed to create subject' });
+    }
+};
 
-//             // Convert keys and send the converted data as JSON response
-//             const convertedResults = results.map(row => ({
-//                 subjectId: row.subject_id,
-//                 subjectName: row.sub_name,
-//                 teacherId: row.teacher_id,
-//                 classId: row.class_id
-//             }));
+exports.viewClassSubject = async (req, res, next) => {
+    try {
+        // Assuming you have a MySQL connection pool set up
+        connection.query('SELECT * FROM class_subjects', async (error, results) => {
+            if (error) {
+                console.error('Error fetching subject data:', error);
+                res.status(500).json({ error: 'Failed to fetch subject data' });
+                return;
+            }
 
-//             res.status(200).json(convertedResults); // Send fetched subject data with converted keys as JSON response
-//         });
-//     } catch (error) {
-//         console.error('Error fetching subject data:', error);
-//         res.status(500).json({ error: 'Failed to fetch subject data' });
-//     }
-// };
+            try {
+                // Map over each row and fetch subject name asynchronously
+                const convertedResults = await Promise.all(results.map(async (row) => {
+                    const subjectName = await getSubjectNameById(row.subject_id);
+                    return {
+                        classSubjectId: row.class_subject_id,
+                        subjectName: subjectName,
+                        teacherId: row.teacher_id,
+                        classId: row.class_id,
+                        syllabus:row.syllabus,
+                        book:row.book
+                    };
+                }));
+                res.status(200).json(convertedResults); // Send fetched subject data with converted keys as JSON response
+            } catch (err) {
+                console.error('Error fetching subject name:', err);
+                res.status(500).json({ error: 'Failed to fetch subject name' });
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching subject data:', error);
+        res.status(500).json({ error: 'Failed to fetch subject data' });
+    }
+};
 
-// exports.updateSubject = async (req, res, next) => {
-//     try {
-//         // Extract updated subject data from the request body
-//         const { subjectId, subjectName, teacherId, classId } = req.body;
 
-//         // Validate the input (if necessary)
-//         console.log(req.body)
-//         // Assuming you have a MySQL connection pool set up
-//         connection.query(
-//             'UPDATE subjects SET sub_name = ?, teacher_id = ?, class_id = ? WHERE subject_id = ?',
-//             [subjectName, teacherId, classId, subjectId],
-//             (error, results) => {
-//                 if (error) {
-//                     console.error('Error updating subject:', error);
-//                     res.status(500).json({ error: 'Failed to update subject' });
-//                     return;
-//                 }
+exports.updateClassSubject = async (req, res, next) => {
+    try {
+        // Extract updated subject data from the request body
+        const { classSubjectId, subjectName, teacherId, syllabus, book } = req.body;
 
-//                 // Check if the subject was updated successfully
-//                 if (results.affectedRows === 0) {
-//                     res.status(404).json({ error: 'Subject not found' });
-//                     return;
-//                 }
+        // Validate the input (if necessary)
+        console.log(req.body);
 
-//                 // Subject updated successfully
-//                 res.status(200).json({ message: 'Subject updated successfully' });
-//             }
-//         );
-//     } catch (error) {
-//         console.error('Error updating subject:', error);
-//         res.status(500).json({ error: 'Failed to update subject' });
-//     }
-// };
+        try {
+            // Get or create the subject ID asynchronously
+            const subjectId = await getOrCreateSubjectID(subjectName);
 
-// exports.deleteSubject = async (req, res, next) => {
-//     try {
-//         const { subjectId } = req.params; // Extract subject ID from request parameters
+            // Assuming you have a MySQL connection pool set up
+            connection.query(
+                'UPDATE class_subjects SET subject_id = ?, teacher_id = ?, syllabus = ?, book = ? WHERE class_subject_id = ?',
+                [subjectId, teacherId, syllabus, book, classSubjectId],
+                (error, results) => {
+                    if (error) {
+                        console.error('Error updating subject:', error);
+                        res.status(500).json({ error: 'Failed to update subject' });
+                        return;
+                    }
 
-//         // Ensure connection is established before executing queries
-//         if (!connection) {
-//             throw new Error('Database connection is not established');
-//         }
+                    // Check if the subject was updated successfully
+                    if (results.affectedRows === 0) {
+                        res.status(404).json({ error: 'Subject not found' });
+                        return;
+                    }
 
-//         // Execute the DELETE query
-//         connection.query('DELETE FROM subjects WHERE subject_id = ?', [subjectId], (error, results) => {
-//             if (error) {
-//                 console.error('Error deleting subject:', error);
-//                 // Send an error response
-//                 res.status(500).json({ error: 'Failed to delete subject' });
-//                 return;
-//             }
+                    // Subject updated successfully
+                    res.status(200).json({ message: 'Subject updated successfully' });
+                }
+            );
+        } catch (err) {
+            console.error('Error getting or creating subject ID:', err);
+            res.status(500).json({ error: 'Failed to get or create subject ID' });
+        }
+    } catch (error) {
+        console.error('Error updating subject:', error);
+        res.status(500).json({ error: 'Failed to update subject' });
+    }
+};
 
-//             // Check if any row was affected
-//             if (results.affectedRows === 0) {
-//                 // If no row was affected, it means subject with provided ID doesn't exist
-//                 res.status(404).json({ error: 'Subject not found' });
-//                 return;
-//             }
 
-//             // Send a success response
-//             res.status(200).json({ message: 'Subject deleted successfully' });
-//         });
-//     } catch (error) {
-//         console.error('Error deleting subject:', error);
-//         // Send an error response
-//         res.status(500).json({ error: 'Failed to delete subject' });
-//     }
-// };
+exports.deleteClassSubject = async (req, res, next) => {
+    try {
+        const { classSubjectId } = req.params; 
+        // Execute the DELETE query
+        connection.query('DELETE FROM class_subjects WHERE class_subject_id = ?', [classSubjectId], (error, results) => {
+            if (error) {
+                console.error('Error deleting subject:', error);
+                // Send an error response
+                res.status(500).json({ error: 'Failed to delete subject' });
+                return;
+            }
+
+            // Check if any row was affected
+            if (results.affectedRows === 0) {
+                // If no row was affected, it means subject with provided ID doesn't exist
+                res.status(404).json({ error: 'Subject not found' });
+                return;
+            }
+
+            // Send a success response
+            res.status(200).json({ message: 'Subject deleted successfully' });
+        });
+    } catch (error) {
+        console.error('Error deleting subject:', error);
+        // Send an error response
+        res.status(500).json({ error: 'Failed to delete subject' });
+    }
+};
 
 // //   student
 
@@ -1102,72 +1191,9 @@ exports.schoolCreateOrUpdate = async (req, res, next) => {
 // }
 
 
-// // notice board
-
-// // Function to view all notices
-// exports.viewNotice = (req, res, next) => {
-//     // Query the database to retrieve all notices ordered by updated_at in descending order
-//     const sql = 'SELECT * FROM notice_board ORDER BY notice_id DESC';
-//     connection.query(sql, (error, results) => {
-//         if (error) {
-//             console.error("Error retrieving notices:", error);
-//             res.status(500).json({ success: false, message: "Failed to retrieve notices" });
-//         } else {
-//             res.status(200).json({ success: true, notices: results });
-//         }
-//     });
-// };
 
 
-// // Function to create a new notice
-// exports.createNotice = (req, res, next) => {
-//     const { title, category, text_message, link } = req.body;
-//     // Insert the new notice into the database
-//     const sql = 'INSERT INTO notice_board (title, category, text_message, link) VALUES (?, ?, ?, ?)';
-//     connection.query(sql, [title, category, text_message, link], (error, result) => {
-//         if (error) {
-//             console.error("Error creating notice:", error);
-//             res.status(500).json({ success: false, message: "Failed to create notice" });
-//         } else {
-//             res.status(201).json({ success: true, message: "Notice created successfully", noticeId: result.insertId });
-//         }
-//     });
-// };
 
-// // Function to update an existing notice
-// exports.updateNotice = (req, res, next) => {
-//     const { noticeId } = req.params;
-//     const { title, category, text_message, link } = req.body;
-
-//     console.log(req.body)
-
-//     // Update the notice in the database
-//     const sql = 'UPDATE notice_board SET title=?, category=?, text_message=?, link=? WHERE notice_id=?';
-//     connection.query(sql, [title, category, text_message, link, noticeId], (error, result) => {
-//         if (error) {
-//             console.error("Error updating notice:", error);
-//             res.status(500).json({ success: false, message: "Failed to update notice" });
-//         } else {
-//             res.status(200).json({ success: true, message: "Notice updated successfully" });
-//         }
-//     });
-// };
-
-// // Function to delete a notice
-// exports.deleteNotice = (req, res, next) => {
-//     const { noticeId } = req.params;
-
-//     // Delete the notice from the database
-//     const sql = 'DELETE FROM notice_board WHERE notice_id=?';
-//     connection.query(sql, [noticeId], (error, result) => {
-//         if (error) {
-//             console.error("Error deleting notice:", error);
-//             res.status(500).json({ success: false, message: "Failed to delete notice" });
-//         } else {
-//             res.status(200).json({ success: true, message: "Notice deleted successfully" });
-//         }
-//     });
-// };
 
 
 

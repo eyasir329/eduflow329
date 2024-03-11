@@ -9,8 +9,8 @@ import Parent from "./parent/Parent";
 import Student from "./student/Student";
 import Teacher from "./teacher/Teacher";
 import GuestUser from "./guest/GuestUser";
-import RandomSignUp from "./RandomSignUp";
-import UserData from "./UserData";
+// import RandomSignUp from "./RandomSignUp";
+// import UserData from "./UserData";
 
 const Portal = () => {
     const role = useSelector((state) => state.user.currentUser?.type);

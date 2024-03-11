@@ -44,9 +44,7 @@ import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import Portal from "./routes/portals/Portal";
-import UserData from "./routes/portals/UserData";
-
-
+import RegUserData from "./routes/portals/RegUserData";
 
 const router = createBrowserRouter([
   {
@@ -205,7 +203,7 @@ const router = createBrowserRouter([
           },
           {
             path: "/formdata/:type/*",
-            element: <UserData />,
+            element: <RegUserData />,
           },
         ],
       }

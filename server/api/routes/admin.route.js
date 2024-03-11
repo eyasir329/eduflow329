@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject } = require("../controllers/admin.controller");
 // const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createSubject, viewSubject, updateSubject, deleteSubject, createStudent, lastStudentId, updateStudent, deleteStudent, viewStudent, createOrUpdatePrincipal, viewPrincipal, viewNotice, createNotice, updateNotice, deleteNotice } = require("../controllers/admin.controller");
 
 const router = express.Router();
@@ -10,8 +10,15 @@ router.post("/createPosition", createPosition);
 router.get("/viewPosition", viewPosition);
 router.put("/updatePosition/:position_id", updatePosition);
 
+// school information
 router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
 router.get("/schoolView", schoolView);
+
+// notice board
+router.get('/viewNotices', viewNotice);
+router.post('/createNotice', createNotice);
+router.put('/notices/:noticeId', updateNotice);
+router.delete('/notices/:noticeId', deleteNotice);
 
 // // Teacher endpoints
 // router.get("/lastTeacherId", lastTeacherId);
@@ -27,17 +34,17 @@ router.get("/schoolView", schoolView);
 // router.post("/updateStaff", updateStaff);
 // router.delete('/deleteStaff/:staffId', deleteStaff);
 
-// // Academic endpoints
-// router.post("/createAcademic", createAcademic);
-// router.get("/viewAcademic", viewAcademic);
-// router.post("/updateAcademic", updateAcademic);
-// router.delete("/deleteAcademic", deleteAcademic);
+// Academic endpoints
+router.post("/createAcademic", createAcademic);
+router.get("/viewAcademic", viewAcademic);
+router.post("/updateAcademic", updateAcademic);
+router.delete("/deleteAcademic", deleteAcademic);
 
 // // subject 
-// router.post("/createSubject", createSubject);
-// router.get("/viewSubject", viewSubject);
-// router.post("/updateSubject", updateSubject);
-// router.delete("/deleteSubject/:subjectId", deleteSubject);
+router.post("/createClassSubject", createClassSubject);
+router.get("/viewClassSubject", viewClassSubject);
+router.post("/updateClassSubject", updateClassSubject);
+router.delete("/deleteClassSubject/:classSubjectId", deleteClassSubject);
 
 // // student
 // router.post("/createStudent", createStudent);
@@ -50,11 +57,7 @@ router.get("/schoolView", schoolView);
 // router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
 // router.get('/viewPrincipal', viewPrincipal);
 
-// // notice board
-// router.get('/viewNotices', viewNotice);
-// router.post('/createNotice', createNotice);
-// router.put('/notices/:noticeId', updateNotice);
-// router.delete('/notices/:noticeId', deleteNotice);
+
 
 
 module.exports = router;

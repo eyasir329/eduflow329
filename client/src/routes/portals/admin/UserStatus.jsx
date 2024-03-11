@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,29 +8,31 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import Image from '../../../components/functionality/Image';
+import emailjs from '@emailjs/browser';
+
 
 const columns = [
-    { id: 'userId', label: 'User ID', minWidth: 50 },
-    { id: 'type', label: 'Type', minWidth: 50 },
+    { id: 'user_id', label: 'User ID', minWidth: 100 },
+    { id: 'user_type', label: 'User Type', minWidth: 50 },
     { id: 'email', label: 'Email', minWidth: 150 },
-    { id: 'key', label: 'Key', minWidth: 150 },
     { id: 'status', label: 'Status', minWidth: 50 },
-    { id: 'mail', label: 'Request', minWidth: 50 },
-    { id: 'created_at', label: 'created_at', minWidth: 100 },
-    { id: 'updated_at', label: 'updated_at', minWidth: 100 },
+    { id: 'button', label: 'Mail', minWidth: 50 },
+    { id: 'created_at', label: 'Created At', minWidth: 200 }
 ];
 
-const UserStatus = () => {
+export default function UserStatus() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [editableData, setEditableData] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialog2, setOpenDialog2] = useState(false);
     const [searchId, setSearchId] = useState('');
     const [filteredData, setFilteredData] = useState([]);
     const [teacherData, setTeacherData] = useState([]);
     const [updateMessage, setUpdateMessage] = useState("");
     const [deleteMessage, setDeleteMessage] = useState("");
+    
+    const form = useRef();
 
     useEffect(() => {
         fetchData();
@@ -38,12 +40,11 @@ const UserStatus = () => {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/viewTeacher');
+            const response = await fetch('http://localhost:5000/api/user/viewUserStatus');
             if (!response.ok) {
                 throw new Error('Failed to fetch teacher data');
             }
             const data = await response.json();
-
             setTeacherData(data);
             setFilteredData(data);
         } catch (error) {
@@ -66,7 +67,6 @@ const UserStatus = () => {
     };
 
     const handleSave = async () => {
-        console.log(editableData);
         try {
             const res = await fetch(`http://localhost:5000/api/admin/updateTeacheryuy`, {
                 method: "POST",
@@ -78,15 +78,12 @@ const UserStatus = () => {
             });
 
             const data = await res.json();
-            console.log(data);
             if (res.ok) {
                 setUpdateMessage(data.message);
                 fetchData();
             } else {
                 setUpdateMessage("something wrong");
             }
-
-
         } catch (error) {
             console.error('Error updating teacher:', error);
         }
@@ -107,10 +104,8 @@ const UserStatus = () => {
                 credentials: 'include',
             });
             const responseData = await res.json();
-            console.log(responseData);
             if (res.ok) {
                 setDeleteMessage(responseData.message);
-                // Refresh the teacher data after deletion
                 fetchData();
             } else {
                 setDeleteMessage("Something wrong not to delete that teacherId");
@@ -124,10 +119,8 @@ const UserStatus = () => {
     const handleSearch = () => {
         const searchTerm = searchId.toLowerCase().trim();
         const searchResult = teacherData.filter((row) => {
-            const teacherIdString = String(row.teacherId);
-            return (
-                (teacherIdString.includes(searchTerm))
-            );
+            const userIdString = String(row.user_id);
+            return userIdString.includes(searchTerm);
         });
         setFilteredData(searchResult);
     };
@@ -140,12 +133,53 @@ const UserStatus = () => {
         setDeleteMessage();
     };
 
+    const [userName, setUserName] = useState('');
+    const [userMail, setUserMail] = useState('');
+    const [userID, setUserId] = useState('');
+    const [userKey, setUserkey] = useState('');
+    const [registrationLink, setRegistrationLink] = useState('http://localhost:3000/formdata/t/?id=n3pyqqto&mail=abc@gmail.com&pos=staff&key=n3pyqqtoEya32sd24'); 
+    const [emailTemplate, setEmailTemplate] = useState("");
+
+
+    const handleButtonClick = (rowIndex) => {
+        const user = teacherData[rowIndex];
+        const userid = user.user_id;
+        const userkey = user.key;
+        const userMail = user.email;
+        console.log(user)
+        const userTemplate = `Dear ${userMail},\n\nPlease Confirm Your Registration By filling up the registration form\nBy this provided link\n\n${registrationLink}`;
+
+        // Set the values of userName, userMail, and userTemplate
+        setUserName(userName);
+        setUserMail(userMail);
+        setEmailTemplate(userTemplate);
+        setOpenDialog2(true);
+        setUserId(userid);
+        setUserkey(userkey);
+    };
+    // http://localhost:3000/formdata/t/?id=n3pyqqto&mail=abc@gmail.com&pos=staff
+    const sendEmail = (e) => {
+        e.preventDefault();
+        emailjs
+            .sendForm(process.env.REACT_APP_EMAILJS_EMAIL_SERVICE_ID, process.env.REACT_APP_EMAILJS_EMAIL_TEMPLATE_ID, form.current, {
+                publicKey: process.env.REACT_APP_EMAILJS_EMAIL_PUBLIC_KEY,
+            })
+            .then(
+                () => {
+                    console.log('SUCCESS!');
+                },
+                (error) => {
+                    console.log('FAILED...', error.text);
+                },
+            );
+    };
+
     return (
         <>
             <div className="teacher-view-ex">
                 <div className="teacher-view">
                     <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66' }}>
-                    
+
                         <TextField
                             label="Search by User ID"
                             value={searchId}
@@ -162,7 +196,6 @@ const UserStatus = () => {
                         </Button>
 
 
-                        {/* Table */}
                         <TableContainer sx={{ maxHeight: 540 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
@@ -184,20 +217,26 @@ const UserStatus = () => {
                                 <TableBody>
                                     {filteredData
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row) => (
-                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.teacherId}>
-                                                {columns.slice(1).map((column) => (
+                                        .map((row, index) => (
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.user_id}>
+                                                {columns.map((column) => (
                                                     <TableCell key={column.id} align="left" sx={{ fontSize: '16px' }}>
-                                                        {editableData === row ? (
-                                                            <TextField
-                                                                value={row[column.id]}
-                                                                onChange={(e) => {
-                                                                    const updatedData = { ...row, [column.id]: e.target.value };
-                                                                    setEditableData(updatedData);
-                                                                }}
-                                                            />
+                                                        {column.id === 'button' ? (
+                                                            <Button variant="contained" color="primary" onClick={() => handleButtonClick(index)}>
+                                                                SEND Mail
+                                                            </Button>
                                                         ) : (
-                                                            row[column.id]
+                                                            editableData === row ? (
+                                                                <TextField
+                                                                    value={row[column.id]}
+                                                                    onChange={(e) => {
+                                                                        const updatedData = { ...row, [column.id]: e.target.value };
+                                                                        setEditableData(updatedData);
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                row[column.id]
+                                                            )
                                                         )}
                                                     </TableCell>
                                                 ))}
@@ -216,13 +255,11 @@ const UserStatus = () => {
                         </TableContainer>
 
 
-                        {/* Update Dialog */}
                         <Dialog open={openDialog} onClose={handleCancel}>
                             <DialogTitle>Edit Teacher</DialogTitle>
                             <DialogContent>
                                 {editableData && columns.map((column) => (
                                     <React.Fragment key={column.id}>
-
                                         <TextField
                                             label={column.label}
                                             value={editableData[column.id]}
@@ -233,7 +270,6 @@ const UserStatus = () => {
                                             fullWidth
                                             margin="normal"
                                         />
-
                                     </React.Fragment>
                                 ))}
                             </DialogContent>
@@ -243,8 +279,6 @@ const UserStatus = () => {
                             </DialogActions>
                         </Dialog>
 
-
-                        {/* Pagination */}
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25, 100]}
                             component="div"
@@ -260,8 +294,58 @@ const UserStatus = () => {
                     </p>
                 </div>
             </div>
+
+            {/* email */}
+
+            <Dialog open={openDialog2} onClose={() => setOpenDialog2(false)} fullWidth maxWidth="md">
+                <form ref={form} onSubmit={sendEmail}>
+                    <DialogTitle>SEND A MAIL</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            label="User Id"
+                            name="userID"
+                            defaultValue={userID}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Key"
+                            name="userKey"
+                            defaultValue={userKey}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Email"
+                            name="to_name"
+                            type="email"
+                            defaultValue={userMail}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Message"
+                            name="message"
+                            defaultValue={emailTemplate}
+                            multiline
+                            rows={10}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDialog2(false)} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button type="submit" onClick={() => {
+                            setOpenDialog2(false);
+                        }} color="primary">
+                            Send
+                        </Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
+
         </>
     );
 };
-
-export default UserStatus;

@@ -21,6 +21,7 @@ export default function AcademicInfo() {
   const [session, setSession] = useState("");
   const [classTeacherId, setClassTeacherId] = useState("");
   const [classCaptainId, setClassCaptainId] = useState("");
+  const [syllabus, setSyllabus] = useState("");
   const [academicMessage, setAcademicMessage] = useState("");
 
   const handleSubmit = async (event) => {
@@ -32,6 +33,7 @@ export default function AcademicInfo() {
       session,
       classTeacherId,
       classCaptainId,
+      syllabus
     };
     try {
 
@@ -47,6 +49,7 @@ export default function AcademicInfo() {
       const data = await res.json();
       console.log(data)
       setAcademicMessage(data.message)
+      
 
     } catch (error) {
     }
@@ -54,115 +57,128 @@ export default function AcademicInfo() {
 
   return (
     <>
-    <div className="teacher-info">
-      <div className="create-teacher">
-        <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66', mb: 4 }}>
-          <form onSubmit={handleSubmit} action={<Link to="/login" />}>
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Class ID"
-                InputLabelProps={{ shrink: true }}
-                color="secondary"
-                fullWidth
-                required
-                value={classId}
-                onChange={(e) => setClassId(e.target.value)}
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Class Name"
-                InputLabelProps={{ shrink: true }}
-                color="secondary"
-                fullWidth
-                required
-                value={className}
-                onChange={(e) => setClassName(e.target.value)}
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Room Number"
-                InputLabelProps={{ shrink: true }}
-                color="secondary"
-                fullWidth
-                value={roomNumber}
-                onChange={(e) => setRoomNumber(e.target.value)}
-              />
-            </Stack>
+      <div className="teacher-info">
+        <div className="create-teacher">
+          <Paper sx={{ width: '100%', overflow: 'hidden', padding: '10px 15px', backgroundColor: '#ffffff66', mb: 4 }}>
+            <form onSubmit={handleSubmit} action={<Link to="/login" />}>
+              <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  label="Class ID"
+                  InputLabelProps={{ shrink: true }}
+                  color="secondary"
+                  fullWidth
+                  required
+                  value={classId}
+                  onChange={(e) => setClassId(e.target.value)}
+                />
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  label="Class Name"
+                  InputLabelProps={{ shrink: true }}
+                  color="secondary"
+                  fullWidth
+                  required
+                  value={className}
+                  onChange={(e) => setClassName(e.target.value)}
+                />
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  label="Room Number"
+                  InputLabelProps={{ shrink: true }}
+                  color="secondary"
+                  fullWidth
+                  value={roomNumber}
+                  onChange={(e) => setRoomNumber(e.target.value)}
+                />
+              </Stack>
 
-            <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Session"
-                InputLabelProps={{ shrink: true }}
-                color="secondary"
-                fullWidth
-                required
-                value={session}
-                onChange={(e) => setSession(e.target.value)}
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Class Teacher ID"
-                InputLabelProps={{ shrink: true }}
-                color="secondary"
-                fullWidth
-                value={classTeacherId}
-                onChange={(e) => setClassTeacherId(e.target.value)}
-              />
-              <TextField
-                type="text"
-                variant="outlined"
-                label="Class Captain ID"
-                InputLabelProps={{ shrink: true }}
-                color="secondary"
-                fullWidth
-                value={classCaptainId}
-                onChange={(e) => setClassCaptainId(e.target.value)}
-              />
-            </Stack>
+              <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  label="Session"
+                  InputLabelProps={{ shrink: true }}
+                  color="secondary"
+                  fullWidth
+                  required
+                  value={session}
+                  onChange={(e) => setSession(e.target.value)}
+                />
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  label="Class Teacher ID"
+                  InputLabelProps={{ shrink: true }}
+                  color="secondary"
+                  fullWidth
+                  value={classTeacherId}
+                  onChange={(e) => setClassTeacherId(e.target.value)}
+                />
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  label="Class Captain ID"
+                  InputLabelProps={{ shrink: true }}
+                  color="secondary"
+                  fullWidth
+                  value={classCaptainId}
+                  onChange={(e) => setClassCaptainId(e.target.value)}
+                />
+              </Stack>
 
-            <Button variant="outlined" color="secondary" type="submit">
-              Register
-            </Button>
-          </form>
-          <div className="reg-error">
-            {academicMessage}
-          </div>
-        </Paper>
+              <TextField
+                multiline
+                rows={10} // Adjust the number of rows as needed
+                variant="outlined"
+                label="Syllabus"
+                InputLabelProps={{ shrink: true }}
+                color="secondary"
+                fullWidth
+                value={syllabus}
+                onChange={(e) => setSyllabus(e.target.value)}
+              />
 
-        <div className="teacher-view-ex">
-          <div className="teacher-view">
-            {/* <div className="create-teacher-id view-teacher-info">
+
+              <Button variant="outlined" color="secondary" type="submit">
+                Register
+              </Button>
+            </form>
+            <div className="reg-error">
+              {academicMessage}
+            </div>
+          </Paper>
+
+          <div className="teacher-view-ex">
+            <div className="teacher-view">
+              {/* <div className="create-teacher-id view-teacher-info">
               <button >
                 Update Academic Information
               </button>
             </div> */}
-            <ThemeProvider theme={theme}>
+              <ThemeProvider theme={theme}>
 
-              <AcademicTable />
+                <AcademicTable />
 
-            </ThemeProvider>
+              </ThemeProvider>
+            </div>
           </div>
+
         </div>
-       
+
       </div>
 
-    </div>
 
-
-    <div className="teacher-info">
-    <h1>
-      Subject Info
-    </h1>
-      <div className="create-teacher">
-      <SubjectInfo />
-      </div>
+      <div className="teacher-info">
+        <h1>
+          Subject Info
+        </h1>
+        <div className="create-teacher">
+          <SubjectInfo />
+        </div>
       </div>
     </>
   );

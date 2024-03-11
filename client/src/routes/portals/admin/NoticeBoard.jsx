@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
     TextField,
     Button,
@@ -19,11 +20,17 @@ import {
 } from "@mui/material";
 
 export default function NoticeBoard() {
+    const { currentUser } = useSelector((state) => state.user);
+
+    console.log(currentUser.userId)
+    const [selectedCategory, setSelectedCategory] = useState("academic");
+
     const [formData, setFormData] = useState({
         title: "",
         link: "",
         text_message: "",
-        category: "academic", // Set default value to "academic"
+        user_id: currentUser.userId,
+        category: selectedCategory,
     });
     const [notices, setNotices] = useState([]);
     const [page, setPage] = useState(0);
@@ -36,9 +43,9 @@ export default function NoticeBoard() {
         title: "",
         link: "",
         text_message: "",
-        category: "academic"
+        category: ""
     });
-    const [selectedCategory, setSelectedCategory] = useState("academic");
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -46,6 +53,7 @@ export default function NoticeBoard() {
     };
 
     const handleSubmit = async (e) => {
+        console.log(formData)
         e.preventDefault();
         try {
             const res = await fetch(`http://localhost:5000/api/admin/createNotice`, {
@@ -60,7 +68,13 @@ export default function NoticeBoard() {
             const data = await res.json();
 
             setMessageExtra(data.message);
-
+            setFormData({
+                title: "",
+                link: "",
+                text_message: "",
+                user_id: currentUser.userId,
+                category: selectedCategory,
+            });
             // Refresh notices after submission
             fetchNotices();
         } catch (error) {
@@ -87,11 +101,13 @@ export default function NoticeBoard() {
     const handleDelete = async (index) => {
         try {
             const noticeId = notices[index].notice_id;
-            await fetch(`http://localhost:5000/api/admin/notices/${noticeId}`, {
+            const res = await fetch(`http://localhost:5000/api/admin/notices/${noticeId}`, {
                 method: "DELETE",
                 credentials: 'include',
             });
-
+            const data = await res.json();
+            console.log(data)
+            setUpdateMessage(data.message)
             // Fetch notices again to refresh the list after deletion
             await fetchNotices();
 
@@ -153,8 +169,17 @@ export default function NoticeBoard() {
     };
 
     const handleCategoryChange = (event) => {
-        setSelectedCategory(event.target.value);
+        const { value } = event.target;
+        setSelectedCategory(value);
     };
+
+    useEffect(() => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            category: selectedCategory,
+        }));
+    }, [selectedCategory]);
+    
 
     return (
         <div>
@@ -175,6 +200,7 @@ export default function NoticeBoard() {
                         color="secondary"
                         fullWidth
                         sx={{ mb: 4 }}
+                        name="category"
                     >
                         <MenuItem value="">All Categories</MenuItem>
                         <MenuItem value="academic">Academic</MenuItem>
@@ -250,7 +276,7 @@ export default function NoticeBoard() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Title</TableCell>
-                                    <TableCell>Link</TableCell>
+                                    <TableCell>Content</TableCell>
                                     <TableCell>Created At</TableCell>
                                     <TableCell>Actions</TableCell>
                                 </TableRow>
@@ -262,7 +288,7 @@ export default function NoticeBoard() {
                                     .map((notice, index) => (
                                         <TableRow key={index}>
                                             <TableCell>{notice.title}</TableCell>
-                                            <TableCell><a href={notice.link}>{notice.link}</a></TableCell>
+                                            <TableCell><a href={notice.link}>{notice.text_message}</a></TableCell>
                                             <TableCell>{notice.created_at}</TableCell>
                                             <TableCell>
                                                 <Button variant="outlined" color="primary" onClick={() => handleUpdate(index)}>Update</Button>
@@ -283,7 +309,7 @@ export default function NoticeBoard() {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </div>
-                
+
             </Paper>
 
 
@@ -353,8 +379,8 @@ export default function NoticeBoard() {
             </Dialog>
 
             <div className="reg-error" style={{ marginTop: 10 }}>
-                    {updateMessage && <p>{updateMessage}</p>}
-                </div>
+                {updateMessage && <p>{updateMessage}</p>}
+            </div>
         </div>
     );
 }

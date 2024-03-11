@@ -18,7 +18,7 @@ const divisionMenuItems = divisions.map((division, index) => (
     <MenuItem key={index} value={division}>{division}</MenuItem>
 ));
 
-export default function UserData() {
+export default function RegUserData() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
 
@@ -27,8 +27,10 @@ export default function UserData() {
     const id = searchParams.get('id');
     const mail = searchParams.get('mail');
     const pos = searchParams.get('pos');
+    const key = searchParams.get('key');
  
-    console.log(type,id,mail,pos);
+    console.log(type,id,mail,pos,key);
+
 
     let headerInfo="";
     if(type==='t'){

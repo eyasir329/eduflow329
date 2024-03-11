@@ -24,7 +24,7 @@ const SubjectTable = () => {
   // Define the fetchSubjectData function
   const fetchSubjectData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/viewSubject');
+      const response = await fetch('http://localhost:5000/api/admin/viewClassSubject');
       if (!response.ok) {
         throw new Error('Failed to fetch subjects');
       }
@@ -39,8 +39,8 @@ const SubjectTable = () => {
     fetchSubjectData();
   }, []); // Run once on component mount
 
-  const handleDelete = (subjectId, index) => {
-    fetch(`http://localhost:5000/api/admin/deleteSubject/${subjectId}`, {
+  const handleDelete = (classSubjectId, index) => {
+    fetch(`http://localhost:5000/api/admin/deleteClassSubject/${classSubjectId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ const SubjectTable = () => {
   };
 
   const handleSave = () => {
-    fetch('http://localhost:5000/api/admin/updateSubject', {
+    fetch('http://localhost:5000/api/admin/updateClassSubject', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,20 +110,22 @@ const SubjectTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Subject ID</TableCell>
+            <TableCell>Class ID</TableCell>
+              <TableCell>Class Subject ID</TableCell>
               <TableCell>Subject Name</TableCell>
               <TableCell>Teacher ID</TableCell>
-              <TableCell>Class ID</TableCell>
+              
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {subjectData && subjectData.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.subjectId}</TableCell>
+              <TableCell>{row.classId}</TableCell>
+                <TableCell>{row.classSubjectId}</TableCell>
                 <TableCell>{row.subjectName}</TableCell>
                 <TableCell>{row.teacherId}</TableCell>
-                <TableCell>{row.classId}</TableCell>
+                
                 <TableCell>
                   <Button
                     variant="contained"
@@ -135,7 +137,7 @@ const SubjectTable = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleDelete(row.subjectId, index)} // Pass subjectId and index to handleDelete
+                    onClick={() => handleDelete(row.classSubjectId, index)} // Pass subjectId and index to handleDelete
                   >
                     Delete
                   </Button>
@@ -150,14 +152,23 @@ const SubjectTable = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Update Subject Data</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Subject ID"
-            name="subjectId"
-            value={editedData.subjectId || ""}
+        <TextField
+            label="Class ID"
+            name="classId"
+            value={editedData.classId || ""}
             fullWidth
             onChange={handleInputChange}
+            sx={{ mb: "10px" }}
             disabled
+          />
+          <TextField
+            label="Class Subject ID"
+            name="classSubjectId"
+            value={editedData.classSubjectId || ""}
+            fullWidth
+            onChange={handleInputChange}
             sx={{ margin: "10px 0px 10px 0px" }}
+            disabled
           />
           <TextField
             label="Subject Name"
@@ -176,13 +187,26 @@ const SubjectTable = () => {
             sx={{ mb: "10px" }}
           />
           <TextField
-            label="Class ID"
-            name="classId"
-            value={editedData.classId || ""}
+          multiline
+            rows={5}
+            label="Syllabus"
+            name="syllabus"
+            value={editedData.syllabus || ""}
             fullWidth
             onChange={handleInputChange}
             sx={{ mb: "10px" }}
           />
+          <TextField
+            multiline
+            rows={2}
+            label="Book Information"
+            name="book"
+            value={editedData.book || ""}
+            fullWidth
+            onChange={handleInputChange}
+            sx={{ mb: "10px" }}
+          />
+         
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

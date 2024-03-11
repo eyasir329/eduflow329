@@ -4,13 +4,6 @@ const { updateUserInfo } = require("../../helper/getUserInfo.js");
 const { getAddressId } = require("../../helper/getAddressData.js");
 const { getSocialUpdateId } = require("../../helper/getSocialData.js");
 
-
-exports.test = (req, res) => {
-    res.json({
-        message: "API is working"
-    });
-};
-
 // profile section
 exports.userUpdateProfile = async (req, res, next) => {
     try {
@@ -89,6 +82,27 @@ exports.userUpdateProfile = async (req, res, next) => {
 
 
 // sign in section update or delete
+
+exports.viewUserStatus = async (req, res, next) => {
+    try {
+        // Assuming you have a MySQL connection pool set up
+        connection.query('SELECT user_id, user_type, email, status, created_at, `key` FROM user_status', (error, results) => {
+            if (error) {
+                console.error('Error fetching user status:', error);
+                res.status(500).json({ error: 'Failed to fetch user status' });
+                return;
+            }
+            // Send fetched user status data as JSON response
+            res.status(200).json(results);
+        });
+    } catch (error) {
+        console.error('Error fetching user status:', error);
+        res.status(500).json({ error: 'Failed to fetch user status' });
+    }
+};
+
+
+
 
 exports.updateUser = async (req, res, next) => {
     // console.log(req.params.id)

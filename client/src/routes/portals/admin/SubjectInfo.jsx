@@ -5,24 +5,28 @@ import {
   Paper,
   createTheme,
   ThemeProvider,
+  Grid
 } from "@mui/material";
+
 import SubjectTable from "./SubjectTable";
 
 const theme = createTheme();
 
 export default function SubjectInfo() {
   const [formData, setFormData] = useState({
-    subjectID: "",
+    classSubjectID: "",
     classID: "",
     subjectName: "",
     teacherId: "",
+    syllabus: "",
+    book: ""
   });
   const [subjectMessage, setSubjectMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/createSubject/`, {
+      const res = await fetch(`http://localhost:5000/api/admin/createClassSubject/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,41 +67,67 @@ export default function SubjectInfo() {
           }}
         >
           <form onSubmit={handleSubmit}>
-            <TextField
-              type="text"
-              name="subjectID"
-              label="Subject ID"
-              value={formData.subjectID}
-              onChange={handleChange}
-              fullWidth
-              required
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              type="text"
-              name="classID"
-              label="Class ID"
-              value={formData.classID}
-              onChange={handleChange}
-              fullWidth
-              required
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              type="text"
-              name="subjectName"
-              label="Subject Name"
-              value={formData.subjectName}
-              onChange={handleChange}
-              fullWidth
-              required
-              sx={{ mb: 2 }}
-            />
+            <Grid container spacing={2} >
+            <Grid item xs={4}>
+                <TextField
+                  type="text"
+                  name="classID"
+                  label="Class ID"
+                  value={formData.classID}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  type="text"
+                  name="classSubjectID"
+                  label="Subject ID"
+                  value={formData.classSubjectID}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  type="text"
+                  name="subjectName"
+                  label="Subject Name"
+                  value={formData.subjectName}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                />
+              </Grid>
+              
+            </Grid>;
             <TextField
               type="text"
               name="teacherId"
               label="Teacher Id"
               value={formData.teacherId}
+              onChange={handleChange}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              multiline
+              rows={3}
+              type="text"
+              name="syllabus"
+              label="Syllabus"
+              value={formData.syllabus}
+              onChange={handleChange}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              type="text"
+              name="book"
+              label="Book Information"
+              value={formData.book}
               onChange={handleChange}
               fullWidth
               sx={{ mb: 2 }}

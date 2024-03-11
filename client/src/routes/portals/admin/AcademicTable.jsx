@@ -24,6 +24,7 @@ const AcademicTable = () => {
 
   useEffect(() => {
     fetchAcademicData();
+    setAcademicMessage();
   }, []);
 
   const fetchAcademicData = async () => {
@@ -33,6 +34,7 @@ const AcademicTable = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
+
       setAcademicData(data);
     } catch (error) {
       console.error("Error fetching academic data:", error);
@@ -76,6 +78,7 @@ const AcademicTable = () => {
   const handleSave = () => {
     // Implement logic to save updated data to the server
     const updateAcademicData = async () => {
+      console.log(editedData)
       try {
         const response = await fetch("http://localhost:5000/api/admin/updateAcademic", {
           method: "POST",
@@ -93,9 +96,11 @@ const AcademicTable = () => {
         const updatedAcademicData = academicData.map((item) =>
           item.classId === editedData.classId ? editedData : item
         );
+        
         setAcademicData(updatedAcademicData);
         setOpen(false);
         setAcademicMessage("Academic data updated successfully.");
+        fetchAcademicData();
       } catch (error) {
         console.error("Error updating academic data:", error);
         setAcademicMessage("Failed to update academic data.");
@@ -217,6 +222,16 @@ const AcademicTable = () => {
             label="Class Captain ID"
             name="classCaptainId"
             value={editedData.classCaptainId || ""}
+            fullWidth
+            onChange={handleInputChange}
+            sx={{ mb: "10px" }}
+          />
+          <TextField
+          multiline
+              rows={10}
+            label="Syllabus"
+            name="syllabus"
+            value={editedData.syllabus || ""}
             fullWidth
             onChange={handleInputChange}
             sx={{ mb: "10px" }}

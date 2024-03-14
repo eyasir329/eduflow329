@@ -9,11 +9,13 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import emailjs from '@emailjs/browser';
+import { useSelector } from 'react-redux';
 
 
 const columns = [
-    { id: 'user_id', label: 'User ID', minWidth: 100 },
+    { id: 'user_id', label: 'Staff ID', minWidth: 100 },
     { id: 'user_type', label: 'User Type', minWidth: 50 },
+    { id: 'position_name', label: 'Position', minWidth: 50 },
     { id: 'email', label: 'Email', minWidth: 150 },
     { id: 'status', label: 'Status', minWidth: 50 },
     { id: 'button', label: 'Mail', minWidth: 50 },
@@ -21,6 +23,8 @@ const columns = [
 ];
 
 export default function UserStatus() {
+    const { currentUser } = useSelector((state) => state.user);
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [editableData, setEditableData] = useState(null);
@@ -39,18 +43,33 @@ export default function UserStatus() {
     }, []);
 
     const fetchData = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/user/viewUserStatus');
-            if (!response.ok) {
-                throw new Error('Failed to fetch teacher data');
-            }
-            const data = await response.json();
-            setTeacherData(data);
-            setFilteredData(data);
-        } catch (error) {
-            console.error('Error fetching teacher data:', error);
+    try {
+        let fetchUrl;
+        if (currentUser.type === 'staff' && currentUser.position === 'admin') {
+            fetchUrl = 'http://localhost:5000/api/admin/viewStaffUserStatus';
+        } else {
+            // Handle other cases if needed
+            return;
         }
-    };
+
+        const response = await fetch(fetchUrl);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch teacher data');
+        }
+        const data = await response.json();
+        console.log(data)
+        // Update state with fetched data
+        setTeacherData(data);
+        // setUserType(data.data.user_type); // Assuming setUserType is a valid state setter function
+        console.log(teacherData); // This line will not output the updated teacherData immediately due to asynchronous behavior
+        setFilteredData(data); // Corrected typo in the state name
+    } catch (error) {
+        console.error('Error fetching teacher data:', error);
+    }
+};
+
+    
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -67,8 +86,9 @@ export default function UserStatus() {
     };
 
     const handleSave = async () => {
+        console.log(editableData)
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/updateTeacheryuy`, {
+            const res = await fetch(`http://localhost:5000/api/admin/updateTeacher`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -137,26 +157,31 @@ export default function UserStatus() {
     const [userMail, setUserMail] = useState('');
     const [userID, setUserId] = useState('');
     const [userKey, setUserkey] = useState('');
-    const [registrationLink, setRegistrationLink] = useState('http://localhost:3000/formdata/t/?id=n3pyqqto&mail=abc@gmail.com&pos=staff&key=n3pyqqtoEya32sd24'); 
+    const [registrationLink, setRegistrationLink] = useState();
     const [emailTemplate, setEmailTemplate] = useState("");
 
 
     const handleButtonClick = (rowIndex) => {
         const user = teacherData[rowIndex];
-        const userid = user.user_id;
-        const userkey = user.key;
-        const userMail = user.email;
-        console.log(user)
-        const userTemplate = `Dear ${userMail},\n\nPlease Confirm Your Registration By filling up the registration form\nBy this provided link\n\n${registrationLink}`;
-
+        const userId = user.user_id;
+        const userKey = user.key;
+        const userEmail = user.email;
+        
+        // Construct the registration link with the current userKey
+        const link = `http://localhost:3000/formdata/t/?id=${userId}&mail=${userEmail}&key=${userKey}`;
+        
         // Set the values of userName, userMail, and userTemplate
-        setUserName(userName);
-        setUserMail(userMail);
-        setEmailTemplate(userTemplate);
+        setUserName('');
+        setUserMail(userEmail);
+        setEmailTemplate(`Dear ${userEmail},\n\nPlease confirm your registration by filling out the form using the provided link:\n\n${link}`);
+        
+        // Open the dialog and set the registration link state
         setOpenDialog2(true);
-        setUserId(userid);
-        setUserkey(userkey);
+        setUserId(userId);
+        setUserkey(userKey);
+        setRegistrationLink(link);
     };
+    
     // http://localhost:3000/formdata/t/?id=n3pyqqto&mail=abc@gmail.com&pos=staff
     const sendEmail = (e) => {
         e.preventDefault();

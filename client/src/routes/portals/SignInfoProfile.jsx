@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOut } from "../../redux/user/userSlice"
 
@@ -7,7 +9,6 @@ import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailur
 export default function Profile(props) {
 
     const { currentUser, loading, error: errorMessage } = useSelector((state) => state.user);
-    console.log(currentUser)
 
     const currentUserMail = currentUser.email;
 
@@ -20,6 +21,7 @@ export default function Profile(props) {
     }
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
         try {
             dispatch(updateUserStart());
@@ -33,30 +35,10 @@ export default function Profile(props) {
                 body: JSON.stringify(formData),
             });
 
-            if (!res.ok) {
-                const contentType = res.headers.get("Content-Type");
-                if (contentType && contentType.startsWith("application/json")) {
-                    // If the response is JSON, try to parse it
-                    const errorData = await res.json();
-                    dispatch(updateUserFailure(errorData.message));
-                } else {
-                    // If not JSON, handle the error based on the content
-                    const errorText = await res.text();
-                    const errorMessageRegex = /Error: (.+?)<br>/;
-                    const matches = errorText.match(errorMessageRegex);
-                    if (matches && matches.length > 1) {
-                        const errorMessage = matches[1];
-                        dispatch(updateUserFailure(errorMessage));
-                    } else {
-                        dispatch(updateUserFailure("An unexpected error occurred"));
-                    }
-                }
-                return;
-            }
-
             const data = await res.json();
 
             if (data.success === false) {
+                toast(data.message)
                 dispatch(updateUserFailure(data.message || "An unexpected error occurred"));
                 return;
             }
@@ -140,6 +122,7 @@ export default function Profile(props) {
                                         className=''
                                         onChange={handleChange}
                                     />
+
                                 </div>
                                 <div className='top'>
                                     <input
@@ -175,6 +158,7 @@ export default function Profile(props) {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </>
     )
 }

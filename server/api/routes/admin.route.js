@@ -1,6 +1,8 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject } = require("../controllers/admin.controller");
-// const { schoolCreateOrUpdate, schoolView, createTeacher, lastTeacherId, viewTeacher, updateTeacher, deleteTeacher, createStaff, lastStaffId, viewStaff, updateStaff, deleteStaff, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createSubject, viewSubject, updateSubject, deleteSubject, createStudent, lastStudentId, updateStudent, deleteStudent, viewStudent, createOrUpdatePrincipal, viewPrincipal, viewNotice, createNotice, updateNotice, deleteNotice } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject, viewTeacher, updateTeacher, deleteTeacher, deletePosition, viewStaffUserStatus, insertStaffUserStatus } = require("../controllers/admin.controller");
+const { lastTeacherId, lastStaffId, lastStudentId } = require("../../helper/getLastId");
+const { viewPositionData } = require("../../helper/getPositionData");
+const { viewAcademicData, viewSubjectData } = require("../../helper/getClassData");
 
 const router = express.Router();
 
@@ -9,6 +11,7 @@ router.post("/adminProfile", adminProfile);
 router.post("/createPosition", createPosition);
 router.get("/viewPosition", viewPosition);
 router.put("/updatePosition/:position_id", updatePosition);
+router.delete("/deletePosition/:position_id", deletePosition);
 
 // school information
 router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
@@ -20,16 +23,30 @@ router.post('/createNotice', createNotice);
 router.put('/notices/:noticeId', updateNotice);
 router.delete('/notices/:noticeId', deleteNotice);
 
-// // Teacher endpoints
-// router.get("/lastTeacherId", lastTeacherId);
+
+// for generating unique ids
+// last ids
+router.get("/lastTeacherId", lastTeacherId);
+router.get("/lastStaffId", lastStaffId);
+router.get("/lastStudentId", lastStudentId);
+// other data
+router.get("/viewPositionMin", viewPositionData);
+router.get("/viewAcademicData", viewAcademicData);
+router.get("/viewSubjectData", viewSubjectData);
+
+
+// staff user_status
+router.get("/viewStaffUserStatus", viewStaffUserStatus);
+router.post("/createStaffCredential", insertStaffUserStatus);
+
+// Teacher endpoints
 // router.post("/createTeacher", createTeacher);
-// router.get("/viewTeacher", viewTeacher);
-// router.post("/updateTeacher", updateTeacher);
-// router.delete('/deleteTeacher/:teacherId', deleteTeacher);
+router.get("/viewTeacher", viewTeacher);
+router.post("/updateTeacher", updateTeacher);
+router.delete('/deleteTeacher/:teacherId', deleteTeacher);
 
 // // Staff endpoints
 // router.post("/createStaff", createStaff);
-// router.get("/lastStaffId", lastStaffId);
 // router.get("/viewStaff", viewStaff);
 // router.post("/updateStaff", updateStaff);
 // router.delete('/deleteStaff/:staffId', deleteStaff);
@@ -48,7 +65,6 @@ router.delete("/deleteClassSubject/:classSubjectId", deleteClassSubject);
 
 // // student
 // router.post("/createStudent", createStudent);
-// router.get("/lastStudentId", lastStudentId);
 // router.post("/updateStudent", updateStudent);
 // router.delete('/deleteStudent/:studentId', deleteStudent);
 // router.get('/viewStudent', viewStudent);

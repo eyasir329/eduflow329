@@ -9,20 +9,21 @@ import {
   MenuItem,
   Paper
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Image from "../../../components/functionality/Image";
-import PrincipalInfo from "./PrincipalInfo";
-import NoticeBoard from "./NoticeBoard";
+// import PrincipalInfo from "./PrincipalInfo";
 import axios from "axios";
-import CreatePosition from "./Position";
+// import CreatePosition from "./Position";
 
 const divisions = ["Barishal", "Chattogram", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
-const divisionMenuItems = divisions.map((state, index) => (
-  <MenuItem key={index} value={state}>{state}</MenuItem>
+const divisionMenuItems = divisions.map((division, index) => (
+  <MenuItem key={index} value={division}>{division}</MenuItem>
 ));
 
 export default function SchoolInfo() {
 
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ division: "Mymensingh" });
 
   useEffect(() => {
     fetch('http://localhost:5000/api/admin/schoolView')
@@ -36,7 +37,6 @@ export default function SchoolInfo() {
         setFormData(data);
         console.log(data)
 
-        
       })
       .catch(error => {
         console.error('Error:', error);
@@ -44,7 +44,6 @@ export default function SchoolInfo() {
   }, []);
 
   const [uploadDisabled, setUploadDisabled] = useState(false);
-  const [schoolInfo, setSchoolInfo] = useState("");
 
   const handleUploadSuccess = (downloadURL) => {
     setFormData({ ...formData, logo: downloadURL });
@@ -55,19 +54,25 @@ export default function SchoolInfo() {
     console.error('Image upload error:', error);
   };
 
+
   const handleCreateOrUpdate = async (e) => {
-    console.log(formData)
+    console.log(formData);
+    // Prevent the default form submission behavior
     e.preventDefault();
+
     try {
+      // Send a POST request to create or update school data
       const response = await axios.post("http://localhost:5000/api/admin/schoolCreateOrUpdate", formData);
 
+      // Extract the response data
       const data = await response.data;
-      setSchoolInfo(data.message);
 
+      toast(data.message);
     } catch (error) {
-      setSchoolInfo(error.message);
+      toast(error.message);
     }
   }
+
 
   return (
     <div className="teacher-info">
@@ -199,12 +204,11 @@ export default function SchoolInfo() {
                   id="inputDivision"
                   variant="outlined"
                   color="secondary"
-                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                  value={formData.state || "Mymensingh"}  
+                  onChange={(e) => setFormData({ ...formData, division: e.target.value })}
+                  value={formData.division || "Mymensingh"}
                 >
                   {divisionMenuItems}
                 </Select>
-
               </FormControl>
 
 
@@ -250,18 +254,20 @@ export default function SchoolInfo() {
               Update
             </Button>
           </form>
-          <p className="reg-error">
-            {schoolInfo}
-          </p>
+
         </Paper>
 
-        <h1>Principal Information</h1>
-        <PrincipalInfo />
+        {/* <div id="principal-info">
+          <h1>Principal Information</h1>
+          <PrincipalInfo />
+        </div>
 
+        <div id="position-info"></div>
         <h1>Position Information</h1>
-        <CreatePosition />
+        <CreatePosition /> */}
 
       </div>
+      <ToastContainer />
     </div>
   );
 }

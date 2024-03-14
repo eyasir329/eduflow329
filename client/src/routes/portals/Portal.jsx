@@ -3,24 +3,24 @@ import PortalLink from "../../components/PortalLink";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Signin from "./Signin";
-import Signup from "./Signup";
-import Admin from "./admin/Admin";
 import Parent from "./parent/Parent";
 import Student from "./student/Student";
 import Teacher from "./teacher/Teacher";
 import GuestUser from "./guest/GuestUser";
-// import RandomSignUp from "./RandomSignUp";
-// import UserData from "./UserData";
+import Admin from "./admin/Admin";
 
 const Portal = () => {
     const role = useSelector((state) => state.user.currentUser?.type);
+    const position = useSelector((state) => state.user.currentUser?.position);
+
     return (
         <Routes>
             <Route path="/" element={<PortalLink />} />
-            <Route
-                path="/admin"
-                element={role === "admin" ? <Admin /> : <Navigate to="/portal/login" />}
+            <Route path="/admin" element={
+                position === "admin" ? <Admin /> : <Navigate to="/portal/login" />
+            }
             />
+
             <Route
                 path="/teacher"
                 element={
@@ -48,7 +48,8 @@ const Portal = () => {
             <Route
                 path="/login"
                 element={
-                    role === "admin" ? <Navigate to="/portal/admin" /> :
+                    role === "staff" && position === "admin" ?
+                        <Navigate to="/portal/admin" /> :
                         role === "teacher" ? <Navigate to="/portal/teacher" /> :
                             role === "student" ? <Navigate to="/portal/student" /> :
                                 role === "parent" ? <Navigate to="/portal/parent" /> :
@@ -56,15 +57,9 @@ const Portal = () => {
                                         role === undefined && <Signin />
                 }
             />
-
-            {/* <Route path="/signup" element={<Signup />} /> */}
-            {/* <Route path="/signup" element={<RandomSignUp />} /> */}
-   
-            <Route path="*" element={<Navigate to="/portal/login" />} />
+            {/* <Route path="*" element={<Navigate to="/portal/login" />} /> */}
         </Routes>
     );
 };
-
-
 
 export default Portal;

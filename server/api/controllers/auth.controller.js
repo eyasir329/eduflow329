@@ -48,6 +48,7 @@ exports.test = (req, res) => {
 //     }
 // };
 
+
 exports.signin = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -57,42 +58,98 @@ exports.signin = (req, res, next) => {
     const { email, password } = req.body;
 
     connection.query(
-        'SELECT * FROM user_status WHERE email = ?',
+        'SELECT * FROM socials WHERE email = ?',
         email,
-        async (error, validUser) => {
+        async (error, validMail) => {
             if (error) {
-                return next(errorHandler(404, "Error finding data"));
+                console.error('Error:', error);
+                return next(errorHandler(500, "Internal server error"));
             }
-            try {
-                if (validUser[0]) {
+            
+            if (validMail.length === 0) {
+                return next(errorHandler(404, "User not found"));
+            }
+            
+            const social_id = validMail[0].social_id;
+
+            connection.query(
+                'SELECT u.*, us.password, us.user_type FROM users u INNER JOIN user_status us ON u.user_id = us.user_id WHERE u.social_id = ?',
+                social_id,
+                async (error, validUser) => {
+                    if (error) {
+                        console.error('Error:', error);
+                        return next(errorHandler(500, "Internal server error"));
+                    }
+                    
+                    if (validUser.length === 0) {
+                        return next(errorHandler(404, "User not found"));
+                    }
+
                     const validPassword = await bcrypt.compare(password, validUser[0].password);
                     if (!validPassword) {
                         return next(errorHandler(400, "Invalid password"));
                     }
 
-                    const tokenPayload = { id: validUser[0].user_id };
-                    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '24h' });
+                    let position = null;
+                    if (validUser[0].user_type === 'staff') {
+                        connection.query(
+                            'SELECT * FROM staffs WHERE staff_id = ?',
+                            validUser[0].user_id,
+                            async (error, staffData) => {
+                                if (error) {
+                                    console.error('Error:', error);
+                                    return next(errorHandler(500, "Internal server error"));
+                                }
 
-                    const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+                                if (staffData.length > 0) {
+                                    const positionId = staffData[0].position_id;
+                                    connection.query(
+                                        'SELECT position_name FROM positions WHERE position_id = ?',
+                                        positionId,
+                                        async (error, positionData) => {
+                                            if (error) {
+                                                console.error('Error:', error);
+                                                return next(errorHandler(500, "Internal server error"));
+                                            }
+                                            if (positionData.length > 0) {
+                                                position = positionData[0].position_name;
+                                            }
 
-                    res.cookie("access_token", token, { expires: expiryDate, httpOnly: true })
-                        .status(200)
-                        .json({
-                            userId: validUser[0].user_id,
-                            type: validUser[0].user_type,
-                            email: validUser[0].email
-                        });
-                } else {
-                    return next(errorHandler(404, "User not found"));
+                                            const tokenPayload = { id: validUser[0].user_id };
+                                            const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '24h' });
+                                            const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+
+                                            res.cookie("access_token", token, { expires: expiryDate, httpOnly: true })
+                                                .status(200)
+                                                .json({
+                                                    userId: validUser[0].user_id,
+                                                    type: validUser[0].user_type,
+                                                    position: position,
+                                                    email: email
+                                                });
+                                        }
+                                    );
+                                }
+                            }
+                        );
+                    } else {
+                        const tokenPayload = { id: validUser[0].user_id };
+                        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '24h' });
+                        const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+
+                        res.cookie("access_token", token, { expires: expiryDate, httpOnly: true })
+                            .status(200)
+                            .json({
+                                userId: validUser[0].user_id,
+                                type: validUser[0].user_type,
+                                email: email
+                            });
+                    }
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                return next(errorHandler(500, "Internal server error"));
-            }
+            );
         }
     );
 };
-
 
 exports.signoutUser = (req, res) => {
     res.clearCookie('access_token').status(200).json("Signout success");

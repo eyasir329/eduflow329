@@ -15,24 +15,22 @@ import {
     TextField,
     CircularProgress,
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ViewPosition() {
     const [positions, setPositions] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [positionFormData, setPositionFormData] = useState({ position_id: "", positionName: "", salary: "" });
-    const [updateMessage, setUpdateMessage] = useState("");
+    // const [updateMessage, setUpdateMessage] = useState("");
 
     const fetchPositions = async () => {
         try {
             const response = await axios.get('http://localhost:5000/api/admin/viewPosition');
             setPositions(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching positions:', error);
-            setError('Error fetching positions. Please try again later.');
-            setLoading(false);
+            toast('Error fetching positions. Please try again later.');
         }
     };
 
@@ -68,104 +66,116 @@ export default function ViewPosition() {
             });
 
             if (res.ok) {
-                setUpdateMessage("Position updated successfully");
+                // setUpdateMessage("Position updated successfully");
+                toast("Position updated successfully");
                 setOpenDialog(false);
                 fetchPositions();
             } else {
                 const errorMessage = `HTTP error! status: ${res.status}`;
                 console.error("Error updating position:", errorMessage);
-                setUpdateMessage("Failed to update position. Please try again.");
+                toast("Failed to update position. Please try again.");
             }
         } catch (error) {
             console.error("Error updating position:", error);
-            setUpdateMessage("Failed to update position. Please try again.");
-        }
+            toast("Error updating position:", error);
 
+        }
     };
 
     const handleRefresh = () => {
-        // Fetch positions again when refresh button is clicked
         fetchPositions();
-        setUpdateMessage();
     };
+    const handleDelete = async (position) => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/admin/deletePosition/${position.position_id}`);
+            if (response.status === 200) {
+                toast("Position deleted successfully");
+                fetchPositions(); // Refresh the positions list after deletion
+            } else {
+                toast("Failed to delete position. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error deleting position:", error);
+            toast("Error deleting position. Please try again.");
+        }
+    };
+
 
     return (
         <div className="view-position">
             <Button variant="outlined" onClick={handleRefresh}>Refresh</Button>
-            {loading ? (
-                <CircularProgress />
-            ) : error ? (
-                <p>Error: {error}</p>
-            ) : (
-                <>
-                    <TableContainer>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Position ID</TableCell>
-                                    <TableCell>Position Name</TableCell>
-                                    <TableCell>Salary</TableCell>
-                                    <TableCell>Actions</TableCell>
+            <>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Position ID</TableCell>
+                                <TableCell>Position Name</TableCell>
+                                <TableCell>Salary</TableCell>
+                                <TableCell>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {positions.map((position) => (
+                                <TableRow key={position.position_id}>
+                                    <TableCell>{position.position_id}</TableCell>
+                                    <TableCell>{position.position_name}</TableCell>
+                                    <TableCell>{position.salary}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="outlined"
+                                            style={{ color: '#416D19', borderColor: '#416D19', marginRight: '8px' }} // Add margin-right for spacing
+                                            onClick={() => handleUpdate(position)}
+                                        >
+                                            Update
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            style={{ color: 'red', borderColor: 'red' }} // Set color and border color to red
+                                            onClick={() => handleDelete(position)}
+                                        >
+                                            DELETE
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {positions.map((position) => (
-                                    <TableRow key={position.position_id}>
-                                        <TableCell>{position.position_id}</TableCell>
-                                        <TableCell>{position.position_name}</TableCell>
-                                        <TableCell>{position.salary}</TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="outlined"
-                                                style={{ color: '#416D19', borderColor: '#416D19' }}
-                                                onClick={() => handleUpdate(position)}
-                                            >
-                                                Update
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-                    <Dialog open={openDialog} onClose={handleCloseDialog}>
-                        <DialogTitle>Update Position</DialogTitle>
-                        <DialogContent>
-                            <TextField
-                                type="text"
-                                label="Position Name"
-                                name="positionName"
-                                value={positionFormData.positionName}
-                                onChange={handleDialogInputChange}
-                                fullWidth
-                                required
-                            />
-                            <TextField
-                                type="text"
-                                label="Salary"
-                                name="salary"
-                                value={positionFormData.salary}
-                                onChange={handleDialogInputChange}
-                                fullWidth
-                                required
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseDialog} color="primary">
-                                Cancel
-                            </Button>
-                            <Button onClick={handleDialogSubmit} color="primary">
-                                Update
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-
-                    <div className="reg-error" style={{ marginTop: 10 }}>
-                        {updateMessage && <p>{updateMessage}</p>}
-                    </div>
-                </>
-            )}
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                    <DialogTitle>Update Position</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            type="text"
+                            label="Position Name"
+                            name="positionName"
+                            value={positionFormData.positionName}
+                            onChange={handleDialogInputChange}
+                            fullWidth
+                            required
+                        />
+                        <TextField
+                            type="text"
+                            label="Salary"
+                            name="salary"
+                            value={positionFormData.salary}
+                            onChange={handleDialogInputChange}
+                            fullWidth
+                            required
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleDialogSubmit} color="primary">
+                            Update
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>
+            <ToastContainer />
         </div>
     );
 }

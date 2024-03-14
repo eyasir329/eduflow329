@@ -22,56 +22,8 @@ function getSocialData(social_id) {
     });
 }
 
-// insert new one
-function insertSocialData(socialData) {
-    return new Promise((resolve, reject) => {
-        const { phone, facebook, linkedin, twitter } = socialData;
-        const sqlInsertSocial = `INSERT INTO socials (phone, facebook, linkedin, twitter) VALUES (?, ?, ?, ?)`;
-
-        connection.query(sqlInsertSocial, [phone, facebook, linkedin, twitter], (error, results) => {
-            if (error) {
-                console.error('Error inserting data into MySQL:', error);
-                reject(error);
-            } else {
-                resolve(results.insertId);
-            }
-        });
-    });
-}
-
-
-
 
 // update by id
-async function getSocialUpdateId(userId, type, socialData) {
-    return new Promise((resolve, reject) => {
-        if (type === "admin" || type === "staff") {
-            let query;
-            
-                query = `SELECT social_id FROM staffs WHERE staff_id = ?`;
-            
-
-            connection.query(query, [userId], (error, results) => {
-                if (error) {
-                    reject({ error: 'Database error' });
-                    return;
-                }
-
-                if (results.length > 0) {
-                    const socialId = results[0].social_id;
-                    updateSocialData(socialId, socialData)
-                        .then(() => resolve({ message: 'Social data updated successfully',socialId }))
-                        .catch(error => reject({ error: 'Failed to update social data' }));
-                } else {
-                    reject({ error: 'User not found' });
-                }
-            });
-        } else {
-            reject({ error: 'Invalid user type' });
-        }
-    });
-}
-
 function updateSocialData(socialId, socialData) {
     return new Promise((resolve, reject) => {
         const query = `UPDATE socials SET ? WHERE social_id = ?`;
@@ -85,4 +37,38 @@ function updateSocialData(socialId, socialData) {
     });
 }
 
-module.exports = { getSocialData, getSocialUpdateId,insertSocialData };
+// update or create
+function updateOrCreateSocialData(socialId, socialData) {
+    if(!socialId) socialId=0;
+    return new Promise((resolve, reject) => {
+        const updateQuery = `UPDATE socials SET ? WHERE social_id = ?`;
+        connection.query(updateQuery, [socialData, socialId], (error, updateResults) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            // If no rows were affected by the update, it means the social ID doesn't exist
+            if (updateResults.affectedRows === 0) {
+                // Insert new social data
+                const insertQuery = `INSERT INTO socials SET ?`;
+                connection.query(insertQuery, socialData, (error, insertResults) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        // Resolve with the newly inserted social ID
+                        resolve(insertResults.insertId);
+                    }
+                });
+            } else {
+                // Resolve with the provided social ID
+                resolve(socialId);
+            }
+        });
+    });
+}
+
+
+
+
+module.exports = { getSocialData, updateSocialData,updateOrCreateSocialData };

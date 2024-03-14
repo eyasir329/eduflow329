@@ -18,6 +18,8 @@ import {
     DialogContent,
     DialogActions
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function NoticeBoard() {
     const { currentUser } = useSelector((state) => state.user);
@@ -35,8 +37,8 @@ export default function NoticeBoard() {
     const [notices, setNotices] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [messageExtra, setMessageExtra] = useState("");
-    const [updateMessage, setUpdateMessage] = useState("");
+    // const [messageExtra, setMessageExtra] = useState("");
+    // const [updateMessage, setUpdateMessage] = useState("");
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedNoticeIndex, setSelectedNoticeIndex] = useState(null);
     const [dialogFormData, setDialogFormData] = useState({
@@ -45,7 +47,7 @@ export default function NoticeBoard() {
         text_message: "",
         category: ""
     });
-    
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -66,8 +68,7 @@ export default function NoticeBoard() {
             });
 
             const data = await res.json();
-
-            setMessageExtra(data.message);
+            toast(data.message);
             setFormData({
                 title: "",
                 link: "",
@@ -84,13 +85,12 @@ export default function NoticeBoard() {
 
     const fetchNotices = async () => {
         try {
-            setMessageExtra(""); // Clear any previous message
             const noticesRes = await fetch('http://localhost:5000/api/admin/viewNotices');
             const noticesData = await noticesRes.json();
             setNotices(noticesData.notices); // Update notices state with fetched data
         } catch (error) {
             console.error('Error fetching notices:', error);
-            setMessageExtra("Error fetching notices. Please try again."); // Set error message if fetch fails
+            toast("Error fetching notices. Please try again.");
         }
     };
 
@@ -107,7 +107,7 @@ export default function NoticeBoard() {
             });
             const data = await res.json();
             console.log(data)
-            setUpdateMessage(data.message)
+            toast(data.message);
             // Fetch notices again to refresh the list after deletion
             await fetchNotices();
 
@@ -146,8 +146,7 @@ export default function NoticeBoard() {
             });
 
             const data = await res.json();
-
-            setUpdateMessage(data.message);
+            toast(data.message);
             console.log(data)
 
             // Close the dialog and refresh notices after update
@@ -179,7 +178,7 @@ export default function NoticeBoard() {
             category: selectedCategory,
         }));
     }, [selectedCategory]);
-    
+
 
     return (
         <div>
@@ -247,12 +246,6 @@ export default function NoticeBoard() {
                     <Button variant="outlined" color="secondary" type="submit">
                         Submit
                     </Button>
-                    {/* <Button variant="outlined" color="secondary" onClick={fetchNotices}>
-                        Refresh Notices
-                    </Button> */}
-                    <div className="reg-error" style={{ marginTop: 10 }}>
-                        {messageExtra && <p>{messageExtra}</p>}
-                    </div>
                 </form>
 
                 <div className="notice-table">
@@ -378,9 +371,10 @@ export default function NoticeBoard() {
                 </DialogActions>
             </Dialog>
 
-            <div className="reg-error" style={{ marginTop: 10 }}>
+            {/* <div className="reg-error" style={{ marginTop: 10 }}>
                 {updateMessage && <p>{updateMessage}</p>}
-            </div>
+            </div> */}
+            <ToastContainer />
         </div>
     );
 }

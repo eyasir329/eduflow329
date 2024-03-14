@@ -13,11 +13,14 @@ import Image from '../../../components/functionality/Image';
 const columns = [
   { id: 'profilePicture', label: 'Profile Picture', minWidth: 200 },
   { id: 'teacherId', label: 'Teacher ID', minWidth: 200 },
+  { id: 'subjectName', label: 'Subject', minWidth: 200 },
   { id: 'firstName', label: 'First Name', minWidth: 200 },
   { id: 'lastName', label: 'Last Name', minWidth: 200 },
   { id: 'email', label: 'Email', minWidth: 270 },
   { id: 'dateOfBirth', label: 'Date of Birth', minWidth: 250 },
   { id: 'phoneNumber', label: 'Phone Number', minWidth: 220 },
+  { id: 'birthCirtificate', label: 'Birth Cirtificate Number', minWidth: 220 },
+  { id: 'nidNum', label: 'Nid Number', minWidth: 220 },
   { id: 'joiningDate', label: 'Joining Date', minWidth: 220 },
   { id: 'position', label: 'Position', minWidth: 120 },
   { id: 'salary', label: 'Salary', minWidth: 100 },
@@ -37,7 +40,7 @@ const TeacherTable = () => {
   const [searchId, setSearchId] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
-  const [profilePicture, setProfilePicture] = useState("https://firebasestorage.googleapis.com/v0/b/school-oauth-49a14.appspot.com/o/241-intro-photo-final.jpg?alt=media&token=66f5d1f3-d93d-4478-aef2-8213c526155c");
+  const [profilePicture, setProfilePicture] = useState("");
   const [uploadDisabled, setUploadDisabled] = useState(false);
   const [updateMessage, setUpdateMessage] = useState("");
   const [deleteMessage, setDeleteMessage] = useState("");
@@ -53,6 +56,7 @@ const TeacherTable = () => {
         throw new Error('Failed to fetch teacher data');
       }
       const data = await response.json();
+      console.log(data)
 
       setTeacherData(data);
       setFilteredData(data);
@@ -253,7 +257,19 @@ const TeacherTable = () => {
                     }}
                     onUploadError={handleUploadError}
                   />
-                ) : (
+                ) :(column.id === 'teacherId'||column.id === 'email' || column.id === 'salary' || column.id === 'joiningDate') ? (
+                  <TextField
+                    label={column.label}
+                    value={editableData[column.id]}
+                    onChange={(e) => {
+                      const updatedData = { ...editableData, [column.id]: e.target.value };
+                      setEditableData(updatedData);
+                    }}
+                    fullWidth
+                    margin="normal"
+                    disabled
+                  />
+                ): (
                   <TextField
                     label={column.label}
                     value={editableData[column.id]}

@@ -67,8 +67,8 @@ export default function SubjectInfo() {
           }}
         >
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={2} >
-            <Grid item xs={4}>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid item xs={4}>
                 <TextField
                   type="text"
                   name="classID"
@@ -101,8 +101,8 @@ export default function SubjectInfo() {
                   fullWidth
                 />
               </Grid>
-              
-            </Grid>;
+
+            </Grid>
             <TextField
               type="text"
               name="teacherId"

@@ -12,6 +12,8 @@ import {
     createTheme,
     ThemeProvider,
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Image from '../../components/functionality/Image';
 
 const theme = createTheme();
@@ -22,64 +24,54 @@ const divisionMenuItems = divisions.map((division, index) => (
 ));
 
 export default function UserProfile(props) {
+
     const { currentUser } = useSelector((state) => state.user);
     const role = currentUser?.type;
-    const email = currentUser?.email;
 
-    const { userData, positionData, addressData, socialData } = props.userDataInfo || {};
+    const [editableData, setEditableData] = useState({});
 
-    const [editableData, setEditableData] = useState({
-        userId: userData?.user_id || "",
-        firstName: userData?.first_name || "",
-        lastName: userData?.last_name || "",
-        email: email,
-        dateOfBirth: userData?.date_of_birth ? userData.date_of_birth.substring(0, 10) : "",
-        phoneNumber: socialData?.phone || "",
-        joiningDate: userData?.created_at ? userData.created_at.substring(0, 10) : "",
-        position: positionData?.position_name || "",
-        salary: positionData?.salary || "",
-        facebook: socialData?.facebook || "",
-        linkedin: socialData?.linkedin || "",
-        streetAddress: addressData?.street_address || "",
-        city: addressData?.city || "",
-        state: addressData?.division || "",
-        zip: addressData?.zip || "",
-        profilePicture: userData?.profile_pic || "",
-        birthCertificateNo: userData?.birth_cirtificate_no || "", // New field
-        nidNo: userData?.nid_no || "", // New field
-        updatedAt: userData?.updated_at ? userData.updated_at.substring(0, 24) : "",
-    });
+    const fetchData = async () => {
+        try {
+            const { userData } = props.userData || {};
+            const { addressData, socialData, userStatusData, positionData } = props.userData || {};
 
-    const [updateMessage, setUpdateMessage] = useState("");
-    const [refresh, setRefresh] = useState(false);
+            // Update editableData with fetched data
+            setEditableData({
+                userId: userData ? userData.user_id : "",
+                firstName: userData ? userData.first_name : "",
+                lastName: userData ? userData.last_name : "",
+                email: socialData ? socialData.email : "",
+                dateOfBirth: userData && userData.date_of_birth ? userData.date_of_birth.substring(0, 10) : "",
+                phoneNumber: socialData ? socialData.phone : "",
+                joiningDate: userStatusData && userStatusData.created_at ? userStatusData.created_at.substring(0, 10) : "",
+                position: positionData ? positionData.position_name : "",
+                salary: positionData ? positionData.salary : "",
+                facebook: socialData ? socialData.facebook : "",
+                linkedin: socialData ? socialData.linkedin : "",
+                streetAddress: userData ? userData.street_address : "",
+                city: addressData ? addressData.city : "",
+                state: addressData ? addressData.division : "",
+                zip: addressData ? addressData.zip : "",
+                profilePicture: userData.profile_pic,
+                birthCertificateNo: userData ? userData.birth_cirtificate_no : "",
+                nidNo: userData ? userData.nid_no : "",
+                updatedAt: userStatusData && userStatusData.updated_at ? userStatusData.updated_at.substring(0, 24) : "",
+                socialId: socialData ? socialData.social_id : ""
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     useEffect(() => {
-        if (props.userDataInfo) {
-            const { userData, positionData, addressData, socialData } = props.userDataInfo;
-            setEditableData({
-                userId: userData?.user_id || "",
-                firstName: userData?.first_name || "",
-                lastName: userData?.last_name || "",
-                email: email,
-                dateOfBirth: userData?.date_of_birth ? userData.date_of_birth.substring(0, 10) : "",
-                phoneNumber: socialData?.phone || "",
-                joiningDate: userData?.created_at ? userData.created_at.substring(0, 10) : "",
-                position: positionData?.position_name || "",
-                salary: positionData?.salary || "",
-                facebook: socialData?.facebook || "",
-                linkedin: socialData?.linkedin || "",
-                streetAddress: addressData?.street_address || "",
-                city: addressData?.city || "",
-                state: addressData?.division || "",
-                zip: addressData?.zip || "",
-                profilePicture: userData?.profile_pic || "",
-                birthCertificateNo: userData?.birth_cirtificate_no || "",
-                nidNo: userData?.nid_no || "",
-                updatedAt: userData?.updated_at ? userData.updated_at.substring(0, 24) : "",
+        fetchData();
+    }, [props.userData]);
 
-            });
-        }
-    }, [props.userDataInfo]);
+    console.log(editableData)
+    
+
+
+    const [refresh, setRefresh] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -95,10 +87,10 @@ export default function UserProfile(props) {
             const data = await res.json();
 
             if (res.ok) {
-                setUpdateMessage(data.message);
+                toast(data.message);
                 setRefresh(refresh);
             } else {
-                setUpdateMessage("Something went wrong");
+                toast("Something went wrong!");
             }
         } catch (error) {
             console.error('Error updating user profile:', error);
@@ -344,10 +336,11 @@ export default function UserProfile(props) {
                                     color="secondary"
                                     name="state"
                                     onChange={handleInputChange}
-                                    value={editableData.state}
+                                    value={editableData.state || ""}
                                 >
                                     {divisionMenuItems}
                                 </Select>
+
                             </FormControl>
                             <TextField
                                 label="Zip"
@@ -392,9 +385,9 @@ export default function UserProfile(props) {
                             Update
                         </Button>
                     </form>
-                    <p className="reg-error">{updateMessage}</p>
                 </Paper>
             </div>
+            <ToastContainer />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import HeaderMain from "../components/header/HeaderMain";
 const getCurrentYear = new Date().getFullYear();
 
 export default function Root() {
+
   const currentLocation = useLocation();
   const isLoginPage = currentLocation.pathname === "/portal/login";
   const isSignupPage = currentLocation.pathname === "/portal/signup";
@@ -19,15 +20,15 @@ export default function Root() {
 
   return (
     <div className="main-content">
-      {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage || isGuestPage || isFormPage) && <Header />}
+      {!(isLoginPage || isSignupPage || isAdminPage ||isStudentPage || isParentPage || isTeacherPage || isGuestPage || isFormPage) && <Header />}
 
-      {(isAdminPage || isStudentPage || isParentPage || isTeacherPage || isGuestPage) && <HeaderMain />}
+      {(isAdminPage || isStudentPage || isParentPage || isTeacherPage|| isGuestPage) && <HeaderMain />}
 
       <div className="content">
         <Outlet />
       </div>
 
-      {!(isLoginPage || isSignupPage || isAdminPage || isStudentPage || isParentPage || isTeacherPage || isFormPage) && <Footer />}
+      {!(isLoginPage || isSignupPage || isAdminPage ||isStudentPage || isParentPage || isTeacherPage || isFormPage) && <Footer />}
 
       {!(isLoginPage || isSignupPage) && (
         <div className="row footer-main">

@@ -1,7 +1,9 @@
 const currentUserProfile = require("../../helper/currentUser.js");
 const { getAddressId } = require("../../helper/getAddressData.js");
-const { insertSocialData } = require("../../helper/getSocialData.js");
+const { getPositionId } = require("../../helper/getPositionData.js");
+const { getSocialUpdateId, updateOrCreateSocialData } = require("../../helper/getSocialData.js");
 const { getOrCreateSubjectID, getSubjectNameById } = require("../../helper/getSubjectId.js");
+const { updateUserInfo } = require("../../helper/getUserInfo.js");
 const connection = require("../sql/db.js");
 
 // admin user profile
@@ -11,8 +13,9 @@ exports.adminProfile = async (req, res, next) => {
 
         // Call currentUserProfile and await its result
         const data = await currentUserProfile({ userId, type });
-
+        // console.log(data)
         // Send response with status 200 and the data returned by currentUserProfile
+        console.log(data)
         res.status(200).json(data);
     } catch (error) {
         // If an error occurs, catch it and send an appropriate error response
@@ -26,27 +29,42 @@ exports.createPosition = async (req, res, next) => {
     try {
         const { positionName, salary } = req.body;
 
-        // Prepare the SQL query
-        const insertQuery = 'INSERT INTO positions (position_name, salary) VALUES (?, ?)';
+        // Check if a position with the same name exists (case-insensitive)
+        const checkQuery = 'SELECT * FROM positions WHERE LOWER(position_name) = LOWER(?)';
 
-        // Execute the SQL query
-        connection.query(insertQuery, [positionName, salary], (error, results) => {
+        connection.query(checkQuery, [positionName], (error, results) => {
             if (error) {
-                // Handle errors
-                console.error('Error creating position:', error);
+                console.error('Error checking position:', error);
                 res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+
+            if (results.length > 0) {
+                // Position with the same name already exists
+                res.status(400).json({ error: 'Position already exists' });
             } else {
-                // Send a success response with the inserted position
-                const newPosition = { id: results.insertId, positionName, salary };
-                res.status(201).json(newPosition);
+                // Prepare the SQL query to insert the new position
+                const insertQuery = 'INSERT INTO positions (position_name, salary) VALUES (?, ?)';
+
+                // Execute the SQL query to insert the new position
+                connection.query(insertQuery, [positionName, salary], (error, results) => {
+                    if (error) {
+                        console.error('Error creating position:', error);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        // Send a success response with the inserted position
+                        const newPosition = { id: results.insertId, positionName, salary };
+                        res.status(201).json(newPosition);
+                    }
+                });
             }
         });
     } catch (error) {
-        // Handle other errors
         console.error('Error creating position:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 
 exports.viewPosition = async (req, res, next) => {
     try {
@@ -103,6 +121,33 @@ exports.updatePosition = async (req, res, next) => {
     }
 };
 
+// delete position
+exports.deletePosition = async (req, res, next) => {
+    try {
+        const { position_id } = req.params;
+
+        // Prepare the SQL query
+        const deleteQuery = 'DELETE FROM positions WHERE position_id = ?';
+
+        // Execute the SQL query
+        connection.query(deleteQuery, [position_id], (error, results) => {
+            if (error) {
+                // If there's an error, send an error response
+                console.error('Error deleting position:', error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                // If deletion is successful, send a success response
+                console.log('Position deleted successfully');
+                res.status(200).json({ success: true, message: 'Position deleted successfully' });
+            }
+        });
+    } catch (error) {
+        // Handle other errors
+        console.error('Error deleting position:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 
 // school view
 
@@ -111,7 +156,7 @@ exports.schoolView = async (req, res, next) => {
 
     try {
         const sqlSelectSchool = `
-            SELECT s.*, so.phone, so.facebook, so.linkedin, so.twitter, a.city, a.division, a.zip, a.street_address
+            SELECT s.*, so.email,so.phone, so.facebook, so.linkedin, so.twitter, a.city, a.division, a.zip
             FROM school s
             LEFT JOIN socials so ON s.social_id = so.social_id
             LEFT JOIN addresses a ON s.address_id = a.address_id
@@ -125,6 +170,7 @@ exports.schoolView = async (req, res, next) => {
                 res.status(500).json({ error: 'Internal server error' });
             } else {
                 if (results.length > 0) {
+                    // console.log(results)
                     // School found, return its information
                     res.status(200).json(results[0]);
                 } else {
@@ -142,7 +188,7 @@ exports.schoolView = async (req, res, next) => {
 exports.schoolCreateOrUpdate = async (req, res, next) => {
     try {
         const data = req.body;
-        console.log(data)
+        // console.log(data)
         // Validate input data here
 
         // Create address
@@ -150,27 +196,29 @@ exports.schoolCreateOrUpdate = async (req, res, next) => {
             city: data.city,
             division: data.division,
             zip: data.zip,
-            street_address: data.street_address
         };
         const address_id = await getAddressId(addressData);
 
         // Create or update social media record
         const socialData = {
+            email: data.email,
             phone: data.phone,
             facebook: data.facebook,
             linkedin: data.linkedin,
             twitter: data.twitter || ""
         };
-        const social_id = await insertSocialData(socialData);
+
+        const social_id = await updateOrCreateSocialData(data.social_id, socialData);
 
         // Prepare school information
-        const { school_name, eiin_number, established_at, history, logo, email } = data;
-        const schoolInfo = [eiin_number, school_name, established_at, history, logo, social_id, address_id, email];
+        const { school_name, eiin_number, established_at, history, logo, street_address } = data;
+
+        const schoolInfo = [eiin_number, school_name, established_at, history, logo, social_id, address_id, street_address];
 
         // Insert or update school record in the database
         const sqlInsertOrUpdateSchool = `
-            INSERT INTO school (eiin_number, school_name, established_at, history, logo, social_id, address_id, email)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO school (eiin_number, school_name, established_at, history, logo, social_id, address_id,street_address)
+            VALUES (?, ?, ?, ?, ?, ?, ?,?)
             ON DUPLICATE KEY UPDATE
             school_name = VALUES(school_name),
             established_at = VALUES(established_at),
@@ -178,7 +226,7 @@ exports.schoolCreateOrUpdate = async (req, res, next) => {
             logo = VALUES(logo),
             social_id = VALUES(social_id),
             address_id = VALUES(address_id),
-            email = VALUES(email)
+            street_address=VALUES(street_address)
         `;
 
         connection.query(sqlInsertOrUpdateSchool, schoolInfo, (error, results) => {
@@ -216,6 +264,7 @@ exports.viewNotice = (req, res, next) => {
 // Function to create a new notice
 exports.createNotice = (req, res, next) => {
     console.log(req.body)
+
     const { title, category, user_id, text_message, link } = req.body;
     // Insert the new notice into the database
     const sql = 'INSERT INTO notice_board (user_id,title, category, text_message, link) VALUES ( ?, ?, ?, ?, ?)';
@@ -264,27 +313,112 @@ exports.deleteNotice = (req, res, next) => {
     });
 };
 
-// create user ...with last id
+
+// view staff user_status
+exports.viewStaffUserStatus = async (req, res, next) => {
+    try {
+        // Assuming you have a MySQL connection pool set up
+        const sql = `
+            SELECT us.user_id, us.status, us.created_at, us.key, 
+                   s.email, 
+                   p.position_name 
+            FROM user_status AS us
+            LEFT JOIN users AS u ON us.user_id = u.user_id
+            LEFT JOIN socials AS s ON u.social_id = s.social_id
+            LEFT JOIN staffs AS st ON u.user_id = st.staff_id
+            LEFT JOIN positions AS p ON st.position_id = p.position_id
+            ORDER BY us.created_at DESC;`;
+
+        connection.query(sql, (error, results) => {
+            if (error) {
+                console.error('Error fetching user status:', error);
+                res.status(500).json({ error: 'Failed to fetch user status' });
+                return;
+            }
+
+            // Add the user_type field to each result object
+            const resultsWithUserType = results.map(result => ({ ...result, user_type: "staff" }));
+
+            // Send fetched user status data as JSON response with additional field
+            res.status(200).json(resultsWithUserType);
+        });
+    } catch (error) {
+        console.error('Error fetching user status:', error);
+        res.status(500).json({ error: 'Failed to fetch user status' });
+    }
+};
+
+
+// insert staff user status
+exports.insertStaffUserStatus = async (req, res, next) => {
+    try {
+        // Assuming you have a MySQL connection pool set up
+        const { type, typeOption, Id, email } = req.body;
+
+        // Insert user status data
+        const userStatusSql = `
+            INSERT INTO user_status (user_id, user_type)
+            VALUES (?, ?)`;
+        connection.query(userStatusSql, [Id, type.toLowerCase()], (error, results) => {
+            if (error) {
+                console.error('Error inserting staff user status:', error);
+                return res.status(500).json({ error: 'Failed to insert staff user status' });
+            }
+
+            // Insert email into socials table and get social_id
+            const socialSql = `
+                INSERT INTO socials (email)
+                VALUES (?)`;
+            connection.query(socialSql, [email], (socialError, socialResults) => {
+                if (socialError) {
+                    console.error('Error inserting social data:', socialError);
+                    return res.status(500).json({ error: 'Failed to insert social data' });
+                }
+
+                const socialId = socialResults.insertId;
+
+                // Insert data into users table
+                const updateUserSql = `
+                    INSERT INTO users (user_id, social_id)
+                    VALUES (?, ?)`;
+                connection.query(updateUserSql, [Id, socialId], (updateUserError, updateUserResults) => {
+                    if (updateUserError) {
+                        console.error('Error updating users table:', updateUserError);
+                        return res.status(500).json({ error: 'Failed to update users table' });
+                    }
+
+                    // Insert staff data
+                    const staffSql = `
+                        INSERT INTO staffs (staff_id, position_id)
+                        VALUES (?, ?)`;
+                    connection.query(staffSql, [Id, typeOption], (staffError, staffResults) => {
+                        if (staffError) {
+                            console.error('Error inserting staff data:', staffError);
+                            return res.status(500).json({ error: 'Failed to insert staff data' });
+                        }
+
+                        res.status(200).json({ message: 'Staff user status inserted successfully' });
+                    });
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error inserting staff user status:', error);
+        res.status(500).json({ error: 'Failed to insert staff user status' });
+    }
+};
 
 
 
 
-// exports.lastTeacherId = async (req, res, next) => {
-//     try {
-//         const sql = "SELECT teacher_id FROM teaches ORDER BY teacher_id DESC LIMIT 1";
-//         const [rows, fields] = await connection.promise().query(sql);
-//         if (rows.length > 0) {
-//             res.status(200).json({ teacherId: rows[0].teacher_id });
-//         } else {
-//             res.status(404).json({ error: "No teacher ID found" });
-//         }
-//     } catch (error) {
-//         console.error("Error retrieving last teacher ID:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
 
 
+
+
+
+
+
+// create user 
 // exports.createTeacher = async (req, res, next) => {
 //     try {
 //         const data = req.body;
@@ -345,140 +479,153 @@ exports.deleteNotice = (req, res, next) => {
 //     }
 // }
 
-// exports.viewTeacher = async (req, res, next) => {
-//     try {
-//         const teacherInfoQuery = `
-//             SELECT t.teacher_id as teacherId,t.first_name as firstName,t.last_name as lastName,t.joining_date as joiningDate,t.position as position,t.salary as salary,t.date_of_birth as dateOfBirth,t.profile_pic as profilePicture, s.email, s.phone, s.facebook, s.linkedin, s.twitter, a.city, a.division as state, a.zip, a.street_address as streetAddress,s.phone as phoneNumber
-//             FROM teaches t
-//             LEFT JOIN socials s ON t.social_id = s.social_id
-//             LEFT JOIN addresses a ON t.address_id = a.address_id
-//         `;
-//         // Execute the query
-//         connection.query(teacherInfoQuery, (error, results) => {
-//             if (error) {
-//                 console.error('Error querying data from MySQL:', error);
-//                 res.status(500).json({ error: 'Internal server error' });
-//             } else {
-//                 if (results.length > 0) {
-//                     // Convert timestamps to date format
-//                     results.forEach(teacher => {
-//                         teacher.joiningDate = convertTimestampToDate(teacher.joiningDate);
-//                         teacher.dateOfBirth = convertTimestampToDate(teacher.dateOfBirth);
-//                     });
-//                     // Teachers found, return their information
-//                     res.status(200).json(results);
-//                 } else {
-//                     // No teachers found
-//                     res.status(404).json({ error: 'No teachers found' });
-//                 }
-//             }
-//         });
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
+exports.viewTeacher = async (req, res, next) => {
+    try {
+        const teacherInfoQuery = `
+            SELECT t.teacher_id as teacherId,u.first_name as firstName,u.last_name as lastName,u.created_at as joiningDate,p.position_name as position,p.salary as salary,u.date_of_birth as dateOfBirth,u.profile_pic as profilePicture,u.nid_no as nidNum,u.birth_cirtificate_no as birthCirtificate, us.email, s.phone, s.facebook, s.linkedin, a.city, a.division as state, a.zip, a.street_address as streetAddress,s.phone as phoneNumber,sub.sub_name as subjectName
+            FROM teaches t
+            LEFT JOIN users u on t.teacher_id = u.user_id
+            LEFT JOIN user_status us on t.teacher_id = us.user_id
+            LEFT JOIN socials s ON t.social_id = s.social_id
+            LEFT JOIN addresses a ON t.address_id = a.address_id
+            LEFT JOIN positions p ON p.position_id = t.position_id
+            LEFT JOIN subject sub ON sub.subject_id=t.subject_id
+        `;
+        // Execute the query
+        connection.query(teacherInfoQuery, (error, results) => {
+            if (error) {
+                console.error('Error querying data from MySQL:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                if (results.length > 0) {
+                    // Convert timestamps to date format
+                    results.forEach(teacher => {
+                        teacher.joiningDate = convertTimestampToDate(teacher.joiningDate);
+                        teacher.dateOfBirth = convertTimestampToDate(teacher.dateOfBirth);
+                    });
+                    // Teachers found, return their information
+                    res.status(200).json(results);
+                } else {
+                    // No teachers found
+                    res.status(404).json({ error: 'No teachers found' });
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
-// function convertTimestampToDate(timestamp) {
-//     const date = new Date(timestamp);
-//     return date.toISOString().split('T')[0];
-// }
+function convertTimestampToDate(timestamp) {
+    const date = new Date(timestamp);
+    return date.toISOString().split('T')[0];
+}
 
-// exports.updateTeacher = async (req, res, next) => {
-//     try {
-//         const data = req.body;
-//         const {
-//             teacherId,
-//             firstName,
-//             lastName,
-//             joiningDate,
-//             position,
-//             salary,
-//             dateOfBirth,
-//             profilePicture,
-//         } = data;
+exports.updateTeacher = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const {
+            teacherId,
+            firstName,
+            lastName,
+            position,
+            dateOfBirth,
+            nidNum,
+            birthCirtificate,
+            profilePicture,
+            facebook,
+            linkedin,
+            city,
+            state,
+            zip,
+            streetAddress,
+            phoneNumber,
+            subjectName
+        } = data;
 
-//         // Convert joiningDate and dateOfBirth to date format
-//         const formattedJoiningDate = convertTimestampToDate(joiningDate);
-//         const formattedDateOfBirth = convertTimestampToDate(dateOfBirth);
+        const userData = {
+            first_name: firstName,
+            last_name: lastName,
+            profile_pic: profilePicture,
+            date_of_birth: dateOfBirth,
+            birth_cirtificate_no: birthCirtificate,
+            nid_no: nidNum
+        };
 
-//         // Create address id
-//         const city = data.city;
-//         const division = data.state;
-//         const zip = data.zip;
-//         const street_address = data.streetAddress;
-//         const addressValues = [city, division, zip, street_address];
-//         const address_id = await getAddressId(addressValues);
+        // Update user information
+        await updateUserInfo(teacherId, userData);
 
-//         // Create social id
-//         const email = data.email;
-//         const phone = data.phoneNumber;
-//         const facebook = data.facebook;
-//         const linkedin = data.linkedin;
-//         const twitter = data.twitter || "";
+        // Get or create position ID
+        const positionId = await getPositionId(position);
 
-//         const social_id = await getSocialId(email, phone, facebook, linkedin, twitter);
+        // Get or create subject ID
+        const subjectId = await getOrCreateSubjectID(subjectName);
 
-//         // Update teacher information in the database
-//         const sql = `UPDATE teaches 
-//                     SET 
-//                     first_name = ?,
-//                     last_name = ?,
-//                     joining_date = ?,
-//                     position = ?,
-//                     salary = ?,
-//                     date_of_birth = ?,
-//                     profile_pic = ?,
-//                     social_id = ?,
-//                     address_id = ?
-//                     WHERE teacher_id = ?`;
+        // Prepare social data
+        const socialData = {
+            phone: phoneNumber,
+            facebook: facebook,
+            linkedin: linkedin,
+        };
 
-//         connection.query(sql, [firstName, lastName, formattedJoiningDate, position, salary, formattedDateOfBirth, profilePicture, social_id, address_id, teacherId], (error, results) => {
-//             if (error) {
-//                 console.error('Error updating teacher information:', error);
-//                 res.status(500).json({ error: 'Internal server error' });
-//             } else {
-//                 console.log('Teacher information updated successfully:', results);
-//                 res.status(200).json({ message: 'Teacher information for ' + teacherId + ' updated successfully' });
-//             }
-//         });
+        // Get or insert social ID
+        const social = await getSocialUpdateId(teacherId, "teacher", socialData);
+        const socialId = social.socialId
 
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+        // Prepare address data
+        const addressData = {
+            city: city,
+            division: state,
+            street_address: streetAddress,
+            zip: zip
+        };
 
-// exports.deleteTeacher = async (req, res, next) => {
-//     try {
-//         const teacher_id = req.params.teacherId;
+        // Get or insert address ID
+        const addressId = await getAddressId(addressData);
 
-//         await connection.execute('DELETE FROM teaches WHERE teacher_id = ?', [teacher_id]);
+        // Update teacher information in the database
+        const sql = `UPDATE teaches 
+                    SET 
+                    position_id = ?,
+                    subject_id = ?,
+                    social_id = ?,
+                    address_id = ?
+                    WHERE teacher_id = ?`;
 
-//         res.status(200).json({ message: `Teacher with ID ${teacher_id} deleted successfully` });
+        connection.query(sql, [positionId, subjectId, socialId, addressId, teacherId], (error, results) => {
+            if (error) {
+                console.error('Error updating teacher information:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                console.log('Teacher information updated successfully:', results);
+                res.status(200).json({ message: 'Teacher information for ' + teacherId + ' updated successfully' });
+            }
+        });
 
-//     } catch (error) {
-//         console.error('Error deleting teacher:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
-// // staff
-// exports.lastStaffId = async (req, res, next) => {
-//     try {
-//         const sql = "SELECT staff_id FROM staffs ORDER BY staff_id DESC LIMIT 1";
-//         const [rows, fields] = await connection.promise().query(sql);
-//         if (rows.length > 0) {
-//             res.status(200).json({ staffId: rows[0].staff_id });
-//         } else {
-//             res.status(404).json({ error: "No staff ID found" });
-//         }
-//     } catch (error) {
-//         console.error("Error retrieving last staff ID:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
+exports.deleteTeacher = async (req, res, next) => {
+    try {
+        const teacher_id = req.params.teacherId;
+        console.log(teacher_id)
+        await connection.execute('DELETE FROM teaches WHERE teacher_id = ?', [teacher_id]);
+
+        res.status(200).json({ message: `Teacher with ID ${teacher_id} deleted successfully` });
+
+    } catch (error) {
+        console.error('Error deleting teacher:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+// staff
 
 // exports.createStaff = async (req, res, next) => {
 //     try {
@@ -769,7 +916,7 @@ exports.deleteAcademic = async (req, res, next) => {
 
 // subject
 exports.createClassSubject = async (req, res, next) => {
-    const { classSubjectID,subjectName, classID, teacherId, syllabus, book } = req.body;
+    const { classSubjectID, subjectName, classID, teacherId, syllabus, book } = req.body;
 
     try {
         // Get or create the subject ID
@@ -783,7 +930,7 @@ exports.createClassSubject = async (req, res, next) => {
         // Insert a new subject into the database
         const query = `INSERT INTO class_subjects (class_subject_id,subject_id, class_id, teacher_id, syllabus, book) 
                        VALUES (?,?, ?, ?, ?, ?)`;
-        connection.query(query, [parsedClassSubjectID,subjectId, parsedClassID, parsedTeacherId, syllabus, book], (error, results, fields) => {
+        connection.query(query, [parsedClassSubjectID, subjectId, parsedClassID, parsedTeacherId, syllabus, book], (error, results, fields) => {
             if (error) {
                 console.error('Error creating subject:', error);
                 return res.status(500).json({ message: 'Failed to create subject' });
@@ -816,8 +963,8 @@ exports.viewClassSubject = async (req, res, next) => {
                         subjectName: subjectName,
                         teacherId: row.teacher_id,
                         classId: row.class_id,
-                        syllabus:row.syllabus,
-                        book:row.book
+                        syllabus: row.syllabus,
+                        book: row.book
                     };
                 }));
                 res.status(200).json(convertedResults); // Send fetched subject data with converted keys as JSON response
@@ -879,7 +1026,7 @@ exports.updateClassSubject = async (req, res, next) => {
 
 exports.deleteClassSubject = async (req, res, next) => {
     try {
-        const { classSubjectId } = req.params; 
+        const { classSubjectId } = req.params;
         // Execute the DELETE query
         connection.query('DELETE FROM class_subjects WHERE class_subject_id = ?', [classSubjectId], (error, results) => {
             if (error) {
@@ -906,7 +1053,7 @@ exports.deleteClassSubject = async (req, res, next) => {
     }
 };
 
-// //   student
+//   student
 
 // exports.createStudent = async (req, res, next) => {
 //     try {
@@ -952,20 +1099,7 @@ exports.deleteClassSubject = async (req, res, next) => {
 //     }
 // };
 
-// exports.lastStudentId = async (req, res, next) => {
-//     try {
-//         const sql = "SELECT student_id FROM students ORDER BY student_id DESC LIMIT 1";
-//         const [rows, fields] = await connection.promise().query(sql);
-//         if (rows.length > 0) {
-//             res.status(200).json({ lastStudentId: rows[0].student_id });
-//         } else {
-//             res.status(404).json({ error: "No lastStudent ID found" });
-//         }
-//     } catch (error) {
-//         console.error("Error retrieving last staff ID:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
+
 
 // // Route handler to update a student
 // exports.updateStudent = async (req, res, next) => {

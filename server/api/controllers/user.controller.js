@@ -2,78 +2,59 @@ const connection = require("../sql/db.js");
 const bcrypt = require("bcrypt");
 const { updateUserInfo } = require("../../helper/getUserInfo.js");
 const { getAddressId } = require("../../helper/getAddressData.js");
-const { getSocialUpdateId } = require("../../helper/getSocialData.js");
+const { updateSocialData } = require("../../helper/getSocialData.js");
+const { errorHandler } = require("../utils/error.js");
 
 // profile section
 exports.userUpdateProfile = async (req, res, next) => {
     try {
         const data = req.body;
         const type = req.params.role;
+
         console.log(data, type);
 
         const userId = data.userId;
-        const userData = {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            profile_pic: data.profilePicture,
+        const socialId = data.socialId;
+
+        const socialData = {
+            phone: data.phoneNumber,
+            facebook: data.facebook,
+            linkedin: data.linkedin,
+            twitter: data.twitter
         };
 
-        updateUserInfo(userId, userData)
-            .then((results) => {
-                console.log('User information updated successfully:', results);
-                
-            })
-            .catch((error) => {
-                console.error('Error updating user information:', error);
-                res.status(500).json({ error: 'Internal Server Error' });
-            });
+        updateSocialData(socialId, socialData);
 
         const addressData = {
             city: data.city,
             division: data.state,
-            street_address: data.streetAddress,
             zip: data.zip
         };
 
         try {
             const address_id = await getAddressId(addressData);
 
-            const socialData = {
-                phone: data.phoneNumber,
-                facebook: data.facebook,
-                linkedin: data.linkedin,
-                twitter: data.twitter
+            const userData = {
+                first_name: data.firstName,
+                last_name: data.lastName,
+                profile_pic: data.profilePicture,
+                street_address: data.streetAddress,
+                address_id: address_id
             };
 
-            getSocialUpdateId(userId, type, socialData)
-                .then(result => {
-                    const socialId = result.socialId;
-                    console.log("Social ID:", socialId);
-                    // Update staffs table with social ID and address ID
-                    const updateQuery = `
-                        UPDATE staffs
-                        SET address_id = ?
-                        WHERE staff_id = ?
-                    `;
-                    connection.query(updateQuery, [address_id, userId], (error, results) => {
-                        if (error) {
-                            console.error('Error updating staffs table:', error);
-                            res.status(500).json({ error: 'Failed to update staffs table' });
-                        } else {
-                            console.log('Staffs table updated successfully');
-                            res.status(200).json({ success: true, message: 'Data updated successfully' });
-                        }
-                    });
+            updateUserInfo(userId, userData)
+                .then((results) => {
+                    console.log('User information updated successfully:', results);
+                    res.status(200).json({ message: 'User information updated successfully' });
                 })
-                .catch(error => {
-                    console.error("Error:", error);
+                .catch((error) => {
+                    console.error('Error updating user information:', error);
                     res.status(500).json({ error: 'Internal Server Error' });
                 });
         } catch (error) {
-            console.error("Error getting or creating address ID:", error);
+            console.error('Error updating user information:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
-
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -81,54 +62,36 @@ exports.userUpdateProfile = async (req, res, next) => {
 }
 
 
-// sign in section update or delete
-
-exports.viewUserStatus = async (req, res, next) => {
-    try {
-        // Assuming you have a MySQL connection pool set up
-        connection.query('SELECT user_id, user_type, email, status, created_at, `key` FROM user_status', (error, results) => {
-            if (error) {
-                console.error('Error fetching user status:', error);
-                res.status(500).json({ error: 'Failed to fetch user status' });
-                return;
-            }
-            // Send fetched user status data as JSON response
-            res.status(200).json(results);
-        });
-    } catch (error) {
-        console.error('Error fetching user status:', error);
-        res.status(500).json({ error: 'Failed to fetch user status' });
-    }
-};
-
-
-
-
+// sign in update
 exports.updateUser = async (req, res, next) => {
-    // console.log(req.params.id)
 
-    if (req.user.id != req.params.id) {
+    const paramId = parseInt(req.params.id);
+    if (req.user.id !== paramId) {
         return next(errorHandler(401, "You can update only your account"));
     }
+
     try {
         let values = [];
-        let query = `UPDATE user_status SET `;
-        
+        let query = `UPDATE user_status 
+                     INNER JOIN users ON user_status.user_id = users.user_id
+                     INNER JOIN socials ON users.social_id = socials.social_id
+                     SET `;
+
         if (req.body.email) {
-            query += `email = ?, `;
+            query += `socials.email = ?, `;
             values.push(req.body.email);
         }
-        
+
         if (req.body.password) {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            query += `password = ?, `;
+            query += `user_status.password = ?, `;
             values.push(hashedPassword);
         }
-        
+
         // Remove the last comma and space
         query = query.slice(0, -2);
 
-        query += ` WHERE user_id = ?`;
+        query += ` WHERE user_status.user_id = ?`;
         values.push(req.params.id);
 
         connection.query(query, values, (error, results) => {
@@ -136,7 +99,7 @@ exports.updateUser = async (req, res, next) => {
                 console.error('Error updating user:', error);
                 return next(error);
             }
-            
+
             if (results.affectedRows === 0) {
                 return next(errorHandler(404, "User not found"));
             }

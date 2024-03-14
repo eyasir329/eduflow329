@@ -5,13 +5,13 @@ import {
     Stack,
     Paper,
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ViewPosition from "./ViewPosition";
 
 export default function CreatePosition() {
     const [positionName, setPositionName] = useState("");
     const [salary, setSalary] = useState("");
-    const [message, setMessage] = useState(null);
-    const [error, setError] = useState(null);
 
     const handleCreatePosition = async (event) => {
         event.preventDefault(); // Prevent default form submission behavior
@@ -34,14 +34,12 @@ export default function CreatePosition() {
             }
 
             const data = await res.json();
-            console.log("Creating position:", { data });
-            // Clear the input fields after submission
-            setMessage("Position created successfully");
+            toast("Creating position:", { data });
             setPositionName("");
             setSalary("");
         } catch (error) {
             console.error("Error submitting form:", error);
-            setError('Failed to create position. Please try again.');
+            toast("Error submitting form:", error);
         }
     };
 
@@ -73,13 +71,14 @@ export default function CreatePosition() {
                         </Button>
                     </Stack>
                 </Paper>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {message && <p style={{ color: 'green' }}>{message}</p>}
+                {/* {error && <p style={{ color: 'red' }}>{error}</p>}
+                {message && <p style={{ color: 'green' }}>{message}</p>} */}
             </div>
 
             <div style={{ marginTop: 50 }}>
                 <ViewPosition />
             </div>
+            <ToastContainer />
         </div>
     );
 }

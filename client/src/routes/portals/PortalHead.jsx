@@ -5,7 +5,13 @@ import { Button } from "react-bootstrap";
 
 export default function PortalHead(props) {
     const dispatch = useDispatch();
-    const role = useSelector((state) => state.user.currentUser?.type);
+    let role = useSelector((state) => state.user.currentUser?.type);
+    let position = useSelector((state) => state.user.currentUser?.position);
+
+    if(role==="staff") role = position;
+    
+    console.log(role)
+    
     useEffect(() => {
         const handleScroll = () => {
             const navbar = document.getElementById('navbar_top');

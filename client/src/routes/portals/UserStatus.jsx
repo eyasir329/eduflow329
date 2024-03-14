@@ -10,6 +10,8 @@ import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import emailjs from '@emailjs/browser';
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const columns = [
@@ -35,7 +37,7 @@ export default function UserStatus() {
     const [teacherData, setTeacherData] = useState([]);
     const [updateMessage, setUpdateMessage] = useState("");
     const [deleteMessage, setDeleteMessage] = useState("");
-    
+
     const form = useRef();
 
     useEffect(() => {
@@ -43,33 +45,33 @@ export default function UserStatus() {
     }, []);
 
     const fetchData = async () => {
-    try {
-        let fetchUrl;
-        if (currentUser.type === 'staff' && currentUser.position === 'admin') {
-            fetchUrl = 'http://localhost:5000/api/admin/viewStaffUserStatus';
-        } else {
-            // Handle other cases if needed
-            return;
+        try {
+            let fetchUrl;
+            if (currentUser.type === 'staff' && currentUser.position === 'admin') {
+                fetchUrl = 'http://localhost:5000/api/admin/viewStaffUserStatus';
+            } else {
+                // Handle other cases if needed
+                return;
+            }
+
+            const response = await fetch(fetchUrl);
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch teacher data');
+            }
+            const data = await response.json();
+            console.log(data)
+            // Update state with fetched data
+            setTeacherData(data);
+            // setUserType(data.data.user_type); // Assuming setUserType is a valid state setter function
+            console.log(teacherData); // This line will not output the updated teacherData immediately due to asynchronous behavior
+            setFilteredData(data); // Corrected typo in the state name
+        } catch (error) {
+            console.error('Error fetching teacher data:', error);
         }
+    };
 
-        const response = await fetch(fetchUrl);
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch teacher data');
-        }
-        const data = await response.json();
-        console.log(data)
-        // Update state with fetched data
-        setTeacherData(data);
-        // setUserType(data.data.user_type); // Assuming setUserType is a valid state setter function
-        console.log(teacherData); // This line will not output the updated teacherData immediately due to asynchronous behavior
-        setFilteredData(data); // Corrected typo in the state name
-    } catch (error) {
-        console.error('Error fetching teacher data:', error);
-    }
-};
-
-    
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -157,6 +159,7 @@ export default function UserStatus() {
     const [userMail, setUserMail] = useState('');
     const [userID, setUserId] = useState('');
     const [userKey, setUserkey] = useState('');
+    // const [userType, setUserType] = useState('');
     const [registrationLink, setRegistrationLink] = useState();
     const [emailTemplate, setEmailTemplate] = useState("");
 
@@ -166,22 +169,23 @@ export default function UserStatus() {
         const userId = user.user_id;
         const userKey = user.key;
         const userEmail = user.email;
-        
+        const userType = user.user_type;
+
         // Construct the registration link with the current userKey
-        const link = `http://localhost:3000/formdata/t/?id=${userId}&mail=${userEmail}&key=${userKey}`;
-        
+        const link = `http://localhost:3000/formdata/${userType}/?id=${userId}&mail=${userEmail}&key=${userKey}`;
+
         // Set the values of userName, userMail, and userTemplate
         setUserName('');
         setUserMail(userEmail);
         setEmailTemplate(`Dear ${userEmail},\n\nPlease confirm your registration by filling out the form using the provided link:\n\n${link}`);
-        
+
         // Open the dialog and set the registration link state
         setOpenDialog2(true);
         setUserId(userId);
         setUserkey(userKey);
         setRegistrationLink(link);
     };
-    
+
     // http://localhost:3000/formdata/t/?id=n3pyqqto&mail=abc@gmail.com&pos=staff
     const sendEmail = (e) => {
         e.preventDefault();
@@ -192,9 +196,11 @@ export default function UserStatus() {
             .then(
                 () => {
                     console.log('SUCCESS!');
+                    toast("Email Send Successfully");
                 },
                 (error) => {
                     console.log('FAILED...', error.text);
+                    toast('FAILED... to send mail', error.text)
                 },
             );
     };
@@ -370,7 +376,7 @@ export default function UserStatus() {
                     </DialogActions>
                 </form>
             </Dialog>
-
+                <ToastContainer />
         </>
     );
 };

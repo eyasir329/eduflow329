@@ -6,7 +6,7 @@ import { faLocationDot, faSquarePhone, faEnvelope } from '@fortawesome/free-soli
 function Footer() {
     return (
         <>
-            <footer>
+            <footer id="school-footer">
                 <div className="end-section"></div>
                 <section id="footer">
                     <div className="footer-section">

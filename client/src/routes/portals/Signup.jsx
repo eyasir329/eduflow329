@@ -1,17 +1,32 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Tab, Tabs } from "react-bootstrap";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignUp() {
-    const [key, setKey] = useState("student");
-    const [userId, setUserId] = useState("");
-    const [userName, setUserName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const initialUserId = searchParams.get('userId');
+    const initialEmail = searchParams.get('email');
+    const initialKey = searchParams.get('key');
+
+    // Initialize state variables with the retrieved values
+    const [userId, setUserId] = useState(initialUserId);
+    const [email, setEmail] = useState(initialEmail);
+    const [password, setPassword] = useState(''); // Password can be initialized to empty string or any other default value
+    const [key, setKey] = useState(initialKey);
+
+    // If you want to update state variables when the query parameters change, you can use useEffect
+    useEffect(() => {
+        setUserId(initialUserId);
+        setEmail(initialEmail);
+        setKey(initialKey);
+    }, [initialUserId, initialEmail, initialKey]);
+
+    // console.log(userId, email, key)
+
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
-    let role = "student";
+    // const [error, setError] = useState(false);
 
     const navigate = useNavigate();
 
@@ -19,25 +34,38 @@ export default function SignUp() {
         e.preventDefault();
         try {
             setLoading(true);
-            const response = await axios.post("http://localhost:5000/api/auth/signup", { userId, userName, email, password, role });
-            const data = await response.data;
-            if (data.status === "ok") {
-                navigate("/portal/login");
-            }else{
-                setLoading(false);
-                setError(false);
+            // console.log(userId, email, password, key);
+
+            const response = await fetch("http://localhost:5000/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId, email, password, key }),
+            });
+
+            const data = await response.json();
+
+            if(!data.ok){
+                toast(data.error);
             }
-        } catch (error) {
-            setLoading(false);
-            setError(true);
-        }
-        finally{
+            console.log(data)
+            toast(data.message)
+
+            window.location.href = "/portal/login";
+            // Clear form fields
             setUserId("");
-            setUserName("");
             setEmail("");
             setPassword("");
+            setKey("");
+            setLoading(false);
+            // Handle any success UI feedback if needed
+        } catch (error) {
+            setLoading(false);
+            toast.error(error.message); // Assuming you're using react-toastify for error messages
         }
     }
+
 
     return (
         <section className="vh-100 gradient-custom-signup">
@@ -55,224 +83,75 @@ export default function SignUp() {
                     <div className="col-md-9 register-right">
                         <div className="row">
                             <div className="col-md-12">
-                                <Tabs
-                                    id="controlled-tabs"
-                                    activeKey={key}
-                                    onSelect={(k) => setKey(k)}
-                                >
-                                    <Tab eventKey="student" title="Student">
-                                        <div className="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
-                                            <h3 className="register-heading">Signup as a Student</h3>
+                                <div className="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
+                                    <h3 className="register-heading">Signup Information</h3>
 
-                                            <div className="row register-form">
-                                                <div className="col-md-12">
+                                    <div className="row register-form">
+                                        <div className="col-md-12">
 
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="Student ID *"
-                                                            value={userId}
-                                                            onChange={ev => setUserId(ev.target.value)}
-                                                        />
-                                                      
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="Username *"
-                                                            value={userName}
-                                                            onChange={ev => setUserName(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="email"
-                                                            className="form-control"
-                                                            placeholder="Your Email *"
-                                                            value={email}
-                                                            onChange={ev => setEmail(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="password"
-                                                            className="form-control"
-                                                            placeholder="Password *"
-                                                            value={password}
-                                                            onChange={ev => setPassword(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <button
-                                                            disabled ={loading}
-                                                            type="button"
-                                                            className="btnRegister btn btn-success"
-                                                            onClick={(event) => {
-                                                                event.preventDefault();
-                                                                role = "student";
-                                                                handleSubmit(event);
-                                                            }}
-                                                        >
-                                                            {loading?"Loading...":"Sign up"}
-                                                        </button>
-                                                    </div>
-                                                    <p className="reg-error">
-                                                    {
-                                                        error && "Something Went Wrong"
-                                                    }
-                                                    </p>
-
-                                                </div>
+                                            <div className="form-group">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Student ID *"
+                                                    value={userId}
+                                                    onChange={ev => setUserId(ev.target.value)}
+                                                    disabled
+                                                />
 
                                             </div>
-                                        </div>
-                                    </Tab>
 
-                                    <Tab eventKey="parent" title="Parent">
-                                        <div className="tab-pane fade show" id="parent" role="tabpanel" aria-labelledby="parent-tab">
-                                            <h3 className="register-heading">Signup as a Parent</h3>
-                                            <div className="row register-form">
-                                                <div className="col-md-12">
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="Parent ID *"
-                                                            value={userId}
-                                                            onChange={ev => setUserId(ev.target.value)}
-                                                        />
-                                                        <label className="form-label" htmlFor="typePasswordX">*If you are our student and do not have a student id then contact school administration</label>
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="User Name *"
-                                                            value={userName}
-                                                            onChange={ev => setUserName(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="email"
-                                                            className="form-control"
-                                                            placeholder="Your Email *"
-                                                            value={email}
-                                                            onChange={ev => setEmail(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="password"
-                                                            className="form-control"
-                                                            placeholder="Password *"
-                                                            value={password}
-                                                            onChange={ev => setPassword(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input type="submit" className="btnRegister" value="Register" onClick={(event) => {
-                                                            event.preventDefault();
-                                                            role = "parent";
-                                                            handleSubmit(event);
-                                                        }} />
-                                                    </div>
-                                                    <p className="reg-error">
-                                                    {
-                                                        error && "Something Went Wrong"
-                                                    }
-                                                    </p>
-
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                    </Tab>
-                                    <Tab eventKey="teacher" title="Teacher">
-                                        <div className="tab-pane fade show" id="teacher" role="tabpanel" aria-labelledby="teacher-tab">
-                                            <h3 className="register-heading">Signup as a Teacher</h3>
-                                            <div className="row register-form">
-
-                                                <div className="col-md-12">
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="Teacher ID *"
-                                                            value={userId}
-                                                            onChange={ev => setUserId(ev.target.value)}
-                                                        />
-                                                        <label className="form-label" htmlFor="typePasswordX">*If you are our student and do not have a student id then contact school administration</label>
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="User Name *"
-                                                            value={userName}
-                                                            onChange={ev => setUserName(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="email"
-                                                            className="form-control"
-                                                            placeholder="Your Email *"
-                                                            value={email}
-                                                            onChange={ev => setEmail(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input
-                                                            type="password"
-                                                            className="form-control"
-                                                            placeholder="Password *"
-                                                            value={password}
-                                                            onChange={ev => setPassword(ev.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <input type="submit" className="btnRegister" value="Register" onClick={(event) => {
-                                                            event.preventDefault();
-                                                            role = "teacher";
-                                                            handleSubmit(event);
-                                                        }} />
-                                                    </div>
-                                                    <p className="reg-error">
-                                                    {
-                                                        error && "Something Went Wrong"
-                                                    }
-                                                    </p>
-
-                                                </div>
+                                            <div className="form-group">
+                                                <input
+                                                    type="email"
+                                                    className="form-control"
+                                                    placeholder="Email *"
+                                                    value={email}
+                                                    onChange={ev => setEmail(ev.target.value)}
+                                                    disabled
+                                                />
                                             </div>
 
+                                            <div className="form-group">
+                                                <input
+                                                    type="password"
+                                                    className="form-control"
+                                                    placeholder="Password *"
+                                                    value={password}
+                                                    onChange={ev => setPassword(ev.target.value)}
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <button
+                                                    disabled={loading}
+                                                    type="button"
+                                                    className="btnRegister btn btn-success"
+                                                    onClick={(event) => {
+                                                        event.preventDefault();
+                                                        handleSubmit(event);
+                                                    }}
+                                                >
+                                                    {loading ? "Loading..." : "Sign up"}
+                                                </button>
+                                            </div>
+                                            {/* <p className="reg-error">
+                                                {
+                                                    error && "Something Went Wrong"
+                                                }
+                                            </p> */}
+
                                         </div>
-                                    </Tab>
-                                </Tabs>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </section>
     );
 }

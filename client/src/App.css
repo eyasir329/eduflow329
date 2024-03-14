@@ -9,6 +9,9 @@ body {
     background: #86A789;
     background-image: url("https://www.transparenttextures.com/patterns/brick-wall.png");
     font-family: "Ubuntu", sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 h1,
@@ -907,6 +910,7 @@ footer {
     color: #131212;
     text-decoration: none;
 }
+
 
 .footer-main {
     background: rgb(2, 0, 36);
@@ -1823,7 +1827,7 @@ form .form-align {
     margin-top: 100px;
 }
 
-.under-header{
+.under-header {
     padding-top: 100px;
     /* background-color: #0063cc3a; */
     background: rgb(2, 0, 36);
@@ -1834,13 +1838,13 @@ form .form-align {
 }
 
 /* position */
-.view-position{
+.view-position {
     background-color: #bfccc06c;
     padding: 20px;
 }
 
 /* school */
-.position-details{
+.position-details {
     padding: 50px;
 }
 

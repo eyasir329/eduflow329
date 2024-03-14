@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import Image from '../../../components/functionality/Image';
+import Image from '../../../../components/functionality/Image';
 
 const columns = [
   { id: 'profilePicture', label: 'Profile Picture', minWidth: 200 },

@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject, viewTeacher, updateTeacher, deleteTeacher, deletePosition, viewStaffUserStatus, insertStaffUserStatus } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject, viewTeacher, updateTeacher, deleteTeacher, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff } = require("../controllers/admin.controller");
 const { lastTeacherId, lastStaffId, lastStudentId } = require("../../helper/getLastId");
 const { viewPositionData } = require("../../helper/getPositionData");
 const { viewAcademicData, viewSubjectData } = require("../../helper/getClassData");
@@ -39,17 +39,21 @@ router.get("/viewSubjectData", viewSubjectData);
 router.get("/viewStaffUserStatus", viewStaffUserStatus);
 router.post("/createStaffCredential", insertStaffUserStatus);
 
+// Staff endpoints
+router.post("/createStaff", createStaff);
+// router.get("/viewStaff", viewStaff);
+// router.post("/updateStaff", updateStaff);
+// router.delete('/deleteStaff/:staffId', deleteStaff);
+
+
+
 // Teacher endpoints
 // router.post("/createTeacher", createTeacher);
 router.get("/viewTeacher", viewTeacher);
 router.post("/updateTeacher", updateTeacher);
 router.delete('/deleteTeacher/:teacherId', deleteTeacher);
 
-// // Staff endpoints
-// router.post("/createStaff", createStaff);
-// router.get("/viewStaff", viewStaff);
-// router.post("/updateStaff", updateStaff);
-// router.delete('/deleteStaff/:staffId', deleteStaff);
+
 
 // Academic endpoints
 router.post("/createAcademic", createAcademic);

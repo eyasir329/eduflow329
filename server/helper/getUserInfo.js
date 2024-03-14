@@ -52,4 +52,26 @@ function updateUserInfo(userId, userData) {
     });
 }
 
-module.exports = { getUserInfo, updateUserInfo };
+// Define the selectKeyFromUserStatus function
+const selectKeyFromUserStatus = async (userId) => {
+    return new Promise((resolve, reject) => {
+        // Prepare the SQL query
+        const query = `SELECT \`key\` FROM user_status WHERE user_id = ?`;
+
+        // Execute the query
+        connection.query(query, [userId], (error, results) => {
+            if (error) {
+                console.error('Error selecting key from user status:', error);
+                reject(error);
+                return;
+            }
+
+            // Resolve with the result (or undefined if no result found)
+            resolve(results[0]);
+        });
+    });
+};
+
+
+
+module.exports = { getUserInfo, updateUserInfo, selectKeyFromUserStatus };

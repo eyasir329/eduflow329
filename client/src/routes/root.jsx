@@ -12,6 +12,9 @@ export default function Root() {
   const isLoginPage = currentLocation.pathname === "/portal/login";
   const isSignupPage = currentLocation.pathname === "/portal/signup";
   const isAdminPage = currentLocation.pathname === "/portal/admin";
+  const isRegPage = currentLocation.pathname === "/portal/register";
+  const isPubPage = currentLocation.pathname === "/portal/publisher";
+  const isAccPage = currentLocation.pathname === "/portal/accountant";
   const isStudentPage = currentLocation.pathname === "/portal/student";
   const isParentPage = currentLocation.pathname === "/portal/parent";
   const isTeacherPage = currentLocation.pathname === "/portal/teacher";
@@ -20,15 +23,15 @@ export default function Root() {
 
   return (
     <div className="main-content">
-      {!(isLoginPage || isSignupPage || isAdminPage ||isStudentPage || isParentPage || isTeacherPage || isGuestPage || isFormPage) && <Header />}
+      {!(isLoginPage || isSignupPage || isAdminPage ||isStudentPage || isParentPage || isTeacherPage || isGuestPage || isFormPage || isAccPage ||isRegPage || isPubPage) && <Header />}
 
-      {(isAdminPage || isStudentPage || isParentPage || isTeacherPage|| isGuestPage) && <HeaderMain />}
+      {(isAdminPage || isStudentPage || isParentPage || isTeacherPage|| isGuestPage || isAccPage ||isRegPage || isPubPage) && <HeaderMain />}
 
       <div className="content">
         <Outlet />
       </div>
 
-      {!(isLoginPage || isSignupPage || isAdminPage ||isStudentPage || isParentPage || isTeacherPage || isFormPage) && <Footer />}
+      {!(isLoginPage || isSignupPage || isAdminPage ||isStudentPage || isParentPage || isTeacherPage || isFormPage || isAccPage ||isRegPage || isPubPage) && <Footer />}
 
       {!(isLoginPage || isSignupPage) && (
         <div className="row footer-main">

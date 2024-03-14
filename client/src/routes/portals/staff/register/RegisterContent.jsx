@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
-import SchoolInfo from "./SchoolInfo";
-import Profile from "../SignInfoProfile";
-import TeacherInfo from "../staff/register/TeacherInfo";
-import StaffInfo from "./StaffInfo";
-import StudentInfo from "./StudentInfo";
-import AcademicInfo from "../staff/register/AcademicInfo";
-import AttendanceInfo from "./AttendanceInfo";
-import ResultInfo from "./ResultInfo";
-import UserCreate from "../UserCreate";
-import NoticeBoard from "./NoticeBoard";
-import UserProfile from "../UserProfile";
+import Profile from "../../SignInfoProfile";
+import UserProfile from "../../UserProfile";
 import { useSelector } from "react-redux";
-import PrincipalInfo from "./PrincipalInfo";
-import CreatePosition from "./Position";
+import UserCreate from "../../UserCreate";
+import NoticeBoard from "../../admin/NoticeBoard";
+import TeacherInfo from "./TeacherInfo";
+import AcademicInfo from "./AcademicInfo";
 
-export default function AdminContent() {
+
+export default function RegisterContent() {
 
     const { currentUser } = useSelector((state) => state.user);
     const [adminData, setAdminData] = useState(null);
@@ -41,7 +35,7 @@ export default function AdminContent() {
                     const responseData = await response.json();
 
                     console.log(responseData)
-                    
+
 
                     setAdminData({
                         userData: responseData.userData.userData,
@@ -61,37 +55,14 @@ export default function AdminContent() {
 
     return (
         <div className="admin-content">
-            <div id="admin-profile">
+            <div id="register-profile">
                 {adminData && <UserProfile userData={adminData} />}
 
                 <Profile
                     title="Sign In Information"
                 />
             </div>
-            <div id="school-info" className="admin-details">
-                <h1>School Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <SchoolInfo />
-                    </div>
-                </div>
-            </div>
-            <div id="principal-info" className="admin-details">
-                <h1>Principal Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <PrincipalInfo />
-                    </div>
-                </div>
-            </div>
-            <div id="position-info" className="admin-details">
-                <h1>Position Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <CreatePosition />
-                    </div>
-                </div>
-            </div>
+
             <div id="notice-info" className="admin-details">
                 <h1>Notice Board</h1>
                 <div className="row">
@@ -105,6 +76,7 @@ export default function AdminContent() {
                     </div>
                 </div>
             </div>
+
             <div id="create-user" className="admin-details">
                 <h1>Create User</h1>
                 <div className="row">
@@ -113,54 +85,25 @@ export default function AdminContent() {
                     </div>
                 </div>
             </div>
-            {/* <div id="teacher-info" className="admin-details">
+
+
+            <div id="teacher-info" className="admin-details">
                 <h1>Teacher Information</h1>
                 <div className="row">
                     <div className="col-lg-12">
                         <TeacherInfo />
                     </div>
                 </div>
-            </div> */}
-            <div id="staff-info" className="admin-details">
-                <h1>Staff Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <StaffInfo />
-                    </div>
-                </div>
             </div>
-            {/* <div id="student-info" className="admin-details">
-                <h1>student Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <StudentInfo />
-                    </div>
-                </div>
-            </div> */}
-            {/* <div id="academic-info" className="admin-details">
+            <div id="academic-info" className="admin-details">
                 <h1>Academic Information</h1>
                 <div className="row">
                     <div className="col-lg-12">
                         <AcademicInfo />
                     </div>
                 </div>
-            </div> */}
-            {/* <div id="attendance-info" className="admin-details">
-                <h1>Attendance Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <AttendanceInfo />
-                    </div>
-                </div>
-            </div> */}
-            {/* <div id="result-info" className="admin-details">
-                <h1>Result Information</h1>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <ResultInfo />
-                    </div>
-                </div>
-            </div> */}
+            </div>
+
         </div>
     );
 }

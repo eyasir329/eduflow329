@@ -39,7 +39,7 @@ function updateSocialData(socialId, socialData) {
 
 // update or create
 function updateOrCreateSocialData(socialId, socialData) {
-    if(!socialId) socialId=0;
+    if (!socialId) socialId = 0;
     return new Promise((resolve, reject) => {
         const updateQuery = `UPDATE socials SET ? WHERE social_id = ?`;
         connection.query(updateQuery, [socialData, socialId], (error, updateResults) => {
@@ -68,7 +68,31 @@ function updateOrCreateSocialData(socialId, socialData) {
     });
 }
 
+// get socialId from userId
+const selectSocialIdFromUsers = async (userId) => {
+    return new Promise((resolve, reject) => {
+        // Prepare the SQL query
+        const query = `
+        SELECT social_id 
+        FROM users 
+        WHERE user_id = ?
+      `;
+
+        // Execute the query
+        connection.query(query, [userId], (error, results) => {
+            if (error) {
+                console.error('Error selecting social_id from users:', error);
+                reject(error);
+                return;
+            }
+
+            // Resolve with the result (or undefined if no result found)
+            resolve(results[0]);
+        });
+    });
+};
 
 
 
-module.exports = { getSocialData, updateSocialData,updateOrCreateSocialData };
+
+module.exports = { getSocialData, updateSocialData, updateOrCreateSocialData, selectSocialIdFromUsers };

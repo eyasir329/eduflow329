@@ -1,7 +1,7 @@
 import React from "react";
-import PortalHead from "../PortalHead";
-import AdminSidebar from "./AdminSidebar";
-import AdminContent from "./AdminContent";
+import PortalHead from "../../PortalHead";
+import PublisherSidebar from "./PublisherSidebar";
+import PublisherContent from "./PublisherContent";
 
 const Admin = () => {
 
@@ -10,7 +10,7 @@ const Admin = () => {
             <section id="admin">
                 <div className="container">
                     <PortalHead
-                        text="admin"
+                        text="publisher"
                     />
                 </div>
             </section>
@@ -20,13 +20,13 @@ const Admin = () => {
 
                         <div className="col-lg-12">
                             <div className="admin-left">
-                                <AdminSidebar />
+                                <PublisherSidebar />
                             </div>
                         </div>
 
                         <div className="col-lg-12">
                             <div className="admin-right">
-                                <AdminContent />
+                                <PublisherContent />
                             </div>
                         </div>
 
@@ -38,3 +38,5 @@ const Admin = () => {
 };
 
 export default Admin;
+
+

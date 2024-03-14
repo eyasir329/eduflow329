@@ -1,16 +1,16 @@
 import React from "react";
-import PortalHead from "../PortalHead";
-import AdminSidebar from "./AdminSidebar";
-import AdminContent from "./AdminContent";
+import PortalHead from "../../PortalHead";
+import AccountantSidebar from "./AccountantSidebar";
+import AccountantContent from "./AccountantContent";
 
-const Admin = () => {
+const Accountant = () => {
 
     return (
         <>
             <section id="admin">
                 <div className="container">
                     <PortalHead
-                        text="admin"
+                        text="accountant"
                     />
                 </div>
             </section>
@@ -20,13 +20,13 @@ const Admin = () => {
 
                         <div className="col-lg-12">
                             <div className="admin-left">
-                                <AdminSidebar />
+                                <AccountantSidebar />
                             </div>
                         </div>
 
                         <div className="col-lg-12">
                             <div className="admin-right">
-                                <AdminContent />
+                                <AccountantContent />
                             </div>
                         </div>
 
@@ -37,4 +37,6 @@ const Admin = () => {
     );
 };
 
-export default Admin;
+export default Accountant;
+
+

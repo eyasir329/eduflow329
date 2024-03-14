@@ -87,7 +87,9 @@ export default function NoticeBoard() {
         try {
             const noticesRes = await fetch('http://localhost:5000/api/admin/viewNotices');
             const noticesData = await noticesRes.json();
-            setNotices(noticesData.notices); // Update notices state with fetched data
+            // Filter notices where user_id matches currentUser.userId
+            const filteredNotices = noticesData.notices.filter(notice => notice.user_id === currentUser.userId);
+            setNotices(filteredNotices); // Update notices state with fetched data
         } catch (error) {
             console.error('Error fetching notices:', error);
             toast("Error fetching notices. Please try again.");

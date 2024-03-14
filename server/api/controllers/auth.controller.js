@@ -5,48 +5,45 @@ const { validationResult } = require('express-validator');
 const connection = require("../sql/db.js");
 // const User = require("../models/user.model.js");
 
-exports.test = (req, res) => {
-    res.json({
-        message: "API is working"
-    });
+exports.signup = async (req, res, next) => {
+    const { userId, email, password, key } = req.body;
+    console.log(userId, email, password, key)
+
+    if (!userId || !email || !password || !key || userId === "" || email === "" || password === "" || key === "") {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    try {
+        // Get the user status from the database
+        connection.query('SELECT * FROM user_status WHERE user_id = ?', [userId], async (error, results) => {
+            if (error) {
+                console.error('Error:', error);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            if (results.length === 0 || results[0].key !== key) {
+                return res.status(401).json({ error: 'Invalid key' });
+            }
+
+            // Hash the password
+            const hashPassword = await bcrypt.hash(password, 10);
+
+            // Update user status with hashed password
+            connection.query('UPDATE user_status SET password = ? WHERE user_id = ?', [hashPassword, userId], (error, results) => {
+                if (error) {
+                    console.error('Error:', error);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+
+                // Respond with success message
+                res.status(201).json({ status: 'ok', message: 'Account Created Successfully' });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 };
-
-// exports.signup = async (req, res, next) => {
-//     const { userId, userName, email, password, role } = req.body;
-
-//     if (
-//         !userId ||
-//         !userName ||
-//         !email ||
-//         !password ||
-//         !role ||
-//         userId === "" ||
-//         userName === "" ||
-//         email === "" ||
-//         password === "" ||
-//         role === ""
-//     ) {
-//         return next(errorHandler(400, "All fields are required"));
-//     }
-
-//     try {
-//         const hash = await bcrypt.hash(password, 10);
-//         const newUser = new User({
-//             userId,
-//             userName,
-//             email,
-//             password: hash,
-//             role,
-//         });
-
-//         await newUser.save();
-//         res
-//             .status(201)
-//             .json({ status: "ok", message: "Account Created Successfully" });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
 
 
 exports.signin = (req, res, next) => {
@@ -65,11 +62,11 @@ exports.signin = (req, res, next) => {
                 console.error('Error:', error);
                 return next(errorHandler(500, "Internal server error"));
             }
-            
+
             if (validMail.length === 0) {
                 return next(errorHandler(404, "User not found"));
             }
-            
+
             const social_id = validMail[0].social_id;
 
             connection.query(
@@ -80,7 +77,7 @@ exports.signin = (req, res, next) => {
                         console.error('Error:', error);
                         return next(errorHandler(500, "Internal server error"));
                     }
-                    
+
                     if (validUser.length === 0) {
                         return next(errorHandler(404, "User not found"));
                     }

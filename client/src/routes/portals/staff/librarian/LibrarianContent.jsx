@@ -59,7 +59,7 @@ export default function LibrarianContent() {
                 />
             </div>
             
-            <div id="notice-info" className="admin-details">
+            <div id="notice-info" className="admin-details notice-extra">
                 <h1>Notice Board</h1>
                 <div className="row">
                     <div className="col-lg-12">

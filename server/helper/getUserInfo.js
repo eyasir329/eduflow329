@@ -103,7 +103,4 @@ const updateUserStatusCreationDate = async (userId, newCreationDate) => {
 };
 
 
-
-
-
 module.exports = { getUserInfo, updateUserInfo, selectKeyFromUserStatus,updateUserStatusCreationDate };

@@ -1691,6 +1691,11 @@ form .form-align {
 
 
 /* header section end */
+/* extra in portal */
+.notice-extra{
+    margin-top: 100px;
+}
+
 /* admin header start */
 
 #navbar_top {

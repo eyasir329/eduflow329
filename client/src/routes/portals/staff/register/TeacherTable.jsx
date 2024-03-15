@@ -8,6 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Image from '../../../../components/functionality/Image';
 
 const columns = [
@@ -42,8 +44,8 @@ const TeacherTable = () => {
   const [teacherData, setTeacherData] = useState([]);
   const [profilePicture, setProfilePicture] = useState("");
   const [uploadDisabled, setUploadDisabled] = useState(false);
-  const [updateMessage, setUpdateMessage] = useState("");
-  const [deleteMessage, setDeleteMessage] = useState("");
+  // const [updateMessage, setUpdateMessage] = useState("");
+  // const [deleteMessage, setDeleteMessage] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -51,11 +53,12 @@ const TeacherTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/viewTeacher');
+      const response = await fetch('http://localhost:5000/api/register/viewTeacher');
       if (!response.ok) {
         throw new Error('Failed to fetch teacher data');
       }
       const data = await response.json();
+
       console.log(data)
 
       setTeacherData(data);
@@ -82,7 +85,7 @@ const TeacherTable = () => {
   const handleSave = async () => {
     console.log(editableData);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/updateTeacher`, {
+      const res = await fetch(`http://localhost:5000/api/register/updateTeacher`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -94,10 +97,12 @@ const TeacherTable = () => {
       const data = await res.json();
       console.log(data);
       if (res.ok) {
-        setUpdateMessage(data.message);
+        toast(data.message);
+        // setUpdateMessage(data.message);
         fetchData();
       } else {
-        setUpdateMessage("something wrong");
+        toast("something wrong");
+        // setUpdateMessage("something wrong");
       }
 
 
@@ -116,18 +121,20 @@ const TeacherTable = () => {
 
   const handleDelete = async (row) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/deleteTeacher/${row.teacherId}`, {
+      const res = await fetch(`http://localhost:5000/api/register/deleteTeacher/${row.teacherId}`, {
         method: "DELETE",
         credentials: 'include',
       });
       const responseData = await res.json();
       console.log(responseData);
       if (res.ok) {
-        setDeleteMessage(responseData.message);
+        toast(responseData.message)
+        // setDeleteMessage(responseData.message);
         // Refresh the teacher data after deletion
         fetchData();
       } else {
-        setDeleteMessage("Something wrong not to delete that teacherId");
+        toast("Something wrong not to delete that teacherId");
+        // setDeleteMessage("Something wrong not to delete that teacherId");
         console.error('Failed to delete teacher:', res.statusText);
       }
     } catch (error) {
@@ -152,8 +159,8 @@ const TeacherTable = () => {
     setSearchId('');
     setFilteredData(teacherData);
     fetchData();
-    setUpdateMessage();
-    setDeleteMessage();
+    // setUpdateMessage();
+    // setDeleteMessage();
   };
 
   const handleUploadSuccess = (downloadURL) => {
@@ -302,10 +309,10 @@ const TeacherTable = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <p className="reg-error" style={{ marginTop: "15px" }}>
+      {/* <p className="reg-error" style={{ marginTop: "15px" }}>
         {updateMessage || deleteMessage}
-      </p>
-
+      </p> */}
+      <ToastContainer />
     </>
   );
 };

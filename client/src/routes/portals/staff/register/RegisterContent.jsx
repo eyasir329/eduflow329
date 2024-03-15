@@ -6,6 +6,8 @@ import UserCreate from "../../UserCreate";
 import NoticeBoard from "../../admin/NoticeBoard";
 import TeacherInfo from "./TeacherInfo";
 import AcademicInfo from "./AcademicInfo";
+import SubjectInfo from "./SubjectInfo";
+import CreateSubject from "./CreateSubject";
 
 
 export default function RegisterContent() {
@@ -63,7 +65,7 @@ export default function RegisterContent() {
                 />
             </div>
 
-            <div id="notice-info" className="admin-details">
+            <div id="notice-info" className="admin-details notice-extra">
                 <h1>Notice Board</h1>
                 <div className="row">
                     <div className="col-lg-12">
@@ -100,6 +102,20 @@ export default function RegisterContent() {
                 <div className="row">
                     <div className="col-lg-12">
                         <AcademicInfo />
+                    </div>
+                </div>
+            </div>
+            <div id="subject-info" className="admin-details">
+                <h1>Create a new subject</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <CreateSubject />
+                    </div>
+                </div>
+                <h1>Subject Information</h1>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <SubjectInfo />
                     </div>
                 </div>
             </div>

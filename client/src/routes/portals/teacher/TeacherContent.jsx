@@ -3,33 +3,47 @@ import Profile from '../SignInfoProfile'
 import StudentTable from "./StudentTable";
 import AttendanceInfo from "./AttendanceInfo";
 import ResultInfo from "./ResultInfo";
-import TeacherProfile from "./TeacherProfile";
 import { useSelector } from "react-redux";
 import CreateStudent from "./CreateStudent";
+import UserProfile from "../UserProfile";
+import NoticeBoard from "../admin/NoticeBoard";
+import UserCreate from "../UserCreate";
 
 export default function TeacherContent() {
     const { currentUser } = useSelector((state) => state.user);
-    const [teacherData, setTeacherData] = useState(null);
+    const [adminData, setAdminData] = useState(null);
+
+    console.log(currentUser)
 
     useEffect(() => {
         const fetchData = async () => {
             if (currentUser) {
                 try {
                     const response = await fetch(
-                        "http://localhost:5000/api/teacher/teacherProfile",
+                        "http://localhost:5000/api/admin/adminProfile",
                         {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                             },
-                            body: JSON.stringify({ userId: currentUser.userId }),
+                            body: JSON.stringify({ userId: currentUser.userId, type: currentUser.type }),
                         }
                     );
                     if (!response.ok) {
                         throw new Error("Failed to fetch teacher profile");
                     }
                     const responseData = await response.json();
-                    setTeacherData(responseData);
+
+                    console.log(responseData)
+
+
+                    setAdminData({
+                        userData: responseData.userData.userData,
+                        addressData: responseData.userData.addressData,
+                        socialData: responseData.userData.socialData,
+                        userStatusData: responseData.userData.userStatusData,
+                        positionData: responseData.positionData
+                    });
 
                 } catch (error) {
                     console.error("Error:", error.message);
@@ -41,41 +55,35 @@ export default function TeacherContent() {
 
     return (
         <div className="admin-content">
-            <div id="login-profile">
-                <Profile title="Teacher Profile" />
+            <div id="teacher-profile">
+                {adminData && <UserProfile userData={adminData} />}
+
+                <Profile
+                    title="Sign In Information"
+                />
             </div>
 
-            <div id="teacher-profile" className="admin-details teacher-profile-dashboard">
-                <h1>Teacher Information</h1>
+            <div id="notice-info" className="admin-details notice-extra">
+                <h1>Notice Board</h1>
                 <div className="row">
                     <div className="col-lg-12">
-                        <TeacherProfile teacherData={teacherData} />
+                        <div className="teacher-info">
+                            <div className="create-teacher">
+                                <NoticeBoard />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-            <div id="teacher-student-info" className="admin-details teacher-profile-dashboard">
-                {/* <h1>Student Information</h1> */}
+            <div id="create-user" className="admin-details">
+                <h1>Create User</h1>
                 <div className="row">
                     <div className="col-lg-12">
-                    <h1>Enroll A Student</h1>
-                        <div className="teacher-view-ex">
-                            <div className="teacher-view">
-                                <CreateStudent/>
-                            </div>
-                        </div>
+                        <UserCreate />
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <div className="teacher-view-ex">
-                            <div className="teacher-view">
-                                <StudentTable/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <div id="teacher-attendance-info" className="admin-details">

@@ -1,9 +1,17 @@
 const connection = require("../api/sql/db.js");
 
 function getOrCreateSubjectID(subjectName) {
+  // Check if subjectName is a string
+  console.log(subjectName)
+  if (typeof subjectName !== 'string') {
+    return Promise.reject("Subject name must be a string");
+  }
+
+  const normalizedSubjectName = subjectName.toLowerCase(); // Convert to lowercase
+
   return new Promise((resolve, reject) => {
-    const sqlSelect = 'SELECT subject_id FROM subject WHERE sub_name = ?';
-    connection.query(sqlSelect, [subjectName], (error, result) => {
+    const sqlSelect = 'SELECT subject_id FROM subject WHERE LOWER(sub_name) = ?'; // Compare in lowercase
+    connection.query(sqlSelect, [normalizedSubjectName], (error, result) => {
       if (error) {
         console.error("Error retrieving subject ID:", error);
         return reject("Error retrieving subject ID");
@@ -24,6 +32,8 @@ function getOrCreateSubjectID(subjectName) {
     });
   });
 }
+
+
 
 function getSubjectNameById(subjectId) {
     return new Promise((resolve, reject) => {

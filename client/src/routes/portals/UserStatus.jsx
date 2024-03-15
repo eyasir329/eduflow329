@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const columns = [
-    { id: 'user_id', label: 'Staff ID', minWidth: 100 },
+    { id: 'user_id', label: 'User ID', minWidth: 100 },
     { id: 'user_type', label: 'User Type', minWidth: 50 },
     { id: 'position_name', label: 'Position', minWidth: 50 },
     { id: 'email', label: 'Email', minWidth: 150 },
@@ -49,10 +49,13 @@ export default function UserStatus() {
             let fetchUrl;
             if (currentUser.type === 'staff' && currentUser.position === 'admin') {
                 fetchUrl = 'http://localhost:5000/api/admin/viewStaffUserStatus';
-            } else {
-                // Handle other cases if needed
-                return;
-            }
+            } else
+                if (currentUser.type === 'staff' && currentUser.position === 'register') {
+                    fetchUrl = 'http://localhost:5000/api/register/viewTeacherUserStatus';
+                } else {
+                    // Handle other cases if needed
+                    return;
+                }
 
             const response = await fetch(fetchUrl);
 
@@ -60,17 +63,20 @@ export default function UserStatus() {
                 throw new Error('Failed to fetch teacher data');
             }
             const data = await response.json();
+
+
             console.log(data)
-            // Update state with fetched data
+
+
             setTeacherData(data);
-            // setUserType(data.data.user_type); // Assuming setUserType is a valid state setter function
-            console.log(teacherData); // This line will not output the updated teacherData immediately due to asynchronous behavior
+            console.log(teacherData); 
+
+
             setFilteredData(data); // Corrected typo in the state name
         } catch (error) {
             console.error('Error fetching teacher data:', error);
         }
     };
-
 
 
     const handleChangePage = (event, newPage) => {
@@ -89,6 +95,7 @@ export default function UserStatus() {
 
     const handleSave = async () => {
         console.log(editableData)
+
         try {
             const res = await fetch(`http://localhost:5000/api/admin/updateTeacher`, {
                 method: "POST",
@@ -285,7 +292,6 @@ export default function UserStatus() {
                             </Table>
                         </TableContainer>
 
-
                         <Dialog open={openDialog} onClose={handleCancel}>
                             <DialogTitle>Edit Teacher</DialogTitle>
                             <DialogContent>
@@ -309,6 +315,7 @@ export default function UserStatus() {
                                 <Button onClick={handleCancel}>Cancel</Button>
                             </DialogActions>
                         </Dialog>
+
 
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25, 100]}
@@ -376,7 +383,7 @@ export default function UserStatus() {
                     </DialogActions>
                 </form>
             </Dialog>
-                <ToastContainer />
+            <ToastContainer />
         </>
     );
 };

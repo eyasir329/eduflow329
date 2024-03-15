@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject, viewTeacher, updateTeacher, deleteTeacher, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff, viewStaff, updateStaff, deleteStaff } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff, viewStaff, updateStaff, deleteStaff } = require("../controllers/admin.controller");
 const { lastTeacherId, lastStaffId, lastStudentId } = require("../../helper/getLastId");
 const { viewPositionData } = require("../../helper/getPositionData");
 const { viewAcademicData, viewSubjectData } = require("../../helper/getClassData");
@@ -17,7 +17,7 @@ router.delete("/deletePosition/:position_id", deletePosition);
 router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
 router.get("/schoolView", schoolView);
 
-// // principal
+// principal
 // router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
 // router.get('/viewPrincipal', viewPrincipal);
 
@@ -50,26 +50,6 @@ router.post("/updateStaff", updateStaff);
 router.delete('/deleteStaff/:staffId', deleteStaff);
 
 
-
-// Teacher endpoints
-// router.post("/createTeacher", createTeacher);
-router.get("/viewTeacher", viewTeacher);
-router.post("/updateTeacher", updateTeacher);
-router.delete('/deleteTeacher/:teacherId', deleteTeacher);
-
-
-
-// Academic endpoints
-router.post("/createAcademic", createAcademic);
-router.get("/viewAcademic", viewAcademic);
-router.post("/updateAcademic", updateAcademic);
-router.delete("/deleteAcademic", deleteAcademic);
-
-// // subject 
-router.post("/createClassSubject", createClassSubject);
-router.get("/viewClassSubject", viewClassSubject);
-router.post("/updateClassSubject", updateClassSubject);
-router.delete("/deleteClassSubject/:classSubjectId", deleteClassSubject);
 
 // // student
 // router.post("/createStudent", createStudent);

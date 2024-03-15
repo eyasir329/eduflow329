@@ -6,6 +6,8 @@ import {
   Paper,
   createTheme,
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Link } from "react-router-dom";
 import AcademicTable from "./AcademicTable";
 import { ThemeProvider } from "@emotion/react";
@@ -22,7 +24,7 @@ export default function AcademicInfo() {
   const [classTeacherId, setClassTeacherId] = useState("");
   const [classCaptainId, setClassCaptainId] = useState("");
   const [syllabus, setSyllabus] = useState("");
-  const [academicMessage, setAcademicMessage] = useState("");
+  // const [academicMessage, setAcademicMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,7 +39,7 @@ export default function AcademicInfo() {
     };
     try {
 
-      const res = await fetch(`http://localhost:5000/api/admin/createAcademic`, {
+      const res = await fetch(`http://localhost:5000/api/register/createAcademic`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,8 +50,10 @@ export default function AcademicInfo() {
 
       const data = await res.json();
       console.log(data)
-      setAcademicMessage(data.message)
-      
+
+      toast(data.message);
+      // setAcademicMessage(data.message)
+
 
     } catch (error) {
     }
@@ -91,6 +95,7 @@ export default function AcademicInfo() {
                   InputLabelProps={{ shrink: true }}
                   color="secondary"
                   fullWidth
+                  required
                   value={roomNumber}
                   onChange={(e) => setRoomNumber(e.target.value)}
                 />
@@ -147,9 +152,9 @@ export default function AcademicInfo() {
                 Register
               </Button>
             </form>
-            <div className="reg-error">
+            {/* <div className="reg-error">
               {academicMessage}
-            </div>
+            </div> */}
           </Paper>
 
           <div className="teacher-view-ex">
@@ -172,14 +177,15 @@ export default function AcademicInfo() {
       </div>
 
 
-      <div className="teacher-info">
+      {/* <div className="teacher-info">
         <h1>
           Subject Info
         </h1>
         <div className="create-teacher">
           <SubjectInfo />
         </div>
-      </div>
+      </div> */}
+      <ToastContainer />
     </>
   );
 }

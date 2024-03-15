@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
   Paper,
   createTheme,
   ThemeProvider,
-  Grid
+  Grid,
+  MenuItem
 } from "@mui/material";
 
 import SubjectTable from "./SubjectTable";
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme();
 
@@ -18,15 +22,51 @@ export default function SubjectInfo() {
     classID: "",
     subjectName: "",
     teacherId: "",
-    syllabus: "",
-    book: ""
+    syllabus: ""
   });
-  const [subjectMessage, setSubjectMessage] = useState("");
+  // const [subjectMessage, setSubjectMessage] = useState("");
+  const [teacherMenuItem, setTeacherMenuItem] = useState([]);
+  const [academicMenuItem, setAcademicMenuItem] = useState([]);
+  const [subjectMenuItem, setSubjectMenuItem] = useState([]);
+  const [filteredTeachers, setFilteredTeachers] = useState([]);
+  const [teacherResponse, setTeacherResponse] = useState(null); // Define teacherResponse state
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [teacherResponse, academicResponse, subjectResponse] = await Promise.all([
+        axios.get('http://localhost:5000/api/register/viewTeacherData'),
+        axios.get('http://localhost:5000/api/register/viewAcademicData'),
+        axios.get('http://localhost:5000/api/register/viewSubjectData'),
+      ]);
+
+      setTeacherResponse(teacherResponse); // Set teacherResponse state
+      setAcademicMenuItem(mapToMenuItems(academicResponse.data.positions, 'class_name', 'class_id'));
+      setSubjectMenuItem(mapToMenuItems(subjectResponse.data.subjects, 'sub_name', 'subject_id'));
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const mapToMenuItems = (data, labelKey, valueKey) => {
+    if (Array.isArray(data)) {
+      return data.map(item => (
+        <MenuItem key={item[valueKey]} value={item[valueKey]}>{item[labelKey]}</MenuItem>
+      ));
+    } else {
+      console.error('Data received is not an array:', data);
+      return [];
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/createClassSubject/`, {
+      const res = await fetch(`http://localhost:5000/api/register/createClassSubject/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,21 +77,41 @@ export default function SubjectInfo() {
 
       const data = await res.json();
       if (res.ok) {
-        setSubjectMessage("Subject created successfully");
+        toast("Subject created successfully");
+        // setSubjectMessage("Subject created successfully");
       } else {
-        setSubjectMessage(data.message || "Failed to create subject");
+        toast(data.message);
+        // setSubjectMessage(data.message || "Failed to create subject");
       }
     } catch (error) {
-      setSubjectMessage("An unexpected error occurred");
+      toast("An unexpected error occurred");
+      // setSubjectMessage("An unexpected error occurred");
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = async (event) => {
     const { name, value } = event.target;
-    setFormData((prevFormData) => ({
+    setFormData(prevFormData => ({
       ...prevFormData,
       [name]: value,
     }));
+  
+    console.log("Selected subject ID:", value); // Check if the selected subject ID is correct
+  
+    // Filter teachers based on the selected subject's ID
+    if (name === 'subjectName') {
+      const selectedSubjectId = value;
+      console.log("Teachers data:", teacherResponse.data.positions); // Check if the teacher data is available
+      const filteredTeachers = teacherResponse.data.positions.filter(teacher => teacher.subject_id === selectedSubjectId);
+      console.log("Filtered teachers:", filteredTeachers); // Check the filtered teachers
+      setFilteredTeachers(filteredTeachers);
+    }
+  };
+  
+
+
+  const handleRefresh = () => {
+    fetchData();
   };
 
   return (
@@ -66,18 +126,22 @@ export default function SubjectInfo() {
             mb: 4,
           }}
         >
+          <Button variant="outlined" onClick={handleRefresh}>Refresh</Button>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item xs={4}>
                 <TextField
+                  select
                   type="text"
                   name="classID"
-                  label="Class ID"
+                  label="Class Name"
                   value={formData.classID}
                   onChange={handleChange}
                   required
                   fullWidth
-                />
+                >
+                  {academicMenuItem}
+                </TextField>
               </Grid>
               <Grid item xs={4}>
                 <TextField
@@ -92,6 +156,7 @@ export default function SubjectInfo() {
               </Grid>
               <Grid item xs={4}>
                 <TextField
+                  select
                   type="text"
                   name="subjectName"
                   label="Subject Name"
@@ -99,19 +164,27 @@ export default function SubjectInfo() {
                   onChange={handleChange}
                   required
                   fullWidth
-                />
+                >
+                  {subjectMenuItem}
+                </TextField>
               </Grid>
-
             </Grid>
             <TextField
+              select
               type="text"
               name="teacherId"
-              label="Teacher Id"
+              label="Teacher Name"
               value={formData.teacherId}
               onChange={handleChange}
               fullWidth
+              required
               sx={{ mb: 2 }}
-            />
+            >
+              {filteredTeachers.map(teacher => (
+                <MenuItem key={teacher.teacher_id} value={teacher.teacher_id}>{teacher.teacher_id}</MenuItem>
+              ))}
+            </TextField>
+
             <TextField
               multiline
               rows={3}
@@ -123,36 +196,25 @@ export default function SubjectInfo() {
               fullWidth
               sx={{ mb: 2 }}
             />
-            <TextField
-              type="text"
-              name="book"
-              label="Book Information"
-              value={formData.book}
-              onChange={handleChange}
-              fullWidth
-              sx={{ mb: 2 }}
-            />
             <Button variant="outlined" color="secondary" type="submit">
               Register
             </Button>
           </form>
-          <div className="reg-error">
+          {/* <div className="reg-error">
             {subjectMessage}
-          </div>
+          </div> */}
         </Paper>
       </div>
 
       <div className="teacher-view-ex">
         <div className="teacher-view">
-          {/* <div className="create-teacher-id view-teacher-info">
-            <Button>Update Subject Information</Button>
-          </div> */}
           <ThemeProvider theme={theme}>
             {/* Pass props to SubjectTable */}
             <SubjectTable />
           </ThemeProvider>
         </div>
       </div>
-    </div>
+      <ToastContainer />
+    </div >
   );
 }

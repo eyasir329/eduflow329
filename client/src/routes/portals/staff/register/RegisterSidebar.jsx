@@ -13,6 +13,7 @@ export default function RegisterSidebar() {
                                 <a href="#create-user"><li>Create</li></a>
                                 <a href="#teacher-info"><li>Teacher</li></a>
                                 <a href="#academic-info"><li>Academic</li></a>
+                                <a href="#subject-info"><li>Subject</li></a>
                             </ul>
                         </div>
                     </div>

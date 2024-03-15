@@ -14,22 +14,24 @@ import {
   DialogActions,
   TextField,
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AcademicTable = () => {
   const [academicData, setAcademicData] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [editedData, setEditedData] = useState({});
-  const [academicMessage, setAcademicMessage] = useState("");
+  // const [academicMessage, setAcademicMessage] = useState("");
 
   useEffect(() => {
     fetchAcademicData();
-    setAcademicMessage();
+    // setAcademicMessage();
   }, []);
 
   const fetchAcademicData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/admin/viewAcademic");
+      const response = await fetch("http://localhost:5000/api/register/viewAcademic");
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
@@ -43,7 +45,7 @@ const AcademicTable = () => {
 
   const handleDelete = async (classId) => {
     try {
-      const response = await fetch("http://localhost:5000/api/admin/deleteAcademic", {
+      const response = await fetch("http://localhost:5000/api/register/deleteAcademic", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -58,10 +60,12 @@ const AcademicTable = () => {
       // Remove the deleted item from the client-side state
       const updatedAcademicData = academicData.filter((item) => item.classId !== classId);
       setAcademicData(updatedAcademicData);
-      setAcademicMessage("Academic data deleted successfully.");
+      toast("Academic data deleted successfully.");
+      // setAcademicMessage("Academic data deleted successfully.");
     } catch (error) {
       console.error("Error deleting academic data:", error);
-      setAcademicMessage("Failed to delete academic data.");
+      toast("Failed to delete academic data.");
+      // setAcademicMessage("Failed to delete academic data.");
     }
   };
 
@@ -80,7 +84,7 @@ const AcademicTable = () => {
     const updateAcademicData = async () => {
       console.log(editedData)
       try {
-        const response = await fetch("http://localhost:5000/api/admin/updateAcademic", {
+        const response = await fetch("http://localhost:5000/api/register/updateAcademic", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -99,11 +103,13 @@ const AcademicTable = () => {
         
         setAcademicData(updatedAcademicData);
         setOpen(false);
-        setAcademicMessage("Academic data updated successfully.");
+        toast("Academic data updated successfully.");
+        // setAcademicMessage("Academic data updated successfully.");
         fetchAcademicData();
       } catch (error) {
         console.error("Error updating academic data:", error);
-        setAcademicMessage("Failed to update academic data.");
+        toast("Failed to update academic data.");
+        // setAcademicMessage("Failed to update academic data.");
       }
     };
 
@@ -246,7 +252,8 @@ const AcademicTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <div className="reg-error" style={{ marginTop: 10 }}>{academicMessage}</div>
+      {/* <div className="reg-error" style={{ marginTop: 10 }}>{academicMessage}</div> */}
+      <ToastContainer />
     </>
   );
 };

@@ -117,16 +117,16 @@ export default function UserCreate() {
     if (type === 'Staff') {
       typeOption = positionID;
     } else if (type === 'Teacher') {
-      typeOption = subjectID;
-    } else if (type === 'Student') {
-      typeOption = academicID;
+      typeOption = positionID;
     }
 
     const postData = {
       type,
       Id,
       email,
-      typeOption
+      typeOption,
+      subjectID,
+      academicID
     };
 
     let endpoint;
@@ -193,22 +193,38 @@ export default function UserCreate() {
               </TextField>
 
 
-              {(type === "Teacher") && (
-                <TextField
-                  select
-                  variant="outlined"
-                  color="secondary"
-                  label="Subject ID"
-                  onChange={(e) => {
-                    setPositionID("");
-                    setSubjectID(e.target.value);
-                  }}
-                  value={subjectID}
-                  sx={{ mb: 4 }}
-                  required
-                >
-                  {subjectMenuItems} {/* Render subject menu items */}
-                </TextField>
+              {type === "Teacher" && (
+                <>
+                  <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+                    <TextField
+                      select
+                      variant="outlined"
+                      color="secondary"
+                      label="Subject ID"
+                      onChange={(e) => {
+                        setSubjectID(e.target.value);
+                      }}
+                      value={subjectID}
+                      sx={{ mb: 4 }}
+                      required
+                    >
+                      {subjectMenuItems}
+                    </TextField>
+                    <TextField
+                      select
+                      variant="outlined"
+                      color="secondary"
+                      label="Position"
+                      onChange={(e) => {
+                        setPositionID(e.target.value);
+                      }}
+                      value={positionID}
+                      sx={{ mb: 4 }}
+                    >
+                      {positionMenuItems}
+                    </TextField>
+                  </Stack>
+                </>
               )}
 
 

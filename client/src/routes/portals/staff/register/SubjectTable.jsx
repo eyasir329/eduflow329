@@ -14,21 +14,24 @@ import {
   DialogActions,
   TextField,
 } from "@mui/material";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SubjectTable = () => {
   const [subjectData, setSubjectData] = useState([]);
   const [open, setOpen] = useState(false);
   const [editedData, setEditedData] = useState({});
-  const [academicMessage, setAcademicMessage] = useState("");
+  // const [academicMessage, setAcademicMessage] = useState("");
 
   // Define the fetchSubjectData function
   const fetchSubjectData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/viewClassSubject');
+      const response = await fetch('http://localhost:5000/api/register/viewClassSubject');
       if (!response.ok) {
         throw new Error('Failed to fetch subjects');
       }
       const data = await response.json();
+      console.log(data)
       setSubjectData(data);
     } catch (error) {
       console.error('Error fetching subjects:', error.message);
@@ -40,26 +43,27 @@ const SubjectTable = () => {
   }, []); // Run once on component mount
 
   const handleDelete = (classSubjectId, index) => {
-    fetch(`http://localhost:5000/api/admin/deleteClassSubject/${classSubjectId}`, {
+    fetch(`http://localhost:5000/api/register/deleteClassSubject/${classSubjectId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to delete subject');
-      }
-      const updatedSubjectData = [...subjectData];
-      updatedSubjectData.splice(index, 1);
-      setSubjectData(updatedSubjectData);
-      setAcademicMessage("Subject deleted successfully.");
-    })
-    .catch(error => {
-      console.error('Error deleting subject:', error.message);
-    });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to delete subject');
+        }
+        const updatedSubjectData = [...subjectData];
+        updatedSubjectData.splice(index, 1);
+        setSubjectData(updatedSubjectData);
+        toast("Subject deleted successfully.");
+        // setAcademicMessage("Subject deleted successfully.");
+      })
+      .catch(error => {
+        console.error('Error deleting subject:', error.message);
+      });
   };
-  
+
 
   const handleUpdate = (data) => {
     setEditedData(data);
@@ -71,7 +75,7 @@ const SubjectTable = () => {
   };
 
   const handleSave = () => {
-    fetch('http://localhost:5000/api/admin/updateClassSubject', {
+    fetch('http://localhost:5000/api/register/updateClassSubject', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -82,7 +86,8 @@ const SubjectTable = () => {
         if (!response.ok) {
           throw new Error('Failed to update subject');
         }
-        setAcademicMessage("Subject updated successfully.");
+        toast("Subject updated successfully.");
+        // setAcademicMessage("Subject updated successfully.");
         setOpen(false);
         fetchSubjectData(); // Fetch the updated data again
       })
@@ -110,22 +115,22 @@ const SubjectTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-            <TableCell>Class ID</TableCell>
+              <TableCell>Class ID</TableCell>
               <TableCell>Class Subject ID</TableCell>
               <TableCell>Subject Name</TableCell>
               <TableCell>Teacher ID</TableCell>
-              
+
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {subjectData && subjectData.map((row, index) => (
               <TableRow key={index}>
-              <TableCell>{row.classId}</TableCell>
+                <TableCell>{row.classId}</TableCell>
                 <TableCell>{row.classSubjectId}</TableCell>
                 <TableCell>{row.subjectName}</TableCell>
                 <TableCell>{row.teacherId}</TableCell>
-                
+
                 <TableCell>
                   <Button
                     variant="contained"
@@ -152,7 +157,7 @@ const SubjectTable = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Update Subject Data</DialogTitle>
         <DialogContent>
-        <TextField
+          <TextField
             label="Class ID"
             name="classId"
             value={editedData.classId || ""}
@@ -187,7 +192,7 @@ const SubjectTable = () => {
             sx={{ mb: "10px" }}
           />
           <TextField
-          multiline
+            multiline
             rows={5}
             label="Syllabus"
             name="syllabus"
@@ -196,17 +201,7 @@ const SubjectTable = () => {
             onChange={handleInputChange}
             sx={{ mb: "10px" }}
           />
-          <TextField
-            multiline
-            rows={2}
-            label="Book Information"
-            name="book"
-            value={editedData.book || ""}
-            fullWidth
-            onChange={handleInputChange}
-            sx={{ mb: "10px" }}
-          />
-         
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -217,7 +212,8 @@ const SubjectTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <div className="reg-error" style={{ marginTop: 10 }}>{academicMessage}</div>
+      {/* <div className="reg-error" style={{ marginTop: 10 }}>{academicMessage}</div> */}
+      <ToastContainer />
     </>
   );
 };

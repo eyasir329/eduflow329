@@ -3,7 +3,7 @@ const { getAddressId } = require("../../helper/getAddressData.js");
 const { getPositionId } = require("../../helper/getPositionData.js");
 const { getSocialUpdateId, updateOrCreateSocialData, selectSocialIdFromUsers, updateSocialData } = require("../../helper/getSocialData.js");
 const { getOrCreateSubjectID, getSubjectNameById } = require("../../helper/getSubjectId.js");
-const { updateUserInfo, selectKeyFromUserStatus } = require("../../helper/getUserInfo.js");
+const { updateUserInfo, selectKeyFromUserStatus, updateUserStatusCreationDate } = require("../../helper/getUserInfo.js");
 const connection = require("../sql/db.js");
 
 // admin user profile
@@ -444,9 +444,9 @@ exports.createStaff = async (req, res, next) => {
                 phone: phoneNumber,
                 facebook: facebook,
                 linkedin: linkedin
-              };
-              
-            await updateSocialData(socialIdResult.social_id,socialData);
+            };
+
+            await updateSocialData(socialIdResult.social_id, socialData);
 
             // Update the user's address information
             const addressData = {
@@ -480,120 +480,123 @@ exports.createStaff = async (req, res, next) => {
     }
 };
 
+// view staff
+exports.viewStaff = async (req, res, next) => {
+    const staffInfoQuery = `
+        SELECT s.staff_id as staffId, 
+        u.first_name as firstName, u.last_name as lastName,  u.date_of_birth as dateOfBirth, u.profile_pic as profilePicture,u.street_address as streetAddress
+        ,us.created_at as joiningDate, 
+        p.position_name as position, p.salary,
+        soc.email, soc.phone as phoneNumber, soc.facebook, soc.linkedin, 
+        ad.city, ad.division as state, ad.zip 
+        FROM staffs s
+        left JOIN users as u on u.user_id=s.staff_id
+        left JOIN user_status as us on u.user_id = us.user_id
+        LEFT JOIN positions p ON s.position_id = p.position_id 
+        LEFT JOIN socials soc ON u.social_id = soc.social_id
+        LEFT JOIN addresses ad ON u.address_id = ad.address_id
+    `;
+    // Execute the query
+    connection.query(staffInfoQuery, (error, results) => {
+        if (error) {
+            console.error('Error querying data from MySQL:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        if (results.length > 0) {
+            // Convert timestamps to date format
+            results.forEach(staff => {
+                staff.joiningDate = convertTimestampToDate(staff.joiningDate);
+                staff.dateOfBirth = convertTimestampToDate(staff.dateOfBirth);
+            });
+            // Staff found, return their information
+            return res.status(200).json(results);
+        } else {
+            // No staff found
+            return res.status(404).json({ error: 'No staff found' });
+        }
+    });
+};
+
+// update staff
+exports.updateStaff = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const {
+            staffId,
+            firstName,
+            lastName,
+            dateOfBirth,
+            streetAddress,
+            profilePicture,
+            facebook,
+            linkedin,
+            phoneNumber,
+            city,
+            state,
+            zip,
+            joiningDate,
+        } = data;
+
+        // Convert joiningDate and dateOfBirth to date format
+        const formattedJoiningDate = convertTimestampToDate(joiningDate);
+        const formattedDateOfBirth = convertTimestampToDate(dateOfBirth);
+
+        // Create address
+        const addressData = {
+            city: city,
+            division: state,
+            zip: zip,
+        };
+        const address_id = await getAddressId(addressData);
+
+        // Create or update social media record
+        const socialData = {
+            phone: phoneNumber,
+            facebook: facebook,
+            linkedin: linkedin,
+            twitter: data.twitter || "", // Ensure 'twitter' is handled correctly
+        };
+
+        const socialIdResult = await selectSocialIdFromUsers(staffId);
+        await updateSocialData(socialIdResult.social_id, socialData);
+
+        // Update the user's information
+        const userData = {
+            first_name: firstName,
+            last_name: lastName,
+            profile_pic: profilePicture,
+            date_of_birth: formattedDateOfBirth,
+            street_address: streetAddress,
+            address_id: address_id
+        };
+
+        await updateUserInfo(staffId, userData);
+
+        // Update the user status with the new creation date
+        await updateUserStatusCreationDate(staffId, formattedJoiningDate);
+
+        res.status(200).json({ message: 'Staff information updated successfully' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
+exports.deleteStaff = async (req, res, next) => {
+    try {
+        const user_id = req.params.staffId;
 
-// exports.viewStaff = async (req, res, next) => {
-//     try {
-//         const staffInfoQuery = `
-//             SELECT s.staff_id as staffId, s.first_name as firstName, s.last_name as lastName, s.joining_date as joiningDate, s.position, s.salary, s.date_of_birth as dateOfBirth, s.profile_pic as profilePicture, soc.email, soc.phone as phoneNumber, soc.facebook, soc.linkedin, ad.city, ad.division as state, ad.zip, ad.street_address as streetAddress
-//             FROM staffs s
-//             LEFT JOIN socials soc ON s.social_id = soc.social_id
-//             LEFT JOIN addresses ad ON s.address_id = ad.address_id
-//         `;
-//         // Execute the query
-//         connection.query(staffInfoQuery, (error, results) => {
-//             if (error) {
-//                 console.error('Error querying data from MySQL:', error);
-//                 res.status(500).json({ error: 'Internal server error' });
-//             } else {
-//                 if (results.length > 0) {
-//                     // Convert timestamps to date format
-//                     results.forEach(staff => {
-//                         staff.joiningDate = convertTimestampToDate(staff.joiningDate);
-//                         staff.dateOfBirth = convertTimestampToDate(staff.dateOfBirth);
-//                     });
-//                     // Staff found, return their information
-//                     res.status(200).json(results);
-//                 } else {
-//                     // No staff found
-//                     res.status(404).json({ error: 'No staff found' });
-//                 }
-//             }
-//         });
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+        await connection.execute('DELETE FROM user_status WHERE user_id = ?', [user_id]);
 
-// exports.updateStaff = async (req, res, next) => {
-//     try {
-//         const data = req.body;
-//         const {
-//             staffId,
-//             firstName,
-//             lastName,
-//             joiningDate,
-//             position,
-//             salary,
-//             dateOfBirth,
-//             profilePicture,
-//         } = data;
+        res.status(200).json({ message: `Staff with ID ${staff_id} deleted successfully` });
 
-//         // Convert joiningDate and dateOfBirth to date format
-//         const formattedJoiningDate = convertTimestampToDate(joiningDate);
-//         const formattedDateOfBirth = convertTimestampToDate(dateOfBirth);
-
-//         // Create address id
-//         const city = data.city;
-//         const division = data.state;
-//         const zip = data.zip;
-//         const street_address = data.streetAddress;
-//         const addressValues = [city, division, zip, street_address];
-//         const address_id = await getAddressId(addressValues);
-
-//         // Create social id
-//         const email = data.email;
-//         const phone = data.phoneNumber;
-//         const facebook = data.facebook;
-//         const linkedin = data.linkedin;
-
-//         const social_id = await getSocialId(email, phone, facebook, linkedin);
-
-//         // Update staff information in the database
-//         const sql = `UPDATE staffs 
-//                     SET 
-//                     first_name = ?,
-//                     last_name = ?,
-//                     joining_date = ?,
-//                     position = ?,
-//                     salary = ?,
-//                     date_of_birth = ?,
-//                     profile_pic = ?,
-//                     social_id = ?,
-//                     address_id = ?
-//                     WHERE staff_id = ?`;
-
-//         connection.query(sql, [firstName, lastName, formattedJoiningDate, position, salary, formattedDateOfBirth, profilePicture, social_id, address_id, staffId], (error, results) => {
-//             if (error) {
-//                 console.error('Error updating staff information:', error);
-//                 res.status(500).json({ error: 'Internal server error' });
-//             } else {
-//                 console.log('Staff information updated successfully:', results);
-//                 res.status(200).json({ message: 'Staff information for ' + staffId + ' updated successfully' });
-//             }
-//         });
-
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
-
-// exports.deleteStaff = async (req, res, next) => {
-//     try {
-//         const staff_id = req.params.staffId;
-
-//         await connection.execute('DELETE FROM staffs WHERE staff_id = ?', [staff_id]);
-
-//         res.status(200).json({ message: `Staff with ID ${staff_id} deleted successfully` });
-
-//     } catch (error) {
-//         console.error('Error deleting staff:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+    } catch (error) {
+        console.error('Error deleting staff:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
 

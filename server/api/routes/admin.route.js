@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject, viewTeacher, updateTeacher, deleteTeacher, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, createAcademic, viewAcademic, updateAcademic, deleteAcademic, createClassSubject, viewClassSubject, updateClassSubject, deleteClassSubject, viewTeacher, updateTeacher, deleteTeacher, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff, viewStaff, updateStaff, deleteStaff } = require("../controllers/admin.controller");
 const { lastTeacherId, lastStaffId, lastStudentId } = require("../../helper/getLastId");
 const { viewPositionData } = require("../../helper/getPositionData");
 const { viewAcademicData, viewSubjectData } = require("../../helper/getClassData");
@@ -16,6 +16,10 @@ router.delete("/deletePosition/:position_id", deletePosition);
 // school information
 router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
 router.get("/schoolView", schoolView);
+
+// // principal
+// router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
+// router.get('/viewPrincipal', viewPrincipal);
 
 // notice board
 router.get('/viewNotices', viewNotice);
@@ -41,9 +45,9 @@ router.post("/createStaffCredential", insertStaffUserStatus);
 
 // Staff endpoints
 router.post("/createStaff", createStaff);
-// router.get("/viewStaff", viewStaff);
-// router.post("/updateStaff", updateStaff);
-// router.delete('/deleteStaff/:staffId', deleteStaff);
+router.get("/viewStaff", viewStaff);
+router.post("/updateStaff", updateStaff);
+router.delete('/deleteStaff/:staffId', deleteStaff);
 
 
 
@@ -73,9 +77,7 @@ router.delete("/deleteClassSubject/:classSubjectId", deleteClassSubject);
 // router.delete('/deleteStudent/:studentId', deleteStudent);
 // router.get('/viewStudent', viewStudent);
 
-// // principal
-// router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
-// router.get('/viewPrincipal', viewPrincipal);
+
 
 
 

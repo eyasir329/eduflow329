@@ -42,7 +42,7 @@ export default function UserCreate() {
   const [positionID, setPositionID] = useState("");
   const [academicID, setAcademicID] = useState("");
   const [subjectID, setSubjectID] = useState("");
-  const [type, setType] = useState("Teacher");
+  const [type, setType] = useState();
   // const [teacherInfo, setTeacherInfo] = useState("");
 
   const [academicMenuItems, setAcademicMenuItems] = useState([]);

@@ -12,6 +12,7 @@ import SignUp from "./Signup";
 import Accountant from "./staff/accountant/Accountant";
 import Register from "./staff/register/Register"
 import Publisher from "./staff/publisher/Publisher"
+import Librarian from "./staff/librarian/Librarian";
 
 const Portal = () => {
     const role = useSelector((state) => state.user.currentUser?.type);
@@ -34,6 +35,10 @@ const Portal = () => {
             />
             <Route path="/publisher" element={
                 position === "publisher" ? <Publisher /> : <Navigate to="/portal/login" />
+            }
+            />
+            <Route path="/librarian" element={
+                position === "librarian" ? <Librarian /> : <Navigate to="/portal/login" />
             }
             />
 
@@ -77,6 +82,8 @@ const Portal = () => {
                                 return <Navigate to="/portal/admin" />;
                             case role === "staff" && position === "publisher":
                                 return <Navigate to="/portal/publisher" />;
+                            case role === "staff" && position === "librarian":
+                                return <Navigate to="/portal/librarian" />;
                             case role === "staff" && position === "register":
                                 return <Navigate to="/portal/register" />;
                             case role === "teacher":

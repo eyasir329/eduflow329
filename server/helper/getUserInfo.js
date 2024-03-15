@@ -73,5 +73,37 @@ const selectKeyFromUserStatus = async (userId) => {
 };
 
 
+const updateUserStatusCreationDate = async (userId, newCreationDate) => {
+    try {
+        // Execute the SQL query to update the user status creation date
+        const query = `
+            UPDATE user_status
+            SET created_at = ?
+            WHERE user_id = ?;
+        `;
+        
+        // Execute the query with userId and newCreationDate parameters
+        const [result] = await connection.promise().query(query, [newCreationDate, userId]);
 
-module.exports = { getUserInfo, updateUserInfo, selectKeyFromUserStatus };
+        // Check if the query was successful
+        if (result.affectedRows > 0) {
+            // If rows were affected, the update was successful
+            console.log(`User status creation date updated for user ${userId}`);
+            return true; // Indicate success
+        } else {
+            // If no rows were affected, it means the user status wasn't found
+            console.log(`User status not found for user ${userId}`);
+            return false; // Indicate failure
+        }
+    } catch (error) {
+        // Handle any errors that occur during the database query
+        console.error('Error updating user status creation date:', error);
+        throw error; // Throw the error for handling at a higher level
+    }
+};
+
+
+
+
+
+module.exports = { getUserInfo, updateUserInfo, selectKeyFromUserStatus,updateUserStatusCreationDate };

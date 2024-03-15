@@ -7,6 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import Image from '../../../components/functionality/Image';
 
@@ -36,8 +38,8 @@ const StaffTable = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [searchId, setSearchId] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  const [updateMessage, setUpdateMessage] = useState('');
-  const [deleteMessage, setDeleteMessage] = useState('');
+  // const [updateMessage, setUpdateMessage] = useState('');
+  // const [deleteMessage, setDeleteMessage] = useState('');
   const [profilePicture, setProfilePicture] = useState("");
 
   useEffect(() => {
@@ -51,6 +53,10 @@ const StaffTable = () => {
         throw new Error('Failed to fetch staff data');
       }
       const data = await response.json();
+
+      console.log(data)
+
+
       setFilteredData(data);
     } catch (error) {
       console.error('Error fetching staff data:', error);
@@ -84,14 +90,17 @@ const StaffTable = () => {
       const data = await res.json();
       fetchData();
       if (res.ok) {
-        setUpdateMessage(data.message);
+        toast(data.message);
+        // setUpdateMessage(data.message);
         fetchData();
       } else {
-        setUpdateMessage('Something went wrong while updating.');
+        toast('Something went wrong while updating.');
+        // setUpdateMessage();
       }
     } catch (error) {
       console.error('Error updating staff:', error);
-      setUpdateMessage('Error updating staff.');
+      toast('Error updating staff.');
+      // setUpdateMessage('Error updating staff.');
     }
     setEditableData(null);
     setOpenDialog(false);
@@ -103,7 +112,7 @@ const StaffTable = () => {
   };
 
   const handleDelete = async (row) => {
-    setUpdateMessage("");
+    // setUpdateMessage("");
     try {
       console.log(row);
       const res = await fetch(`http://localhost:5000/api/admin/deleteStaff/${row.staffId}`, {
@@ -114,32 +123,35 @@ const StaffTable = () => {
       fetchData();
       console.log(responseData);
       if (res.ok) {
-        setDeleteMessage(responseData.message);
+        toast(responseData.message);
+        // setDeleteMessage(responseData.message);
       } else {
-        setDeleteMessage('Something went wrong while deleting.');
+        toast('Something went wrong while deleting.');
+        // setDeleteMessage('Something went wrong while deleting.');
         console.error('Failed to delete staff:', res.statusText);
       }
     } catch (error) {
       console.error('Error deleting staff:', error);
-      setDeleteMessage('Error deleting staff.');
+      toast('Error deleting staff.');
+      // setDeleteMessage('Error deleting staff.');
     }
   };
 
   const handleSearch = () => {
     const searchTerm = searchId.toString().toLowerCase().trim(); // Convert to string
     const searchResult = filteredData.filter((row) =>
-        row.staffId.toString().toLowerCase().includes(searchTerm) || // Convert to string
-        row.firstName.toLowerCase().includes(searchTerm) ||
-        row.lastName.toLowerCase().includes(searchTerm)
+      row.staffId.toString().toLowerCase().includes(searchTerm) || // Convert to string
+      row.firstName.toLowerCase().includes(searchTerm) ||
+      row.lastName.toLowerCase().includes(searchTerm)
     );
     setFilteredData(searchResult);
-};
+  };
 
 
   const handleRefresh = async () => {
     setSearchId('');
-    setUpdateMessage('');
-    setDeleteMessage('');
+    // setUpdateMessage('');
+    // setDeleteMessage('');
     await fetchData();
   };
 
@@ -224,7 +236,7 @@ const StaffTable = () => {
       </TableContainer>
 
       <Dialog open={openDialog} onClose={handleCancel}>
-        <DialogTitle>Edit Teacher</DialogTitle>
+        <DialogTitle>Edit Staff</DialogTitle>
         <DialogContent>
           {editableData && columns.map((column) => (
             <React.Fragment key={column.id}>
@@ -241,6 +253,7 @@ const StaffTable = () => {
                 <TextField
                   label={column.label}
                   value={editableData[column.id]}
+                  disabled={column.id === 'staffId' || column.id === 'email' || column.id === 'position' || column.id === 'salary'}
                   onChange={(e) => {
                     const updatedData = { ...editableData, [column.id]: e.target.value };
                     setEditableData(updatedData);
@@ -251,6 +264,7 @@ const StaffTable = () => {
               )}
             </React.Fragment>
           ))}
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSave}>Save</Button>
@@ -267,9 +281,10 @@ const StaffTable = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <p className="reg-error" style={{ marginTop: '15px' }}>
+      {/* <p className="reg-error" style={{ marginTop: '15px' }}>
         {updateMessage || deleteMessage}
-      </p>
+      </p> */}
+      <ToastContainer />
     </Paper>
   );
 };

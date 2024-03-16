@@ -94,7 +94,7 @@ export default function RegUserData() {
             if (type === "teacher") {
                 startpoint = "register";
                 endpoint = "createTeacher";
-            } else if (type === "student") {
+            } else if (type === "student" || type === "parent") {
                 startpoint = "teacher";
                 endpoint = "createStudent";
             } else if (type === "staff") {

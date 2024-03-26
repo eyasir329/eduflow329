@@ -15,7 +15,7 @@ import {
 
 export default function PrincipalInfo() {
   const [formData, setFormData] = useState({
-    teacherid: "2020050100",
+    teacherid: "",
     joiningDate: "",
     endingDate: "",
     speech: ""
@@ -61,6 +61,7 @@ export default function PrincipalInfo() {
         }),
       });
       const data = await res.json();
+      console.log(data)
     } catch (error) {
       dispatch(updateUserFailure("An unexpected error occurred"));
     }
@@ -121,7 +122,7 @@ export default function PrincipalInfo() {
                 onChange={(e) => handleDateChange(e, "joiningDate")}
                 value={formData.joiningDate}
                 fullWidth
-                required
+                // required
               />
               <TextField
                 type="text" 
@@ -132,7 +133,7 @@ export default function PrincipalInfo() {
                 onChange={(e) => handleDateChange(e, "endingDate")}
                 value={formData.endingDate}
                 fullWidth
-                required
+                // required
               />
             </Stack>
             {updateSuccess && <p style={{ color: "green" }}>Update successful!</p>}

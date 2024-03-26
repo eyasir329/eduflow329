@@ -13,7 +13,8 @@ const authRoutes = require("./api/routes/auth.route.js");
 const userRoutes = require("./api/routes/user.route.js");
 const adminRoutes = require("./api/routes/admin.route.js");
 const registerRoutes = require("./api/routes/register.route.js");
-// const teacherRoutes = require("./api/routes/teacher.route.js");
+const teacherRoutes = require("./api/routes/teacher.route.js");
+const publicRoutes = require("./api/routes/public.route.js");
 
 
 const app = express();
@@ -73,8 +74,12 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/register", registerRoutes);
 
 // teacher panel start
-// app.use("/api/teacher", teacherRoutes);
+app.use("/api/teacher", teacherRoutes);
 // teacher panel end
+
+// public panel start
+app.use("/api/public", publicRoutes);
+// public panel end
 
 
 

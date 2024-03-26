@@ -14,18 +14,20 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const columns = [
-    { id: 'user_id', label: 'User ID', minWidth: 100 },
-    { id: 'user_type', label: 'User Type', minWidth: 50 },
-    { id: 'position_name', label: 'Position', minWidth: 50 },
-    { id: 'email', label: 'Email', minWidth: 150 },
-    { id: 'status', label: 'Status', minWidth: 50 },
-    { id: 'button', label: 'Mail', minWidth: 50 },
-    { id: 'created_at', label: 'Created At', minWidth: 200 }
-];
+
 
 export default function UserStatus() {
     const { currentUser } = useSelector((state) => state.user);
+
+    const columns = [
+        { id: 'user_id', label: 'User ID', minWidth: 100 },
+        { id: 'user_type', label: 'User Type', minWidth: 50 },
+        ...(currentUser.type === 'teacher' ? [] : [{ id: 'position_name', label: 'Position', minWidth: 50 }]),
+        { id: 'email', label: 'Email', minWidth: 150 },
+        { id: 'status', label: 'Status', minWidth: 50 },
+        { id: 'button', label: 'Mail', minWidth: 50 },
+        { id: 'created_at', label: 'Created At', minWidth: 200 }
+    ];
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -52,10 +54,14 @@ export default function UserStatus() {
             } else
                 if (currentUser.type === 'staff' && currentUser.position === 'register') {
                     fetchUrl = 'http://localhost:5000/api/register/viewTeacherUserStatus';
-                } else {
-                    // Handle other cases if needed
-                    return;
                 }
+                else
+                    if (currentUser.type === 'teacher') {
+                        fetchUrl = 'http://localhost:5000/api/teacher/viewStudentUserStatus';
+                    } else {
+                        // Handle other cases if needed
+                        return;
+                    }
 
             const response = await fetch(fetchUrl);
 
@@ -63,16 +69,21 @@ export default function UserStatus() {
                 throw new Error('Failed to fetch teacher data');
             }
             const data = await response.json();
+            console.log(data);
 
+            let filteredData = data; // Declare using let to allow reassignment
 
-            console.log(data)
-
-
-            setTeacherData(data);
-            console.log(teacherData); 
-
-
-            setFilteredData(data); // Corrected typo in the state name
+            if (currentUser.type === "teacher") {
+                filteredData = data.filter(item => item.user_type === 'student' || item.user_type === 'parent');
+            } else if (currentUser.type === "staff") {
+                if (currentUser.position === "register") {
+                    filteredData = data.filter(item => item.user_type === 'teacher');
+                }
+            }
+            console.log(filteredData)
+            setTeacherData(filteredData);
+            setFilteredData(filteredData);
+            // Corrected typo in the state name
         } catch (error) {
             console.error('Error fetching teacher data:', error);
         }

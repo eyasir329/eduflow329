@@ -70,7 +70,7 @@ exports.viewTeacherUserStatus = async (req, res, next) => {
     try {
         // Assuming you have a MySQL connection pool set up
         const sql = `
-            SELECT us.user_id, us.status, us.created_at, us.key, 
+            SELECT us.user_id, us.status, us.created_at,us.user_type, us.key, 
                    s.email, 
                    p.position_name,
                    t.subject_id 
@@ -88,13 +88,8 @@ exports.viewTeacherUserStatus = async (req, res, next) => {
                 return;
             }
 
-            // Add the user_type field to each result object
-            const resultsWithUserType = results.map(result => ({ ...result, user_type: "teacher" }));
 
-            // Send fetched user status data as JSON response with additional field
-            console.log(resultsWithUserType)
-
-            res.status(200).json(resultsWithUserType);
+            res.status(200).json(results);
         });
     } catch (error) {
         console.error('Error fetching user status:', error);

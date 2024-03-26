@@ -39,9 +39,13 @@ export default function UserCreate() {
 
   const [Id, setId] = useState("");
   const [email, setEmail] = useState("");
+  const [fatherEmail, setFatherEmail] = useState("");
+  const [motherEmail, setMotherEmail] = useState("");
+  const [guardianEmail, setGuardianEmail] = useState("");
   const [positionID, setPositionID] = useState("");
   const [academicID, setAcademicID] = useState("");
   const [subjectID, setSubjectID] = useState("");
+  const [gender, setGender] = useState("");
   const [type, setType] = useState();
   // const [teacherInfo, setTeacherInfo] = useState("");
 
@@ -50,6 +54,7 @@ export default function UserCreate() {
   const [positionMenuItems, setPositionMenuItems] = useState([]);
 
   console.log(lastStudentId)
+
 
   const fetchData = async () => {
     try {
@@ -126,7 +131,11 @@ export default function UserCreate() {
       email,
       typeOption,
       subjectID,
-      academicID
+      academicID,
+      fatherEmail,
+      motherEmail,
+      guardianEmail,
+      gender
     };
 
     let endpoint;
@@ -245,7 +254,7 @@ export default function UserCreate() {
                 </TextField>
               )}
 
-              {(type === "Student") && (
+              {(type === "Student") && (<>
                 <TextField
                   select
                   variant="outlined"
@@ -261,6 +270,60 @@ export default function UserCreate() {
                 >
                   {academicMenuItems}
                 </TextField>
+
+                <TextField
+                  select
+                  variant="outlined"
+                  color="secondary"
+                  label="Gender"
+                  onChange={(event) => setGender(event.target.value)} // Inline definition of handleGenderChange
+                  value={gender}
+                  fullWidth
+                  required
+                  sx={{ mb: 4 }}
+                >
+                  {/* Menu items for the gender options */}
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </TextField>
+                <TextField
+                  type="email"
+                  variant="outlined"
+                  color="secondary"
+                  label="Father Email"
+                  onChange={(e) => setFatherEmail(e.target.value)}
+                  value={fatherEmail}
+                  fullWidth
+                  required
+                  sx={{ mb: 4 }}
+                />
+
+                <TextField
+                  type="email"
+                  variant="outlined"
+                  color="secondary"
+                  label="Mother Email"
+                  onChange={(e) => setMotherEmail(e.target.value)}
+                  value={motherEmail}
+                  fullWidth
+                  required
+                  sx={{ mb: 4 }}
+                />
+
+                <TextField
+                  type="email"
+                  variant="outlined"
+                  color="secondary"
+                  label="Guardian Email"
+                  onChange={(e) => setGuardianEmail(e.target.value)}
+                  value={guardianEmail}
+                  fullWidth
+                  required
+                  sx={{ mb: 4 }}
+                />
+
+              </>
               )}
 
             </Stack>

@@ -102,5 +102,56 @@ const updateUserStatusCreationDate = async (userId, newCreationDate) => {
     }
 };
 
+// Function to generate user data
+function generateUser(type, id, email) {
+    return new Promise((resolve, reject) => {
+        // Insert user status data
+        const userStatusSql = `
+            INSERT INTO user_status (user_id, user_type)
+            VALUES (?, ?)`;
+        connection.query(userStatusSql, [id, type.toLowerCase()], (error, userStatusResults) => {
+            if (error) {
+                console.error('Error inserting user status:', error);
+                reject(error); // Reject the promise on error
+                return;
+            }
+            console.log(userStatusResults);
+            const userId = userStatusResults.insertId;
 
-module.exports = { getUserInfo, updateUserInfo, selectKeyFromUserStatus,updateUserStatusCreationDate };
+            // Insert email into socials table and get social_id
+            const socialSql = `
+                INSERT INTO socials (email)
+                VALUES (?)`;
+            connection.query(socialSql, [email], (socialError, socialResults) => {
+                if (socialError) {
+                    console.error('Error inserting social data:', socialError);
+                    reject(socialError); // Reject the promise on error
+                    return;
+                }
+
+                const socialId = socialResults.insertId;
+
+                console.log(userId, socialId, id)
+
+                // Insert data into users table
+                const updateUserSql = `
+                    INSERT INTO users (user_id, social_id)
+                    VALUES (?, ?)`;
+                connection.query(updateUserSql, [id, socialId], (updateUserError, updateUserResults) => {
+                    if (updateUserError) {
+                        console.error('Error updating users table:', updateUserError);
+                        reject(updateUserError); // Reject the promise on error
+                        return;
+                    }
+                    console.log(updateUserResults);
+                    resolve({ userId, socialId }); // Resolve with relevant data
+                });
+            });
+        });
+    });
+}
+
+
+
+
+module.exports = { getUserInfo, updateUserInfo, selectKeyFromUserStatus,updateUserStatusCreationDate,generateUser };

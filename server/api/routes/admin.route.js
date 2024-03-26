@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff, viewStaff, updateStaff, deleteStaff } = require("../controllers/admin.controller");
+const { adminProfile, createPosition, viewPosition, updatePosition,schoolCreateOrUpdate, schoolView, createNotice, viewNotice, updateNotice, deleteNotice, deletePosition, viewStaffUserStatus, insertStaffUserStatus, createStaff, viewStaff, updateStaff, deleteStaff, createOrUpdatePrincipal, viewPrincipal } = require("../controllers/admin.controller");
 const { lastTeacherId, lastStaffId, lastStudentId } = require("../../helper/getLastId");
 const { viewPositionData } = require("../../helper/getPositionData");
 const { viewAcademicData, viewSubjectData } = require("../../helper/getClassData");
@@ -18,8 +18,8 @@ router.post("/schoolCreateOrUpdate", schoolCreateOrUpdate);
 router.get("/schoolView", schoolView);
 
 // principal
-// router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
-// router.get('/viewPrincipal', viewPrincipal);
+router.post('/createOrUpdatePrincipal', createOrUpdatePrincipal);
+router.get('/viewPrincipal', viewPrincipal);
 
 // notice board
 router.get('/viewNotices', viewNotice);
@@ -48,18 +48,6 @@ router.post("/createStaff", createStaff);
 router.get("/viewStaff", viewStaff);
 router.post("/updateStaff", updateStaff);
 router.delete('/deleteStaff/:staffId', deleteStaff);
-
-
-
-// // student
-// router.post("/createStudent", createStudent);
-// router.post("/updateStudent", updateStudent);
-// router.delete('/deleteStudent/:studentId', deleteStudent);
-// router.get('/viewStudent', viewStudent);
-
-
-
-
 
 
 module.exports = router;

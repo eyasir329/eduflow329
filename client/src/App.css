@@ -205,9 +205,12 @@ p {
 }
 
 .news-title {
-    /* background-color: #EAD196; */
+    background-color: #F5DD61;
     color: #fff;
     /* width: 160px; */
+}
+.newsIcon{
+    margin-left: 10px;
 }
 
 .animate-charcter {

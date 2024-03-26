@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2'); // Import the promise-based version
 require("dotenv").config();
 
 // Database connection configuration

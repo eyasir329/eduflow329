@@ -1,5 +1,2 @@
-# school_management_system
-It's my 2nd Year,4th Semester, Application Development Lab Project
+#School Management System 2.0
 
-Presentation Link :
-https://1drv.ms/p/s!AobsdOA38SachWzeumj41gRVrrdR?e=Xuhp00
